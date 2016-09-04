@@ -1,8 +1,10 @@
 <resources>
 
+    <string name="facebook_app_id">1068176056564355</string>
+
     <string name="app_name">IESB - Rede</string>
     <string name="action_settings">Configurações</string>
-    <string name="title_activity_login">IESB - Identifique-se</string>
+    <string name="title_activity_login">Rede do IESB</string>
 
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Senha</string>
