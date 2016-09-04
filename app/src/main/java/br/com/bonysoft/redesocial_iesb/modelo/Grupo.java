@@ -5,12 +5,9 @@ import java.util.Map;
 
 public class Grupo {
 
-    // TESTE 1
     public String id_dono;
     public String id_grupo;
     public String nome;
-
-    // incluida esta linha de comentario para testar o github
 
     public Grupo(String id_dono, String id_grupo, String nome) {
         this.id_dono = id_dono;
