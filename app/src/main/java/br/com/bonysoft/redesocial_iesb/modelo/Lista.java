@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class Lista {
 
-    // TESTE DE COMMIT
+    // TESTE DE COMMIT Pelo Android Studio
     public String id_lista;
     public String id_lista2;
     public String id_dono;
