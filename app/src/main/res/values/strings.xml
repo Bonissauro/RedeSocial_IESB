@@ -1,0 +1,23 @@
+<resources>
+
+    <string name="app_name">IESB - Rede Social</string>
+    <string name="action_settings">Configurações</string>
+    <string name="title_activity_login">IESB - Identifique-se</string>
+
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Senha</string>
+    <string name="action_sign_in">Confirmar</string>
+    <string name="action_sign_in_short">Cadastrar conta</string>
+    <string name="error_invalid_email">E-mail não é válido</string>
+    <string name="error_invalid_password">Senha muito curta</string>
+    <string name="error_incorrect_password">Senha incorreta</string>
+    <string name="error_field_required">Campo obrigatório</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."
+    </string>
+    <string name="link_esqueci_senha">Esqueci a senha</string>
+    <string name="link_nao_tenho_conta">Não tenho conta</string>
+
+    <string name="title_activity_principal">IESB - Rede Social</string>
+    <string name="section_format">Guia: %1$d</string>
+
+</resources>
