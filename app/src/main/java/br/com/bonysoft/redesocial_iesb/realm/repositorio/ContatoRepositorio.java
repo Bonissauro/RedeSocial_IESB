@@ -36,7 +36,6 @@ public class ContatoRepositorio implements IContatoRepositorio {
         Contato realmContato = realm.createObject(Contato.class);
         realmContato.setId(UUID.randomUUID().toString());
 
-
         realmContato.setId_usuario(contato.getId_usuario());
         realmContato.setNome(contato.getNome());
         realmContato.setEmail(contato.getEmail());
@@ -57,14 +56,15 @@ public class ContatoRepositorio implements IContatoRepositorio {
     public void deleteContatoById(Context context,String id, OnDeleteContatoCallback callback) {
         Realm realm = carrega(context);
         realm.beginTransaction();
-        final RealmResults<Contato> results = realm.where(Contato.class).equalTo("id_usuario", id).findAll();
+        final RealmResults<Contato> results = realm.where(Contato.class)
+                //.equalTo("id_usuario", id)
+                .findAll();
         results.deleteAllFromRealm();
         realm.commitTransaction();
 
         if (callback != null) {
             callback.onSuccess();
         }
-
     }
 
     @Override

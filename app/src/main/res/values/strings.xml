@@ -4,6 +4,8 @@
 
     <string name="app_name">IESB - Rede</string>
     <string name="action_settings">Configurações</string>
+    <string name="action_contatos">Contatos</string>
+    <string name="action_conversas">Conversas</string>
     <string name="title_activity_login">Rede do IESB</string>
 
     <string name="prompt_email">Email</string>
@@ -21,5 +23,6 @@
 
     <string name="title_activity_principal">IESB - Rede Social</string>
     <string name="section_format">Guia: %1$d</string>
+    <string name="title_activity_tab_atividade">TabAtividade</string>
 
 </resources>

@@ -29,7 +29,7 @@ public interface IContatoRepositorio {
     }
 
     interface OnGetAllContatosCallback {
-        void onSuccess(RealmResults<Contato> students);
+        void onSuccess(RealmResults<Contato> listaContatos);
         void onError(String message);
     }
 

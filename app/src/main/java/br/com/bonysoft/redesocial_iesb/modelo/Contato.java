@@ -95,4 +95,19 @@ public class Contato extends RealmObject {
     public void setId(String id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "Contato{" +
+                "id='" + id + '\'' +
+                ", nome='" + nome + '\'' +
+                ", sobreNome='" + sobreNome + '\'' +
+                ", telefone='" + telefone + '\'' +
+                ", caminhoFoto='" + caminhoFoto + '\'' +
+                ", email='" + email + '\'' +
+                ", dataNascimento=" + dataNascimento +
+                ", id_usuario='" + id_usuario + '\'' +
+                ", usuarioPrincipal=" + usuarioPrincipal +
+                '}';
+    }
 }
