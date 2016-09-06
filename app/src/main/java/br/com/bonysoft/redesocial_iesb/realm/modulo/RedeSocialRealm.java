@@ -18,13 +18,6 @@ public class RedeSocialRealm extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        /*
-        RealmConfiguration config = new RealmConfiguration.Builder(getApplicationContext())
-                .modules(new RedeSocialRealmModule()).build();
-
-
-        Realm.setDefaultConfiguration(config);
-        */
 
         RealmConfiguration config = new RealmConfiguration.Builder(this)
                 .modules(new RedeSocialRealmModule())

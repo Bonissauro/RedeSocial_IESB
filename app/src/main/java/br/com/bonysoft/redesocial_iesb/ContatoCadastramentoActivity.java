@@ -50,7 +50,7 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
             setTitle("Alteração de contato");
 
             IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
-            contatoRepositorio.getContatoById(this, id, new IContatoRepositorio.OnGetContatoByIdCallback() {
+            contatoRepositorio.getContatoById( id, new IContatoRepositorio.OnGetContatoByIdCallback() {
 
                 @Override
                 public void onSuccess(Contato contato) {
@@ -102,7 +102,7 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
 
             contato.setUsuarioPrincipal(true);
 
-            contatoRepositorio.addContato(this, contato, new IContatoRepositorio.OnSaveContatoCallback() {
+            contatoRepositorio.addContato( contato, new IContatoRepositorio.OnSaveContatoCallback() {
 
                 @Override
                 public void onSuccess() {
@@ -123,7 +123,7 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
 
         }else{
 
-            contatoRepositorio.editContato(this, contato, new IContatoRepositorio.OnSaveContatoCallback() {
+            contatoRepositorio.editContato(contato, new IContatoRepositorio.OnSaveContatoCallback() {
 
                 @Override
                 public void onSuccess() {

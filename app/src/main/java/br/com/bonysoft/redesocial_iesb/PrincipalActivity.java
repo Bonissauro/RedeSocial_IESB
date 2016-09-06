@@ -32,11 +32,15 @@ public class PrincipalActivity extends AppCompatActivity implements
 
     List<Contato> listaContatos;
 
+
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private ViewPager mViewPager;
     private Toolbar toolbar;
     private TabLayout tabLayout;
+
+    private FloatingActionButton fab;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +61,8 @@ public class PrincipalActivity extends AppCompatActivity implements
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabButton);
-        fab.setVisibility(View.VISIBLE);
+        fab = (FloatingActionButton) findViewById(R.id.fabButton);
+       // fab.setVisibility(View.VISIBLE);
 
         fab.setOnClickListener(new View.OnClickListener() {
 
@@ -123,12 +127,15 @@ public class PrincipalActivity extends AppCompatActivity implements
             mFragmentTitleList.add(title);
         }
 
+
+
         @Override
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);
         }
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -184,6 +191,8 @@ public class PrincipalActivity extends AppCompatActivity implements
             }
             return null;
         }
+
+
     }
 
     @Override
@@ -198,7 +207,7 @@ public class PrincipalActivity extends AppCompatActivity implements
     private void buscaLista() {
 
         IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
-        contatoRepositorio.getAllContatos(getBaseContext(), new IContatoRepositorio.OnGetAllContatosCallback() {
+        contatoRepositorio.getAllContatos(new IContatoRepositorio.OnGetAllContatosCallback() {
 
             @Override
             public void onSuccess(RealmResults<Contato> itens) {

@@ -40,10 +40,9 @@ public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContato
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-
         holder.mItem = mValues.get(position);
-        //holder.mIdView.setText(mValues.get(position).getId());
-        holder.mContentView.setText(mValues.get(position).getNome());
+        holder.mContatoNomeView.setText(mValues.get(position).getNome() + " " + mValues.get(position).getSobreNome());
+        holder.mContatoEmailView.setText(mValues.get(position).getEmail());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,7 +84,7 @@ public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContato
     public int getItemCount() {
         return mValues.size();
     }
-
+/*
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         //public final TextView mIdView;
@@ -104,6 +103,24 @@ public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContato
             return super.toString() + " '" + mContentView.getText() + "'";
         }
 
-    }
+    }*/
 
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        public final View mView;
+        public final TextView mContatoNomeView;
+        public final TextView mContatoEmailView;
+        public Contato mItem;
+
+        public ViewHolder(View view) {
+            super(view);
+            mView = view;
+            mContatoNomeView = (TextView) view.findViewById(R.id.contatoItemListaNome);
+            mContatoEmailView = (TextView) view.findViewById(R.id.contatoItemListaEmail);
+        }
+
+        @Override
+        public String toString() {
+            return super.toString() + " '" + mContatoNomeView.getText() + "'";
+        }
+    }
 }

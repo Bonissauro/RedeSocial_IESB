@@ -31,6 +31,7 @@ import java.util.List;
 import br.com.bonysoft.redesocial_iesb.modelo.Contato;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.ContatoRepositorio;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.IContatoRepositorio;
+import io.realm.RealmResults;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -183,7 +184,7 @@ public class LoginActivity extends AppCompatActivity {
     private boolean usuarioJaRegistradoComoContato(Contato contato){
         IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
 
-        /*
+
         Log.i("ContatoLog","IdProfile-"+contato.getId_usuario());
         List<Contato> contatoList = contatoRepositorio.getAllContatosByUsuarioId(contato.getId_usuario(), new IContatoRepositorio.OnGetAllContatosCallback() {
             @Override
@@ -208,16 +209,11 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         return (contato != null && contato.getId_usuario()!=null && !contato.getId_usuario().trim().isEmpty());
-
-        */
-
-        return true;
-
     }
 
     public void deleteAll(View v){
 
-        /*
+
         IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
         contatoRepositorio.deleteContatoById( "", new IContatoRepositorio.OnDeleteContatoCallback() {
             @Override
@@ -230,13 +226,13 @@ public class LoginActivity extends AppCompatActivity {
                 Log.i("ContatoLog","Erro delete all ==> "+message);
             }
         });
-        */
+
 
     }
 
     private void gravarContato(Contato contato, boolean isPrincipal){
 
-        /*
+
         IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
 
         Log.i("ContatoLog", "IdUsuarioFace"+contato.getId_usuario());
@@ -255,7 +251,7 @@ public class LoginActivity extends AppCompatActivity {
         });
         Log.i("ContatoLog","contato adicionado =>"+ contato.toString());
 
-        */
+
 
 
     }
