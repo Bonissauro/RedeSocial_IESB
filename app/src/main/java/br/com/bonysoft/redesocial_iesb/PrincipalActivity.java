@@ -22,9 +22,11 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PrincipalActivity extends AppCompatActivity {
+import br.com.bonysoft.redesocial_iesb.dummy.DummyContent;
 
-    public static String[] guias = {"Conversas","Contatos"};
+public class PrincipalActivity extends AppCompatActivity implements ConversasFragment.OnListFragmentInteractionListener,
+        ContatoFragment.OnListFragmentInteractionListener,
+        Configuracao.OnFragmentInteractionListener{
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -75,6 +77,21 @@ public class PrincipalActivity extends AppCompatActivity {
         adapter.addFragment(new ConversasFragment(), "Conversas");
         adapter.addFragment(new Configuracao(), "Configuracao");
         viewPager.setAdapter(adapter);
+    }
+
+    @Override
+    public void onListFragmentInteractionConversas(DummyContent.DummyItem item) {
+
+    }
+
+    @Override
+    public void onListFragmentInteractionContato(DummyContent.DummyItem item) {
+
+    }
+
+    @Override
+    public void onFragmentInteraction() {
+
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {

@@ -104,6 +104,6 @@ public class ContatoFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteractionContato(DummyItem item);
     }
 }

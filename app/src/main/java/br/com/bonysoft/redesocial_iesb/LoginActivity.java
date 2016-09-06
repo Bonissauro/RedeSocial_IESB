@@ -112,6 +112,7 @@ public class LoginActivity extends AppCompatActivity {
                     Bundle parameters = new Bundle();
                     parameters.putString("fields", "id, first_name, last_name, email,gender, birthday, location"); // Parámetros que pedimos a facebook
                     requestMe.setParameters(parameters);
+                    requestFriends.setParameters(parameters);
 
                     GraphRequestBatch batch = new GraphRequestBatch(
                             requestMe,requestFriends);
