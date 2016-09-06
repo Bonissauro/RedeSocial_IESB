@@ -18,19 +18,10 @@ import io.realm.RealmResults;
  */
 public class ContatoRepositorio implements IContatoRepositorio {
 
-    private Realm carrega(Context context){
-        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context)
-                .deleteRealmIfMigrationNeeded()
-                .build();
-
-        Realm.setDefaultConfiguration(realmConfig);
-        return Realm.getDefaultInstance();
-    }
-
     @Override
-    public Contato addContato(Context context, Contato contato, OnSaveContatoCallback callback) {
+    public Contato addContato( Contato contato, OnSaveContatoCallback callback) {
 
-        Realm realm = carrega(context);
+        Realm realm =  Realm.getDefaultInstance();
 
         realm.beginTransaction();
         Contato realmContato = realm.createObject(Contato.class);
@@ -53,8 +44,8 @@ public class ContatoRepositorio implements IContatoRepositorio {
     }
 
     @Override
-    public void deleteContatoById(Context context,String id, OnDeleteContatoCallback callback) {
-        Realm realm = carrega(context);
+    public void deleteContatoById(String id, OnDeleteContatoCallback callback) {
+        Realm realm =  Realm.getDefaultInstance();
         realm.beginTransaction();
         final RealmResults<Contato> results = realm.where(Contato.class)
                 //.equalTo("id_usuario", id)
@@ -68,8 +59,8 @@ public class ContatoRepositorio implements IContatoRepositorio {
     }
 
     @Override
-    public List<Contato>  getAllContatos(Context context,OnGetAllContatosCallback callback) {
-        Realm realm = carrega(context);
+    public List<Contato>  getAllContatos(OnGetAllContatosCallback callback) {
+        Realm realm =  Realm.getDefaultInstance();
 
         RealmResults<Contato> results = realm.where(Contato.class)
                 .findAll();
@@ -85,9 +76,9 @@ public class ContatoRepositorio implements IContatoRepositorio {
     }
 
     @Override
-    public List<Contato> getAllContatosByUsuarioId(Context context, String id, OnGetAllContatosCallback callback) {
+    public List<Contato> getAllContatosByUsuarioId(String id, OnGetAllContatosCallback callback) {
 
-        Realm realm = carrega(context);
+        Realm realm =  Realm.getDefaultInstance();
         RealmResults<Contato> results = realm.where(Contato.class)
                 .equalTo("id_usuario",id)
                 .findAll();
@@ -105,8 +96,8 @@ public class ContatoRepositorio implements IContatoRepositorio {
     }
 
     @Override
-    public Contato getContatoById(Context context,String id, OnGetContatoByIdCallback callback) {
-        Realm realm = carrega(context);
+    public Contato getContatoById(String id, OnGetContatoByIdCallback callback) {
+        Realm realm =  Realm.getDefaultInstance();
         Contato contato = realm.where(Contato.class)
                 .equalTo("id", id)
                 .findFirst();

@@ -1,17 +1,23 @@
 package br.com.bonysoft.redesocial_iesb;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import br.com.bonysoft.redesocial_iesb.dummy.DummyContent;
 import br.com.bonysoft.redesocial_iesb.dummy.DummyContent.DummyItem;
+import br.com.bonysoft.redesocial_iesb.modelo.Contato;
+import br.com.bonysoft.redesocial_iesb.realm.repositorio.ContatoRepositorio;
+import br.com.bonysoft.redesocial_iesb.realm.repositorio.IContatoRepositorio;
+import io.realm.RealmResults;
 
 import java.util.List;
 
@@ -29,19 +35,23 @@ public class ContatoFragment extends Fragment {
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
 
+    private String idUsuario;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ContatoFragment() {
-    }
+    public ContatoFragment(){}
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static ContatoFragment newInstance(int columnCount) {
+    public static ContatoFragment newInstance(int columnCount,String idUsuario) {
+        idUsuario = idUsuario;
         ContatoFragment fragment = new ContatoFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
+
+        fragment.setIdUsuario(idUsuario);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,7 +79,23 @@ public class ContatoFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyContatoRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+
+            IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
+
+            List<Contato> contatoList = contatoRepositorio.getAllContatosByUsuarioId(idUsuario,
+                    new IContatoRepositorio.OnGetAllContatosCallback() {
+                @Override
+                public void onSuccess(RealmResults<Contato> itens) {
+                    Log.i("ContatoLog","Sucesso na Consulta Usuario Id->" + itens.size() );
+                }
+
+                @Override
+                public void onError(String message) {
+                    Log.i("ContatoLog","Erro Consulta Usuario Id ==> "+message);
+                }
+            });
+
+            recyclerView.setAdapter(new MyContatoRecyclerViewAdapter(contatoList, mListener));
         }
         return view;
     }
@@ -104,6 +130,14 @@ public class ContatoFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteractionContato(DummyItem item);
+        void onListFragmentInteractionContato(Contato item);
+    }
+
+    public String getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(String idUsuario) {
+        this.idUsuario = idUsuario;
     }
 }

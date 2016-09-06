@@ -45,6 +45,7 @@ import io.realm.RealmResults;
 public class LoginActivity extends AppCompatActivity {
 
     CallbackManager callbackManager;
+    String idUsuarioLogado;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +70,6 @@ public class LoginActivity extends AppCompatActivity {
                     String accessToken = loginResult.getAccessToken().getToken();
                     Log.i("ContatosLogAcessToken", accessToken);
 
-
                     GraphRequest requestMe = GraphRequest.newMeRequest(
                             loginResult.getAccessToken(),
                             new GraphRequest.GraphJSONObjectCallback() {
@@ -82,11 +82,15 @@ public class LoginActivity extends AppCompatActivity {
 
                                     Log.i("ContatoLogJUser", jsonObject.toString());
                                     Log.i("ContatoLogRUser" , response.toString());
+                                    Contato c = convertFacebookJsonToContato(jsonObject,null);
 
-                                    incluirUsuarioFacebookComoContatoPrincipal(convertFacebookJsonToContato(jsonObject));
+                                    setIdUsuarioLogado(c.getId_usuario());
+
+                                    incluirUsuarioFacebookComoContatoPrincipal(c);
                                 }
                             }
                     );
+
 
                     GraphRequest requestFriends = GraphRequest.newMyFriendsRequest(
                             loginResult.getAccessToken(),
@@ -100,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
                                     Log.i("ContatoLogJFriend", jsonArray.toString());
                                     Log.i("ContatoLogRFriend" , response.toString());
 
-                                    List<Contato> contatoList = convertFacebookJsonToContato(jsonArray);
+                                    List<Contato> contatoList = convertFacebookJsonToContato(jsonArray,getIdUsuarioLogado());
 
                                     for(Contato contato: contatoList){
                                         Log.i("ContatoLogFriendAdd" , contato.toString());
@@ -121,7 +125,9 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onBatchCompleted(GraphRequestBatch graphRequests) {
                             //TODO: aqui ele chama qdo terminar os dois requests do facebook
+
                             Intent it = new Intent(LoginActivity.this, PrincipalActivity.class);
+                            it.putExtra(Constantes.ID_USUARIO_PESQUISA,getIdUsuarioLogado() );
                             startActivity(it);
                         }
                     });
@@ -146,9 +152,9 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart() {
 
         super.onStart();
-
+/*
         IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
-        contatoRepositorio.getAllContatos(this, new IContatoRepositorio.OnGetAllContatosCallback() {
+        contatoRepositorio.getAllContatos(new IContatoRepositorio.OnGetAllContatosCallback() {
             @Override
             public void onSuccess(RealmResults<Contato> itens) {
                 Log.i("ContatoLog", "Quantidade Itens => "+itens.size());
@@ -160,7 +166,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-
+*/
         //
         // Caso o cara retorne da ActivityPrincipal para cá "desloga" ele do Facebook e obriga
         // ele a relogar pra desfazer a caca que ele fez
@@ -188,7 +194,7 @@ public class LoginActivity extends AppCompatActivity {
         IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
 
         Log.i("ContatoLog","IdProfile-"+contato.getId_usuario());
-        List<Contato> contatoList = contatoRepositorio.getAllContatosByUsuarioId(this,contato.getId_usuario(), new IContatoRepositorio.OnGetAllContatosCallback() {
+        List<Contato> contatoList = contatoRepositorio.getAllContatosByUsuarioId(contato.getId_usuario(), new IContatoRepositorio.OnGetAllContatosCallback() {
             @Override
             public void onSuccess(RealmResults<Contato> itens) {
                 Log.i("ContatoLog","Sucesso na Consulta Usuario Id->" + itens.size() );
@@ -215,7 +221,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void deleteAll(View v){
         IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
-        contatoRepositorio.deleteContatoById(this, "", new IContatoRepositorio.OnDeleteContatoCallback() {
+        contatoRepositorio.deleteContatoById( "", new IContatoRepositorio.OnDeleteContatoCallback() {
             @Override
             public void onSuccess() {
                 Log.i("ContatoLog","Sucesso no delete all");
@@ -234,7 +240,7 @@ public class LoginActivity extends AppCompatActivity {
         Log.i("ContatoLog", "IdUsuarioFace"+contato.getId_usuario());
         contato.setUsuarioPrincipal(isPrincipal);
 
-        contato = contatoRepositorio.addContato(this,contato, new IContatoRepositorio.OnSaveContatoCallback() {
+        contato = contatoRepositorio.addContato(contato, new IContatoRepositorio.OnSaveContatoCallback() {
             @Override
             public void onSuccess() {
                 Log.i("ContatoLog","Sucesso na Gravacao");
@@ -248,11 +254,14 @@ public class LoginActivity extends AppCompatActivity {
         Log.i("ContatoLog","contato adicionado =>"+ contato.toString());
     }
 
-    private Contato convertFacebookJsonToContato(JSONObject object) {
+    private Contato convertFacebookJsonToContato(JSONObject object, String id) {
 
         try {
             Contato contato = new Contato();
-            String id = object.getString("id");
+
+            if(id == null || id.isEmpty()){
+                id = object.getString("id");
+            }
 
             try {
                 URL profile_pic = new URL("https://graph.facebook.com/" + id + "/picture?width=200&height=150");
@@ -296,13 +305,13 @@ public class LoginActivity extends AppCompatActivity {
         return null;
     }
 
-    private List<Contato> convertFacebookJsonToContato(JSONArray object) {
+    private List<Contato> convertFacebookJsonToContato(JSONArray object,String id) {
         List<Contato> listaContato = new ArrayList<>();
 
         try {
             if (object.length() > 0) {
                 for (int i = 0; i < object.length(); i++) {
-                    listaContato.add(convertFacebookJsonToContato(object.optJSONObject(i)));
+                    listaContato.add(convertFacebookJsonToContato(object.optJSONObject(i),id));
                 }
             }
 
@@ -330,6 +339,12 @@ public class LoginActivity extends AppCompatActivity {
         Toast.makeText(LoginActivity.this, "Ainda nao tenho conta nao implementado", Toast.LENGTH_LONG).show();
     }
 
+    public String getIdUsuarioLogado() {
+        return idUsuarioLogado;
+    }
 
+    public void setIdUsuarioLogado(String idUsuarioLogado) {
+        this.idUsuarioLogado = idUsuarioLogado;
+    }
 }
 

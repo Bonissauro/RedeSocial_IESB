@@ -33,13 +33,13 @@ public interface IContatoRepositorio {
         void onError(String message);
     }
 
-    Contato addContato(Context context,Contato contato, OnSaveContatoCallback callback);
+    Contato addContato(Contato contato, OnSaveContatoCallback callback);
 
-    void deleteContatoById(Context context,String id, OnDeleteContatoCallback callback);
+    void deleteContatoById(String id, OnDeleteContatoCallback callback);
 
-    List<Contato> getAllContatos(Context context,OnGetAllContatosCallback callback);
+    List<Contato> getAllContatos(OnGetAllContatosCallback callback);
 
-    List<Contato> getAllContatosByUsuarioId(Context context, String id, OnGetAllContatosCallback callback);
+    List<Contato> getAllContatosByUsuarioId(String id, OnGetAllContatosCallback callback);
 
-    Contato getContatoById(Context context,String id, OnGetContatoByIdCallback callback);
+    Contato getContatoById(String id, OnGetContatoByIdCallback callback);
 }

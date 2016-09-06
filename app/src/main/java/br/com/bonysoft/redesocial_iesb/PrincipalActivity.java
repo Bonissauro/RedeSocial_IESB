@@ -1,5 +1,6 @@
 package br.com.bonysoft.redesocial_iesb;
 
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.bonysoft.redesocial_iesb.dummy.DummyContent;
+import br.com.bonysoft.redesocial_iesb.modelo.Contato;
 
 public class PrincipalActivity extends AppCompatActivity implements ConversasFragment.OnListFragmentInteractionListener,
         ContatoFragment.OnListFragmentInteractionListener,
@@ -44,7 +46,7 @@ public class PrincipalActivity extends AppCompatActivity implements ConversasFra
     private ViewPager mViewPager;
     private Toolbar toolbar;
     private TabLayout tabLayout;
-
+    private String idUsuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,16 +66,20 @@ public class PrincipalActivity extends AppCompatActivity implements ConversasFra
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         //mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        setupViewPager(mViewPager);
+        Intent intent = getIntent();
+        idUsuario = (String) intent.getSerializableExtra(Constantes.ID_USUARIO_PESQUISA);
+        setupViewPager(mViewPager,idUsuario);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
     }
 
-    private void setupViewPager(ViewPager viewPager) {
+    private void setupViewPager(ViewPager viewPager,String id) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new ContatoFragment(), "Contatos");
+        ContatoFragment cf = new ContatoFragment();
+        cf.setIdUsuario(id);
+
+        adapter.addFragment(cf, "Contatos");
         adapter.addFragment(new ConversasFragment(), "Conversas");
         adapter.addFragment(new Configuracao(), "Configuracao");
         viewPager.setAdapter(adapter);
@@ -85,7 +91,7 @@ public class PrincipalActivity extends AppCompatActivity implements ConversasFra
     }
 
     @Override
-    public void onListFragmentInteractionContato(DummyContent.DummyItem item) {
+    public void onListFragmentInteractionContato(Contato item) {
 
     }
 
@@ -126,7 +132,7 @@ public class PrincipalActivity extends AppCompatActivity implements ConversasFra
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_principal, menu);
+        //getMenuInflater().inflate(R.menu.menu_principal, menu);
         return true;
     }
 
@@ -159,7 +165,7 @@ public class PrincipalActivity extends AppCompatActivity implements ConversasFra
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return ContatoFragment.newInstance(position + 1);
+            return ContatoFragment.newInstance(position + 1,idUsuario);
         }
 
         @Override
