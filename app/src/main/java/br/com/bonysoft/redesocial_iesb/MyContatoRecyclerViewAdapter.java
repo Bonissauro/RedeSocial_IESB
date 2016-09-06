@@ -40,7 +40,9 @@ public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContato
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
+
         holder.mItem = mValues.get(position);
+
         holder.mContatoNomeView.setText(mValues.get(position).getNome() + " " + mValues.get(position).getSobreNome());
         holder.mContatoEmailView.setText(mValues.get(position).getEmail());
 
