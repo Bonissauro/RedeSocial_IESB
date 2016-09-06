@@ -7,11 +7,9 @@ import java.util.List;
 import java.util.UUID;
 
 import br.com.bonysoft.redesocial_iesb.modelo.Contato;
-import br.com.bonysoft.redesocial_iesb.realm.modulo.RedeSocialRealm;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
-
 
 /**
  * Created by carlospanarello on 04/09/16.
@@ -53,6 +51,22 @@ public class ContatoRepositorio implements IContatoRepositorio {
     }
 
     @Override
+    public void editContato(Context context, Contato contato, OnSaveContatoCallback callback) {
+
+        Realm realm = carrega(context);
+
+        realm.beginTransaction();
+        realm.insertOrUpdate(contato);
+        realm.commitTransaction();
+
+        if (callback != null) {
+            callback.onSuccess();
+        }
+
+        return;
+    }
+
+    @Override
     public void deleteContatoById(Context context,String id, OnDeleteContatoCallback callback) {
         Realm realm = carrega(context);
         realm.beginTransaction();
@@ -69,10 +83,11 @@ public class ContatoRepositorio implements IContatoRepositorio {
 
     @Override
     public List<Contato>  getAllContatos(Context context,OnGetAllContatosCallback callback) {
+
         Realm realm = carrega(context);
 
         RealmResults<Contato> results = realm.where(Contato.class)
-                .findAll();
+                .findAll().sort("nome");
 
         if (callback != null) {
             callback.onSuccess(results);

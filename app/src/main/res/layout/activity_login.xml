@@ -16,9 +16,8 @@
         android:id="@+id/etxtEmail"
         android:textAlignment="center"
         android:layout_gravity="center_horizontal"
-        android:text="Email"
         android:backgroundTint="@color/primary_light"
-        />
+        android:hint="Email da conta" />
 
     <EditText
         android:layout_width="match_parent"
@@ -28,7 +27,7 @@
         android:ems="10"
         android:id="@+id/etxtSenha"
         android:layout_gravity="center_horizontal"
-        android:text="Senha" />
+        android:hint="Senha de acesso" />
 
 
     <LinearLayout

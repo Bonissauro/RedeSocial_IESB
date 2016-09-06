@@ -1,13 +1,10 @@
 package br.com.bonysoft.redesocial_iesb;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
@@ -17,8 +14,6 @@ import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphRequestBatch;
 import com.facebook.GraphResponse;
-import com.facebook.Profile;
-import com.facebook.ProfileTracker;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -31,15 +26,11 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import br.com.bonysoft.redesocial_iesb.modelo.Contato;
-import br.com.bonysoft.redesocial_iesb.modelo.Usuario;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.ContatoRepositorio;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.IContatoRepositorio;
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
 public class LoginActivity extends AppCompatActivity {
@@ -228,7 +219,8 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void gravarContato(Contato contato,boolean isPrincipal){
+    private void gravarContato(Contato contato, boolean isPrincipal){
+
         IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
 
         Log.i("ContatoLog", "IdUsuarioFace"+contato.getId_usuario());

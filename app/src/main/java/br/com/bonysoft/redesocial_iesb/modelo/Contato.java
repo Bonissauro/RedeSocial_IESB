@@ -1,5 +1,6 @@
 package br.com.bonysoft.redesocial_iesb.modelo;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import io.realm.RealmObject;
@@ -9,7 +10,8 @@ import io.realm.annotations.PrimaryKey;
 /**
  * Created by carlospanarello on 04/09/16.
  */
-public class Contato extends RealmObject {
+public class Contato extends RealmObject implements Serializable {
+
     @PrimaryKey
     String id;
     String nome;
@@ -17,12 +19,22 @@ public class Contato extends RealmObject {
     String telefone;
     String caminhoFoto;
     String email;
+    String nomeSkype;
+    String endereco;
     Date dataNascimento;
-    // aqui iremos definir o dono dos contratos
+    // aqui iremos definir o dono dos contatos
     // assim qdo sera possivel 2 pessoas diferentes logar no app e ter uma lista de contatos propria.
     @Index
     String id_usuario;
     boolean usuarioPrincipal;
+
+    public Contato() {
+    }
+
+    public Contato(String id, String nome) {
+        this.id = id;
+        this.nome = nome;
+    }
 
     public String getNome() {
         return nome;
@@ -94,6 +106,22 @@ public class Contato extends RealmObject {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getNomeSkype() {
+        return nomeSkype;
+    }
+
+    public void setNomeSkype(String nomeSkype) {
+        this.nomeSkype = nomeSkype;
+    }
+
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
     }
 
     @Override

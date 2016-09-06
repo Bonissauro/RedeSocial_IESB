@@ -1,26 +1,32 @@
 package br.com.bonysoft.redesocial_iesb;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import br.com.bonysoft.redesocial_iesb.ContatoFragment.OnListFragmentInteractionListener;
-import br.com.bonysoft.redesocial_iesb.dummy.DummyContent.DummyItem;
 
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
+import br.com.bonysoft.redesocial_iesb.ContatoFragment.OnListFragmentInteractionListener;
+
+import br.com.bonysoft.redesocial_iesb.modelo.Contato;
+
 public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContatoRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<Contato> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyContatoRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public interface OnItemClickListener {
+        public void onItemClicked(int position);
+    }
+
+    public interface OnItemLongClickListener {
+        public boolean onItemLongClicked(int position);
+    }
+
+    public MyContatoRecyclerViewAdapter(List<Contato> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -33,21 +39,46 @@ public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContato
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
+
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        //holder.mIdView.setText(mValues.get(position).getId());
+        holder.mContentView.setText(mValues.get(position).getNome());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
                     mListener.onListFragmentInteractionContato(holder.mItem);
                 }
+
             }
         });
+
+        holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
+
+            @Override
+            public boolean onLongClick(View v) {
+
+                int p = position;
+
+                Contato contato = mValues.get(p);
+
+                PrincipalActivity pa = (PrincipalActivity) v.getContext();
+
+                Intent it = new Intent(pa, ContatoCadastramentoActivity.class);
+                it.putExtra("id",contato.getId());
+
+                pa.startActivityForResult(it,111);
+
+                return false;
+
+            }
+        });
+
     }
 
     @Override
@@ -57,14 +88,14 @@ public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContato
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
+        //public final TextView mIdView;
         public final TextView mContentView;
-        public DummyItem mItem;
+        public Contato mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
+            //mIdView = (TextView) view.findViewById(R.id.id);
             mContentView = (TextView) view.findViewById(R.id.content);
         }
 
@@ -72,5 +103,7 @@ public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContato
         public String toString() {
             return super.toString() + " '" + mContentView.getText() + "'";
         }
+
     }
+
 }

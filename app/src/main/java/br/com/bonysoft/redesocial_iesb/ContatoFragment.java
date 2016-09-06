@@ -10,10 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import br.com.bonysoft.redesocial_iesb.dummy.DummyContent;
-import br.com.bonysoft.redesocial_iesb.dummy.DummyContent.DummyItem;
-
-import java.util.List;
+import br.com.bonysoft.redesocial_iesb.modelo.Contato;
 
 /**
  * A fragment representing a list of Items.
@@ -23,8 +20,12 @@ import java.util.List;
  */
 public class ContatoFragment extends Fragment {
 
+
+
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
+
+
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
@@ -48,16 +49,25 @@ public class ContatoFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public void onResume(){
+
+        super.onResume();
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_contato_list, container, false);
 
         // Set the adapter
@@ -69,9 +79,15 @@ public class ContatoFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyContatoRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+
+            ((PrincipalActivity) getActivity()).myContatoRecyclerViewAdapter = new MyContatoRecyclerViewAdapter(((PrincipalActivity) getActivity()).listaContatos, mListener);
+
+            recyclerView.setAdapter(((PrincipalActivity) getActivity()).myContatoRecyclerViewAdapter);
+
         }
+
         return view;
+
     }
 
 
@@ -104,6 +120,7 @@ public class ContatoFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteractionContato(DummyItem item);
+        void onListFragmentInteractionContato(Contato item);
     }
+
 }

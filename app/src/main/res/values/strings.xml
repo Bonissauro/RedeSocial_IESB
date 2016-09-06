@@ -3,7 +3,7 @@
     <string name="facebook_app_id">1068176056564355</string>
 
     <string name="app_name">IESB - Rede</string>
-    <string name="action_settings">Configurações</string>
+    <string name="action_settings">Configuração</string>
     <string name="action_contatos">Contatos</string>
     <string name="action_conversas">Conversas</string>
     <string name="title_activity_login">Rede do IESB</string>
@@ -27,5 +27,6 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_contato_cadastramento">Novo contato</string>
 
 </resources>
