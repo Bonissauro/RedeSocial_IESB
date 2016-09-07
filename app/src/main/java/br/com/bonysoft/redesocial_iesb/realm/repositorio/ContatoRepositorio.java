@@ -1,14 +1,11 @@
 package br.com.bonysoft.redesocial_iesb.realm.repositorio;
 
-import android.content.Context;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import br.com.bonysoft.redesocial_iesb.modelo.Contato;
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
 /**
@@ -27,6 +24,7 @@ public class ContatoRepositorio implements IContatoRepositorio {
 
         realmContato.setId_usuario(contato.getId_usuario());
         realmContato.setNome(contato.getNome());
+        realmContato.setSobreNome(contato.getSobreNome());
         realmContato.setEmail(contato.getEmail());
         realmContato.setSobreNome(contato.getSobreNome());
         realmContato.setUsuarioPrincipal(contato.isUsuarioPrincipal());

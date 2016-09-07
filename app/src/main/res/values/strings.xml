@@ -29,4 +29,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_contato_cadastramento">Novo contato</string>
 
+    <string name="crop_image_menu_crop">Feito</string>
+
 </resources>
