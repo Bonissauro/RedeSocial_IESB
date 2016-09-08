@@ -134,7 +134,8 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onError(FacebookException exception) {
                         Log.i("ContatoLogLoginActivity", "Entrou no onError Facebook");
-                        Log.i("ContatoLogLoginActivity", exception.getCause().toString());
+                        exception.printStackTrace();
+                        Log.i("ContatoLogLoginActivity", exception.toString());
                     }
             });
     }

@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <!--
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/imgListaContato"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        fresco:placeholderImage="@drawable/ic_foto_padrao"
+        fresco:roundAsCircle="true"
+        fresco:roundBottomLeft="false"
+        fresco:roundBottomRight="false"
+        fresco:roundWithOverlayColor="@color/primary_dark"
+        fresco:roundingBorderWidth="1dp"
+        fresco:roundingBorderColor="@color/primary_text"
+        fresco:actualImageScaleType="fitXY"
+        />
 
-        <TextView
-            android:id="@+id/id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
-            android:textAppearance="?attr/textAppearanceListItem" />
-
-        -->
     <TextView
         android:id="@+id/contatoItemListaNome"
+        android:text="Nome Do Contato"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
@@ -23,6 +29,7 @@
 
     <TextView
         android:id="@+id/contatoItemListaEmail"
+        android:text="email@contato.com"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"

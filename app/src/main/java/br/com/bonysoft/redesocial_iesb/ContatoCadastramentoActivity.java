@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -16,12 +17,26 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.facebook.binaryresource.BinaryResource;
+import com.facebook.binaryresource.FileBinaryResource;
+import com.facebook.cache.common.CacheKey;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imageformat.ImageFormat;
+import com.facebook.imageformat.ImageFormatChecker;
+import com.facebook.imagepipeline.cache.DefaultCacheKeyFactory;
+import com.facebook.imagepipeline.core.ImagePipelineFactory;
+import com.facebook.imagepipeline.request.ImageRequest;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Date;
 
 import br.com.bonysoft.redesocial_iesb.modelo.Contato;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.ContatoRepositorio;
@@ -33,6 +48,8 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
     private static final int SELECIONAR_FOTO = 1973;
 
     private Bitmap bitmapSELECIONADO;
+
+    private boolean fotoAlterada;
 
     Contato contatoSelecionado = null;
 
@@ -140,6 +157,41 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
             contato.setId(contatoSelecionado.getId());
         }
 
+        if(fotoAlterada){
+            String caminho = Environment.getExternalStorageDirectory()
+                    + "/img/perfil_"+ contato.getId() +".jpg";
+
+            File file = new File(caminho );
+
+            Toast.makeText(this, "path: " + caminho, Toast.LENGTH_LONG).show();
+            SimpleDraweeView imgFresco = (SimpleDraweeView) findViewById(R.id.imgListaContatoCadastro);
+
+            try {
+                /*
+                ImageRequest downloadRequest = ImageRequest.fromUri("");
+
+
+                CacheKey cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(downloadRequest);
+                if (ImagePipelineFactory.getInstance().getMainDiskStorageCache().hasKey(cacheKey)) {
+                    BinaryResource resource = ImagePipelineFactory.getInstance().getMainDiskStorageCache().getResource(cacheKey);
+                    File cacheFile = ((FileBinaryResource) resource).getFile();
+                    FileInputStream fis = new FileInputStream(cacheFile);
+                    ImageFormat imageFormat = ImageFormatChecker.getImageFormat(fis);
+
+                    InputStream initialStream = fis;
+                    byte[] buffer = new byte[initialStream.available()];
+                    initialStream.read(buffer);
+
+                    OutputStream outStream = new FileOutputStream(file);
+                    outStream.write(buffer);
+
+                }*/
+            }catch (Exception e){
+                e.printStackTrace();
+
+            }
+        }
+
         contato.setEmail(edtEmail.getText().toString());
         contato.setNome(edtNome.getText().toString());
         contato.setSobreNome(edtSobrenome.getText().toString());
@@ -201,7 +253,8 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         ImageView imagem = (ImageView) findViewById(R.id.imgFoto);
-
+        SimpleDraweeView imgFresco = (SimpleDraweeView) findViewById(R.id.imgListaContatoCadastro);
+        fotoAlterada = false;
         if ( ((requestCode == SELECIONAR_FOTO) || (requestCode == TIRAR_FOTO)) && (resultCode == RESULT_OK) ) {
 
             if (data != null) {
@@ -244,6 +297,10 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
                     bitmapSELECIONADO = BitmapFactory.decodeStream(stream);
 
                     imagem.setImageBitmap(bitmapSELECIONADO);
+
+                    fotoAlterada = true;
+
+                    imgFresco.setImageURI(resultUri);
 
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();

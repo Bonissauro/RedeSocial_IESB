@@ -4,6 +4,8 @@ import android.app.Application;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -24,6 +26,9 @@ public class RedeSocialRealm extends Application {
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);
+
+
+        Fresco.initialize(this);
 
     }
 

@@ -1,11 +1,14 @@
 package br.com.bonysoft.redesocial_iesb;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.List;
 
@@ -45,6 +48,13 @@ public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContato
 
         holder.mContatoNomeView.setText(mValues.get(position).getNome() + " " + mValues.get(position).getSobreNome());
         holder.mContatoEmailView.setText(mValues.get(position).getEmail());
+
+        if(mValues.get(position).getCaminhoFoto() != null
+            && !mValues.get(position).getCaminhoFoto().isEmpty() ) {
+
+            Uri uri = Uri.parse("https://raw.githubusercontent.com/facebook/fresco/gh-pages/static/logo.png");
+            holder.mImagem.setImageURI(uri);
+        }
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,6 +121,7 @@ public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContato
         public final View mView;
         public final TextView mContatoNomeView;
         public final TextView mContatoEmailView;
+        public final SimpleDraweeView mImagem;
         public Contato mItem;
 
         public ViewHolder(View view) {
@@ -118,6 +129,9 @@ public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContato
             mView = view;
             mContatoNomeView = (TextView) view.findViewById(R.id.contatoItemListaNome);
             mContatoEmailView = (TextView) view.findViewById(R.id.contatoItemListaEmail);
+
+            mImagem = (SimpleDraweeView) view.findViewById(R.id.imgListaContato);
+
         }
 
         @Override
