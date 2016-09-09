@@ -39,6 +39,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import br.com.bonysoft.redesocial_iesb.modelo.Contato;
+import br.com.bonysoft.redesocial_iesb.modelo.Usuario;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.ContatoRepositorio;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.IContatoRepositorio;
 import io.realm.RealmResults;
@@ -114,7 +115,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                     for(Contato contato: contatoList){
                                         Log.i("ContatoLogFriendAdd" , contato.toString());
-                                        gravarContato(contato,false);
+                                        gravarContato(contato,false,true);
                                     }
                                 }
                             }
@@ -190,7 +191,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean incluirUsuarioFacebookComoContatoPrincipal(Contato contato){
         if(!usuarioJaRegistradoComoContato(contato)){
-            gravarContato(contato,true);
+            gravarContato(contato,true,true);
             return true;
         }
 
@@ -242,50 +243,69 @@ public class LoginActivity extends AppCompatActivity {
                 Log.i("ContatoLog","Erro delete all ==> "+message);
             }
         });
-
-
     }
 
-    private void gravarContato(Contato contato, boolean isPrincipal){
+    private void gravarContato(Contato contato, boolean isPrincipal,boolean isViaFacebook){
         try {
-
-
             Log.i("ContatoLog", "IdUsuarioFace" + contato.getId_usuario());
             contato.setUsuarioPrincipal(isPrincipal);
 
-
-            BasicImageDownloader download = new BasicImageDownloader(new BasicImageDownloader.OnImageLoaderListener( ) {
-                @Override
-                public void onError(BasicImageDownloader.ImageError error) {
-
-                }
-
-                @Override
-                public void onProgressChange(int percent) {
-
-                }
-
-                @Override
-                public void onComplete(Bitmap result) {
-
-                }
-            });
-            String url = "https://graph.facebook.com/" + contato.getId() + "/picture?width=200&height=150";
-            download.download(url,false,contato);
-
             IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
 
-            contato = contatoRepositorio.addContato(contato, new IContatoRepositorio.OnSaveContatoCallback() {
-                @Override
-                public void onSuccess(Contato contato) {
-                    Log.i("ContatoLog", "Sucesso na Gravacao");
-                }
 
-                @Override
-                public void onError(String message) {
-                    Log.i("ContatoLog", "Erro ==> " + message);
-                }
-            });
+            IContatoRepositorio.OnSaveContatoCallback callBackFace =
+                    new IContatoRepositorio.OnSaveContatoCallback() {
+                        @Override
+                        public void onSuccess(Contato contato) {
+
+                            Log.i("ContatoLog", "Sucesso na Gravacao");
+                            Log.i("ContatoLog", "Caminho Login" + contato.getCaminhoFoto());
+
+                            BasicImageDownloader download = new BasicImageDownloader(new BasicImageDownloader.OnImageLoaderListener( ) {
+                                @Override
+                                public void onError(BasicImageDownloader.ImageError error) {
+
+                                }
+
+                                @Override
+                                public void onProgressChange(int percent) {
+
+                                }
+
+                                @Override
+                                public void onComplete(Bitmap result) {
+
+                                }
+                            });
+                            String url = "https://graph.facebook.com/" + contato.getId() + "/picture?width=200&height=150";
+                            Log.i("ContatoLog","Caminho da foto-> "+ contato.getCaminhoFoto());
+                            download.download(url,false,contato);
+                        }
+
+                        @Override
+                        public void onError(String message) {
+                            Log.i("ContatoLog", "Erro ==> " + message);
+                        }
+                    };
+
+            IContatoRepositorio.OnSaveContatoCallback callBackSemFace =
+                    new IContatoRepositorio.OnSaveContatoCallback() {
+                        @Override
+                        public void onSuccess(Contato contato) {
+                            Log.i("ContatoLog", "Sucesso na Gravacao");
+                        }
+
+                        @Override
+                        public void onError(String message) {
+                            Log.i("ContatoLog", "Erro ==> " + message);
+                        }
+                    };
+
+            if(isViaFacebook) {
+                contato = contatoRepositorio.addContato(contato, callBackFace);
+            } else {
+                contato = contatoRepositorio.addContato(contato, callBackSemFace);
+            }
 
             Log.i("ContatoLog", "contato adicionado =>" + contato.toString());
         }catch (Exception e){
@@ -374,15 +394,21 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void logarComLoginSenha(View v){
-
         if(loginText.getText() != null && senhaText.getText() != null){
+            Usuario usuarioMock = new Usuario("Nome Mock",loginText.getText().toString(),senhaText.getText().toString());
+
+            Contato c = new Contato();
+            c.setNome(usuarioMock.getNome());
+            c.setEmail(usuarioMock.getEmail());
+
+            gravarContato(c,true,false);
+
             Intent it = new Intent(LoginActivity.this, PrincipalActivity.class);
-            it.putExtra(Constantes.ID_USUARIO_PESQUISA,getIdUsuarioLogado() );
+            it.putExtra(Constantes.ID_USUARIO_PESQUISA,c.getId() );
             startActivity(it);
         } else {
             Toast.makeText(LoginActivity.this, "Informe o Login ou senha", Toast.LENGTH_LONG).show();
         }
-
     }
 
     public void naoTenhoConta(View v){

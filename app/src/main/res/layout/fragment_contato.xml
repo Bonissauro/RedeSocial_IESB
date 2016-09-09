@@ -19,6 +19,7 @@
         fresco:actualImageScaleType="fitXY"
         />
 
+
     <TextView
         android:id="@+id/contatoItemListaNome"
         android:text="Nome Do Contato"
@@ -34,5 +35,11 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
         android:textAppearance="?attr/textAppearanceListItem" />
+
+    <ImageView
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:id="@+id/imagemContato"
+        />
 
 </LinearLayout>

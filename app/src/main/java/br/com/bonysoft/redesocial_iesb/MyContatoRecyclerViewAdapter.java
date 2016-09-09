@@ -1,17 +1,21 @@
 package br.com.bonysoft.redesocial_iesb;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 import br.com.bonysoft.redesocial_iesb.ContatoFragment.OnListFragmentInteractionListener;
@@ -61,7 +65,12 @@ public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContato
 
             if(mValues.get(position).getCaminhoFoto()!= null && !mValues.get(position).getCaminhoFoto().isEmpty()){
                 Uri imageUri= Uri.fromFile(new File(mValues.get(position).getCaminhoFoto()));// For files on device
+
+                Bitmap bitmapSELECIONADO = BitmapFactory.decodeFile(mValues.get(position).getCaminhoFoto());
+                holder.mImagem2.setImageBitmap(bitmapSELECIONADO);
+
                 holder.mImagem.setImageURI(imageUri);
+
             } else {
                 Log.i("ContatoLog","Nao encontrou a imagem "+ mValues.get(position).getCaminhoFoto());
                 String imageUri = "drawable://" + R.drawable.ic_foto_padrao;
@@ -135,6 +144,7 @@ public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContato
         public final TextView mContatoNomeView;
         public final TextView mContatoEmailView;
         public final SimpleDraweeView mImagem;
+        public final ImageView mImagem2;
         public Contato mItem;
 
         public ViewHolder(View view) {
@@ -144,7 +154,7 @@ public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContato
             mContatoEmailView = (TextView) view.findViewById(R.id.contatoItemListaEmail);
 
             mImagem = (SimpleDraweeView) view.findViewById(R.id.imgListaContato);
-
+            mImagem2 = (ImageView) view.findViewById(R.id.imagemContato);
         }
 
         @Override

@@ -72,7 +72,7 @@ public class BasicImageDownloader {
      */
     public void download(@NonNull final String imageUrl, final boolean displayProgress, final Contato contato) {
         if (mUrlsInProgress.contains(imageUrl)) {
-            Log.w(TAG, "a download for this url is already running, " +
+            Log.i(TAG, "a download for this url is already running, " +
                     "no further download will be started");
             return;
         }
