@@ -1,5 +1,6 @@
 package br.com.bonysoft.redesocial_iesb;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -195,9 +196,11 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
 
                 @Override
                 public void onSuccess(Contato contato) {
-                    String caminho = saveToInternalStorage(bitmapSELECIONADO,contato);
 
-                    Toast.makeText(getBaseContext(), "Sucesso na Gravacao", Toast.LENGTH_LONG).show();
+                    String caminho = saveToInternalStorage(getBaseContext(),bitmapSELECIONADO,contato);
+
+                    Toast.makeText(getBaseContext(), "Sucesso na Gravacao"
+                            + caminho, Toast.LENGTH_LONG).show();
                     finish();
 
                 }
@@ -306,18 +309,33 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
 
     }
 
-    private String saveToInternalStorage(Bitmap bitmapImage,Contato contato){
-
-
-        File file = new File(contato.getCaminhoFoto() );
+    private String saveToInternalStorage(Context contexto, Bitmap bitmapImage, Contato contato){
+        //File file = new File(contato.getCaminhoFoto() );
         FileOutputStream fos = null;
         try {
+            String path2 = Environment.getExternalStorageDirectory().toString()+"/img1";
+
+            File path = new File(path2);
+                // Make sure the Pictures directory exists.
+            if(!path.exists())
+                path.mkdirs();
+            //InputStream inputStream = new FileInputStream(file);
+            //File file = new File(contato.getCaminhoFoto() );
+            File file = new File(path, "DemoPicture.jpg");
             InputStream inputStream = new FileInputStream(file);
 
             fos = new FileOutputStream(file);
+            //fos = contexto.openFileOutput(contato.getCaminhoFoto() ,Context.MODE_PRIVATE);
             // Use the compress method on the BitMap object to write image to the OutputStream
-            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            boolean a = bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+
+            Toast.makeText(getBaseContext(), "Resulatado ImgemEM- "
+                    + a, Toast.LENGTH_LONG).show();
         } catch (Exception e) {
+            Toast.makeText(getBaseContext(), "ERRO-IMAGEM"
+                    + e, Toast.LENGTH_LONG).show();
+
+
             e.printStackTrace();
         } finally {
             if(fos != null) {

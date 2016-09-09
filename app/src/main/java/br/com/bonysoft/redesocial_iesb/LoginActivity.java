@@ -63,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
         LoginButton loginButton = (LoginButton) this.findViewById(R.id.login_button);
 
         EditText loginText = (EditText) this.findViewById(R.id.etxtEmail);
-        EditText senhaText = (EditText) this.findViewById(R.id.etxtEmail);
+        EditText senhaText = (EditText) this.findViewById(R.id.etxtSenha);
 
         loginButton.setReadPermissions(Arrays.asList(
                     "public_profile", "email", "user_friends"));
@@ -394,7 +394,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void logarComLoginSenha(View v){
-        if(loginText.getText() != null && senhaText.getText() != null){
+        EditText loginText = (EditText) this.findViewById(R.id.etxtEmail);
+        EditText senhaText = (EditText) this.findViewById(R.id.etxtSenha);
+
+        if(loginText.getText().toString() != null && senhaText.getText().toString() != null){
             Usuario usuarioMock = new Usuario("Nome Mock",loginText.getText().toString(),senhaText.getText().toString());
 
             Contato c = new Contato();

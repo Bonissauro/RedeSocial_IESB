@@ -60,8 +60,7 @@ public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContato
         if(mValues.get(position).getCaminhoFoto() != null
             && !mValues.get(position).getCaminhoFoto().isEmpty() ) {
 
-            Uri uri = Uri.parse("https://raw.githubusercontent.com/facebook/fresco/gh-pages/static/logo.png");
-            holder.mImagem.setImageURI(uri);
+
 
             if(mValues.get(position).getCaminhoFoto()!= null && !mValues.get(position).getCaminhoFoto().isEmpty()){
                 Uri imageUri= Uri.fromFile(new File(mValues.get(position).getCaminhoFoto()));// For files on device
