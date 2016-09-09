@@ -7,13 +7,13 @@
 
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/imgListaContato"
-        android:layout_width="128dp"
-        android:layout_height="128dp"
-        fresco:placeholderImage="@drawable/ic_foto_padrao"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+
         fresco:roundAsCircle="true"
         fresco:roundBottomLeft="false"
         fresco:roundBottomRight="false"
-        fresco:roundWithOverlayColor="@color/primary_dark"
+        fresco:roundWithOverlayColor="#FFFFFF"
         fresco:roundingBorderWidth="1dp"
         fresco:roundingBorderColor="@color/primary_text"
         fresco:actualImageScaleType="fitXY"

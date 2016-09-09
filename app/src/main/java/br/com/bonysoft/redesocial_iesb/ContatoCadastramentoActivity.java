@@ -62,6 +62,18 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        SimpleDraweeView imgFresco = (SimpleDraweeView) findViewById(R.id.imgListaContatoCadastro);
+
+        imgFresco.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent, TIRAR_FOTO);
+
+            }
+        });
+
         Button btnCamera = (Button) findViewById(R.id.btnTiraFoto);
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,42 +168,18 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
         if (contatoSelecionado!=null) {
             contato.setId(contatoSelecionado.getId());
         }
-
+/*
         if(fotoAlterada){
-            String caminho = Environment.getExternalStorageDirectory()
-                    + "/img/perfil_"+ contato.getId() +".jpg";
-
-            File file = new File(caminho );
-
-            Toast.makeText(this, "path: " + caminho, Toast.LENGTH_LONG).show();
-            SimpleDraweeView imgFresco = (SimpleDraweeView) findViewById(R.id.imgListaContatoCadastro);
-
             try {
-                /*
-                ImageRequest downloadRequest = ImageRequest.fromUri("");
+            saveToInternalStorage(bitmapSELECIONADO,contato);
 
+            Toast.makeText(this, "path: " + contato.getCaminhoFoto(), Toast.LENGTH_LONG).show();
 
-                CacheKey cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(downloadRequest);
-                if (ImagePipelineFactory.getInstance().getMainDiskStorageCache().hasKey(cacheKey)) {
-                    BinaryResource resource = ImagePipelineFactory.getInstance().getMainDiskStorageCache().getResource(cacheKey);
-                    File cacheFile = ((FileBinaryResource) resource).getFile();
-                    FileInputStream fis = new FileInputStream(cacheFile);
-                    ImageFormat imageFormat = ImageFormatChecker.getImageFormat(fis);
-
-                    InputStream initialStream = fis;
-                    byte[] buffer = new byte[initialStream.available()];
-                    initialStream.read(buffer);
-
-                    OutputStream outStream = new FileOutputStream(file);
-                    outStream.write(buffer);
-
-                }*/
             }catch (Exception e){
                 e.printStackTrace();
-
             }
         }
-
+*/
         contato.setEmail(edtEmail.getText().toString());
         contato.setNome(edtNome.getText().toString());
         contato.setSobreNome(edtSobrenome.getText().toString());
@@ -206,7 +194,8 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
             contatoRepositorio.addContato( contato, new IContatoRepositorio.OnSaveContatoCallback() {
 
                 @Override
-                public void onSuccess() {
+                public void onSuccess(Contato contato) {
+                    String caminho = saveToInternalStorage(bitmapSELECIONADO,contato);
 
                     Toast.makeText(getBaseContext(), "Sucesso na Gravacao", Toast.LENGTH_LONG).show();
                     finish();
@@ -227,7 +216,7 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
             contatoRepositorio.editContato(contato, new IContatoRepositorio.OnSaveContatoCallback() {
 
                 @Override
-                public void onSuccess() {
+                public void onSuccess(Contato contato) {
 
                     Toast.makeText(getBaseContext(), "Sucesso na alteração", Toast.LENGTH_LONG).show();
                     finish();
@@ -258,12 +247,11 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
         if ( ((requestCode == SELECIONAR_FOTO) || (requestCode == TIRAR_FOTO)) && (resultCode == RESULT_OK) ) {
 
             if (data != null) {
-
                 CropImage.activity(data.getData())
                         .setActivityTitle("Ajustar foto")
                         .setBorderLineColor(Color.RED)
                         .setAspectRatio(1,1)
-                        .setCropShape(CropImageView.CropShape.RECTANGLE)
+                        .setCropShape(CropImageView.CropShape.OVAL)
                         .setGuidelines(CropImageView.Guidelines.ON).start(this);
 
             }
@@ -291,18 +279,15 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
                 Uri resultUri = result.getUri();
 
                 try {
-
                     stream = getContentResolver().openInputStream(resultUri);
-
                     bitmapSELECIONADO = BitmapFactory.decodeStream(stream);
-
-                    imagem.setImageBitmap(bitmapSELECIONADO);
 
                     fotoAlterada = true;
 
                     imgFresco.setImageURI(resultUri);
-
-                } catch (FileNotFoundException e) {
+                } catch (FileNotFoundException exe){
+                    exe.printStackTrace();
+                } catch (Exception e) {
                     e.printStackTrace();
 
                 } finally {
@@ -319,6 +304,31 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    private String saveToInternalStorage(Bitmap bitmapImage,Contato contato){
+
+
+        File file = new File(contato.getCaminhoFoto() );
+        FileOutputStream fos = null;
+        try {
+            InputStream inputStream = new FileInputStream(file);
+
+            fos = new FileOutputStream(file);
+            // Use the compress method on the BitMap object to write image to the OutputStream
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if(fos != null) {
+                try {
+                    fos.close();
+                }catch (Exception erro){
+                    erro.printStackTrace();
+                }
+            }
+        }
+        return contato.getCaminhoFoto();
     }
 
 }

@@ -3,6 +3,7 @@ package br.com.bonysoft.redesocial_iesb;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 
+import java.io.File;
 import java.util.List;
 
 import br.com.bonysoft.redesocial_iesb.ContatoFragment.OnListFragmentInteractionListener;
@@ -49,11 +51,22 @@ public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContato
         holder.mContatoNomeView.setText(mValues.get(position).getNome() + " " + mValues.get(position).getSobreNome());
         holder.mContatoEmailView.setText(mValues.get(position).getEmail());
 
+
+
         if(mValues.get(position).getCaminhoFoto() != null
             && !mValues.get(position).getCaminhoFoto().isEmpty() ) {
 
             Uri uri = Uri.parse("https://raw.githubusercontent.com/facebook/fresco/gh-pages/static/logo.png");
             holder.mImagem.setImageURI(uri);
+
+            if(mValues.get(position).getCaminhoFoto()!= null && !mValues.get(position).getCaminhoFoto().isEmpty()){
+                Uri imageUri= Uri.fromFile(new File(mValues.get(position).getCaminhoFoto()));// For files on device
+                holder.mImagem.setImageURI(imageUri);
+            } else {
+                Log.i("ContatoLog","Nao encontrou a imagem "+ mValues.get(position).getCaminhoFoto());
+                String imageUri = "drawable://" + R.drawable.ic_foto_padrao;
+                holder.mImagem.setImageURI(imageUri);
+            }
         }
 
         holder.mView.setOnClickListener(new View.OnClickListener() {

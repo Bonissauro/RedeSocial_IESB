@@ -35,7 +35,6 @@
                 fresco:roundWithOverlayColor="@color/icons"
                 fresco:roundingBorderWidth="1dp"
                 fresco:roundingBorderColor="@color/primary_text"
-
                 />
 
             <EditText

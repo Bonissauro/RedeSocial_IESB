@@ -28,12 +28,11 @@ public class ContatoRepositorio implements IContatoRepositorio {
         realmContato.setEmail(contato.getEmail());
         realmContato.setSobreNome(contato.getSobreNome());
         realmContato.setUsuarioPrincipal(contato.isUsuarioPrincipal());
-        realmContato.setCaminhoFoto(contato.getCaminhoFoto());
         realmContato.setDataNascimento(contato.getDataNascimento());
         realm.commitTransaction();
 
         if (callback != null) {
-            callback.onSuccess();
+            callback.onSuccess(contato);
         }
 
         return realmContato;
@@ -49,7 +48,7 @@ public class ContatoRepositorio implements IContatoRepositorio {
         realm.commitTransaction();
 
         if (callback != null) {
-            callback.onSuccess();
+            callback.onSuccess(contato);
         }
 
         return;

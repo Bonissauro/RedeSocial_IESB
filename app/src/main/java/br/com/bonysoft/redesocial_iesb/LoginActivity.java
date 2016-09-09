@@ -1,10 +1,15 @@
 package br.com.bonysoft.redesocial_iesb;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
@@ -21,6 +26,11 @@ import com.facebook.login.widget.LoginButton;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -37,6 +47,8 @@ public class LoginActivity extends AppCompatActivity {
 
     CallbackManager callbackManager;
     String idUsuarioLogado;
+    private EditText loginText;
+    private EditText senhaText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +60,9 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         LoginButton loginButton = (LoginButton) this.findViewById(R.id.login_button);
+
+        EditText loginText = (EditText) this.findViewById(R.id.etxtEmail);
+        EditText senhaText = (EditText) this.findViewById(R.id.etxtEmail);
 
         loginButton.setReadPermissions(Arrays.asList(
                     "public_profile", "email", "user_friends"));
@@ -232,30 +247,54 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void gravarContato(Contato contato, boolean isPrincipal){
+        try {
 
 
-        IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
-
-        Log.i("ContatoLog", "IdUsuarioFace"+contato.getId_usuario());
-        contato.setUsuarioPrincipal(isPrincipal);
-
-        contato = contatoRepositorio.addContato(contato, new IContatoRepositorio.OnSaveContatoCallback() {
-            @Override
-            public void onSuccess() {
-                Log.i("ContatoLog","Sucesso na Gravacao");
-            }
-
-            @Override
-            public void onError(String message) {
-                Log.i("ContatoLog","Erro ==> "+message);
-            }
-        });
-        Log.i("ContatoLog","contato adicionado =>"+ contato.toString());
+            Log.i("ContatoLog", "IdUsuarioFace" + contato.getId_usuario());
+            contato.setUsuarioPrincipal(isPrincipal);
 
 
+            BasicImageDownloader download = new BasicImageDownloader(new BasicImageDownloader.OnImageLoaderListener( ) {
+                @Override
+                public void onError(BasicImageDownloader.ImageError error) {
 
+                }
+
+                @Override
+                public void onProgressChange(int percent) {
+
+                }
+
+                @Override
+                public void onComplete(Bitmap result) {
+
+                }
+            });
+            String url = "https://graph.facebook.com/" + contato.getId() + "/picture?width=200&height=150";
+            download.download(url,false,contato);
+
+            IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
+
+            contato = contatoRepositorio.addContato(contato, new IContatoRepositorio.OnSaveContatoCallback() {
+                @Override
+                public void onSuccess(Contato contato) {
+                    Log.i("ContatoLog", "Sucesso na Gravacao");
+                }
+
+                @Override
+                public void onError(String message) {
+                    Log.i("ContatoLog", "Erro ==> " + message);
+                }
+            });
+
+            Log.i("ContatoLog", "contato adicionado =>" + contato.toString());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
+
+
 
     private Contato convertFacebookJsonToContato(JSONObject object, String id) {
 
@@ -269,7 +308,7 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 URL profile_pic = new URL("https://graph.facebook.com/" + id + "/picture?width=200&height=150");
                 Log.i("ContatoLogProfilePic", profile_pic + "");
-                contato.setCaminhoFoto(profile_pic.toString());
+
             } catch (MalformedURLException e) {
                 e.printStackTrace();
                 return null;
@@ -335,7 +374,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void logarComLoginSenha(View v){
-        Toast.makeText(LoginActivity.this, "Logar por login e senha nao implementado", Toast.LENGTH_LONG).show();
+
+        if(loginText.getText() != null && senhaText.getText() != null){
+            Intent it = new Intent(LoginActivity.this, PrincipalActivity.class);
+            it.putExtra(Constantes.ID_USUARIO_PESQUISA,getIdUsuarioLogado() );
+            startActivity(it);
+        } else {
+            Toast.makeText(LoginActivity.this, "Informe o Login ou senha", Toast.LENGTH_LONG).show();
+        }
+
     }
 
     public void naoTenhoConta(View v){
@@ -349,5 +396,8 @@ public class LoginActivity extends AppCompatActivity {
     public void setIdUsuarioLogado(String idUsuarioLogado) {
         this.idUsuarioLogado = idUsuarioLogado;
     }
+
+
+
 }
 

@@ -1,5 +1,7 @@
 package br.com.bonysoft.redesocial_iesb.modelo;
 
+import android.os.Environment;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -61,11 +63,12 @@ public class Contato extends RealmObject implements Serializable {
     }
 
     public String getCaminhoFoto() {
-        return caminhoFoto;
+        return Environment.getExternalStorageDirectory()
+                + "/img/perfil_"+ this.getId() +".jpg";
     }
 
-    public void setCaminhoFoto(String caminhoFoto) {
-        this.caminhoFoto = caminhoFoto;
+    public String getCaminhoFotoFacebook(){
+        return  "https://graph.facebook.com/" + getId_usuario() + "/picture?width=200&height=150";
     }
 
     public String getEmail() {

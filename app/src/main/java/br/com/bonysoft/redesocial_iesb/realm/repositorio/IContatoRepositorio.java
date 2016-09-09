@@ -13,7 +13,7 @@ import io.realm.RealmResults;
 public interface IContatoRepositorio {
 
     interface OnSaveContatoCallback {
-        void onSuccess();
+        void onSuccess(Contato contato);
         void onError(String message);
     }
 
