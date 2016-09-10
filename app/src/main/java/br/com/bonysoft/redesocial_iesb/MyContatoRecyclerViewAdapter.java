@@ -57,10 +57,10 @@ public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContato
 
         if(mValues.get(position).getCaminhoFoto()!= null && !mValues.get(position).getCaminhoFoto().isEmpty()){
             try {
-                Uri imageUri= Uri.parse(mValues.get(position).getCaminhoFoto());
-                Uri imageUri2 = Uri.fromFile(new File(mValues.get(position).getCaminhoFoto()));
-                Log.i("ContatoLog","Caminho do Item no List " + imageUri2.toString() );
-                holder.mSimpleImagem.setImageURI(imageUri2);
+
+                Uri imageUri = Uri.fromFile(new File(mValues.get(position).getCaminhoFoto()));
+                Log.i("ContatoLog","Caminho do Item no List " + imageUri.toString() );
+                holder.mSimpleImagem.setImageURI(imageUri);
 
             }catch (Exception e){
                 e.printStackTrace();

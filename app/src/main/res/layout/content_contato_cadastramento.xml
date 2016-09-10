@@ -29,7 +29,7 @@
                 android:layout_width="128dp"
                 android:layout_height="128dp"
                 android:layout_gravity="center_horizontal|center_vertical"
-                fresco:placeholderImage="@drawable/ic_foto_padrao"
+                fresco:placeholderImage="@drawable/camera"
                 fresco:roundAsCircle="true"
                 fresco:roundBottomLeft="false"
                 fresco:roundBottomRight="false"

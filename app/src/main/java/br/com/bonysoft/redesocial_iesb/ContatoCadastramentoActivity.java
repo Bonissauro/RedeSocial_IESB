@@ -40,6 +40,7 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
     private Bitmap bitmapSELECIONADO;
     private Contato contatoSelecionado = null;
     private boolean novo;
+    private String caminhoFoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,10 +136,10 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
             edtTelefone.setText(contatoSelecionado.getTelefone());
             edtNomeSkype.setText(contatoSelecionado.getNomeSkype());
             edtEnderecoCompleto.setText(contatoSelecionado.getEndereco());
+            caminhoFoto = contatoSelecionado.getCaminhoFoto();
             if(contatoSelecionado.getCaminhoFoto()!=null && !contatoSelecionado.getCaminhoFoto().isEmpty()) {
-                Uri imageUri = Uri.parse(contatoSelecionado.getCaminhoFoto());
+                Uri imageUri = Uri.fromFile(new File(contatoSelecionado.getCaminhoFoto()));
                 Log.i("ContatoLog","Caminho do Item na Alteracao " + imageUri.toString() );
-
                 sdvFoto.setImageURI(imageUri);
             }
         } else {
@@ -162,7 +163,6 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
 
         if (contatoSelecionado!=null) {
             contato.setId(contatoSelecionado.getId());
-            contato.setCaminhoFoto(contatoSelecionado.getCaminhoFoto());
         }
 
         Log.i("ContatoLog","Caminho do Item na Salva " +  contato.getCaminhoFoto() );
@@ -173,6 +173,7 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
         contato.setTelefone(edtTelefone.getText().toString());
         contato.setNomeSkype(edtNomeSkype.getText().toString());
         contato.setEndereco(edtEnderecoCompleto.getText().toString());
+        contato.setCaminhoFoto(caminhoFoto);
 
         if (contato.getId() == null){
 
@@ -263,7 +264,7 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
                     bitmapSELECIONADO = BitmapFactory.decodeStream(stream);
 
                     bitmapSELECIONADO.compress(Bitmap.CompressFormat.JPEG, 90, out);
-                    contatoSelecionado.setCaminhoFoto(file.getAbsolutePath());
+                    caminhoFoto = file.getAbsolutePath();
 
                     out.flush();
                     out.close();

@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/icons"
     android:orientation="horizontal">
 
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/imgListaContato"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        fresco:placeholderImage="@drawable/contatosemfoto"
         fresco:roundAsCircle="true"
         fresco:roundBottomLeft="false"
         fresco:roundBottomRight="false"
@@ -19,14 +22,20 @@
         fresco:roundingBorderColor="@color/primary_text"
         fresco:actualImageScaleType="fitXY"
         />
-
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:fresco="http://schemas.android.com/apk/res-auto"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/icons"
+        android:orientation="vertical">
 
     <TextView
         android:id="@+id/contatoItemListaNome"
         android:text="Nome Do Contato"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
+        android:layout_marginTop="16dp"
         android:layout_weight="3"
 
         android:textAppearance="?attr/textAppearanceListItem" />
@@ -36,10 +45,10 @@
         android:text="email@contato.com"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
+        android:layout_marginTop="16dp"
         android:layout_weight="2"
         android:textAppearance="?attr/textAppearanceListItem" />
-
+</LinearLayout>
 
 
 </LinearLayout>
