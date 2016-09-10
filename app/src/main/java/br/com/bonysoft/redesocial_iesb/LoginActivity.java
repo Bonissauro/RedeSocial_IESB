@@ -85,7 +85,6 @@ public class LoginActivity extends AppCompatActivity {
                                         JSONObject jsonObject,
                                         GraphResponse response) {
                                     Log.i("ContatoLog", "RespostaJsonUsuario->" + response.toString());
-                                    // Get facebook data from login
 
                                     Log.i("ContatoLogJUser", jsonObject.toString());
                                     Log.i("ContatoLogRUser" , response.toString());
@@ -313,8 +312,6 @@ public class LoginActivity extends AppCompatActivity {
         }
 
     }
-
-
 
     private Contato convertFacebookJsonToContato(JSONObject object, String id) {
 

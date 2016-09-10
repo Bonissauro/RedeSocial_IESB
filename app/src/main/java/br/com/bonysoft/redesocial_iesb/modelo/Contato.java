@@ -63,8 +63,11 @@ public class Contato extends RealmObject implements Serializable {
     }
 
     public String getCaminhoFoto() {
-        return Environment.getExternalStorageDirectory()
-                + "/img/perfil_"+ this.getId() +".jpg";
+       return caminhoFoto;
+    }
+
+    public void setCaminhoFoto(String caminho){
+        caminhoFoto = caminho;
     }
 
     public String getCaminhoFotoFacebook(){

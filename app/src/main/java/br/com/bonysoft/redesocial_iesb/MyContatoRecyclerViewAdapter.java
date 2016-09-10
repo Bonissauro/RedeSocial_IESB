@@ -103,7 +103,7 @@ public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContato
 
                 Intent it = new Intent(pa, ContatoCadastramentoActivity.class);
                 it.putExtra("id",contato.getId());
-
+                it.putExtra("email", contato.getEmail());
                 pa.startActivityForResult(it,111);
 
                 return false;
