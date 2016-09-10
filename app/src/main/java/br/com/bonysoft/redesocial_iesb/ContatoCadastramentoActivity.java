@@ -1,6 +1,5 @@
 package br.com.bonysoft.redesocial_iesb;
 
-        import android.content.Context;
         import android.content.Intent;
         import android.graphics.Bitmap;
         import android.graphics.BitmapFactory;
@@ -10,35 +9,25 @@ package br.com.bonysoft.redesocial_iesb;
         import android.os.Environment;
         import android.provider.MediaStore;
         import android.support.design.widget.FloatingActionButton;
+        import android.support.v4.content.FileProvider;
         import android.support.v7.app.AppCompatActivity;
         import android.support.v7.widget.Toolbar;
+        import android.util.Log;
         import android.view.View;
         import android.widget.Button;
         import android.widget.EditText;
-        import android.widget.ImageView;
         import android.widget.Toast;
 
-        import com.facebook.binaryresource.BinaryResource;
-        import com.facebook.binaryresource.FileBinaryResource;
-        import com.facebook.cache.common.CacheKey;
         import com.facebook.drawee.view.SimpleDraweeView;
-        import com.facebook.imageformat.ImageFormat;
-        import com.facebook.imageformat.ImageFormatChecker;
-        import com.facebook.imagepipeline.cache.DefaultCacheKeyFactory;
-        import com.facebook.imagepipeline.core.ImagePipelineFactory;
-        import com.facebook.imagepipeline.request.ImageRequest;
         import com.theartofdev.edmodo.cropper.CropImage;
         import com.theartofdev.edmodo.cropper.CropImageView;
 
         import java.io.File;
-        import java.io.FileInputStream;
-        import java.io.FileNotFoundException;
         import java.io.FileOutputStream;
         import java.io.IOException;
         import java.io.InputStream;
-        import java.io.OutputStream;
+        import java.text.SimpleDateFormat;
         import java.util.Date;
-        import java.util.Random;
 
         import br.com.bonysoft.redesocial_iesb.modelo.Contato;
         import br.com.bonysoft.redesocial_iesb.realm.repositorio.ContatoRepositorio;
@@ -50,7 +39,7 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
     private static final int SELECIONAR_FOTO = 1973;
     private Bitmap bitmapSELECIONADO;
     private Contato contatoSelecionado = null;
-
+    private boolean novo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,44 +100,51 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
         final EditText edtNomeSkype = (EditText) findViewById(R.id.edtNomeSkype);
         final EditText edtEnderecoCompleto = (EditText) findViewById(R.id.edtEndereco);
 
-        contatoSelecionado = null;
+        final SimpleDraweeView  sdvFoto = (SimpleDraweeView) findViewById(R.id.imgListaContatoCadastro);
 
-        String id = getIntent().getStringExtra("id");
-        String email = getIntent().getStringExtra("email");
+        contatoSelecionado = (Contato) getIntent().getSerializableExtra(Constantes.NOVO);
+        String id = getIntent().getStringExtra(Constantes.id);
 
-        if (id!=null) {
+        if(contatoSelecionado == null){
+            novo = false;
+        } else {
+            novo = true;
+        }
 
+        if(id != null && !id.isEmpty()){
             setTitle("Alteração de contato");
 
             IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
-            contatoRepositorio.getContatoById( id, new IContatoRepositorio.OnGetContatoByIdCallback() {
+            contatoRepositorio.getContatoById(id, new IContatoRepositorio.OnGetContatoByIdCallback() {
 
                 @Override
                 public void onSuccess(Contato contato) {
                     contatoSelecionado = contato;
-                    edtEmail.setText(contatoSelecionado.getEmail());
-                    edtNome.setText(contatoSelecionado.getNome());
-                    edtSobrenome.setText(contatoSelecionado.getSobreNome());
-                    edtTelefone.setText(contatoSelecionado.getTelefone());
-                    edtNomeSkype.setText(contatoSelecionado.getNomeSkype());
-                    edtEnderecoCompleto.setText(contatoSelecionado.getEndereco());
                 }
 
                 @Override
                 public void onError(String message) {
-
                 }
-
             });
+        }
 
+        if(contatoSelecionado != null){
+            edtEmail.setText(contatoSelecionado.getEmail());
+            edtNome.setText(contatoSelecionado.getNome());
+            edtSobrenome.setText(contatoSelecionado.getSobreNome());
+            edtTelefone.setText(contatoSelecionado.getTelefone());
+            edtNomeSkype.setText(contatoSelecionado.getNomeSkype());
+            edtEnderecoCompleto.setText(contatoSelecionado.getEndereco());
+            if(contatoSelecionado.getCaminhoFoto()!=null && !contatoSelecionado.getCaminhoFoto().isEmpty()) {
+                Uri imageUri = Uri.parse(contatoSelecionado.getCaminhoFoto());
+                Log.i("ContatoLog","Caminho do Item na Alteracao " + imageUri.toString() );
+
+                sdvFoto.setImageURI(imageUri);
+            }
         } else {
             setTitle("Novo contato");
             contatoSelecionado = new Contato();
-            if(email!= null){
-                contatoSelecionado.setUsuarioPrincipal(true);
-            }
         }
-
     }
 
     private void gravaContato() {
@@ -166,7 +162,10 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
 
         if (contatoSelecionado!=null) {
             contato.setId(contatoSelecionado.getId());
+            contato.setCaminhoFoto(contatoSelecionado.getCaminhoFoto());
         }
+
+        Log.i("ContatoLog","Caminho do Item na Salva " +  contato.getCaminhoFoto() );
 
         contato.setEmail(edtEmail.getText().toString());
         contato.setNome(edtNome.getText().toString());
@@ -182,9 +181,12 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(Contato contato) {
 
-                    Toast.makeText(getBaseContext(), "Sucesso na Gravacao  " + contato.getCaminhoFoto()
+                    Toast.makeText(getBaseContext(), "Sucesso na Gravacao "
                             , Toast.LENGTH_LONG).show();
-
+                    if(novo){
+                        Intent it = new Intent(ContatoCadastramentoActivity.this, PrincipalActivity.class);
+                        startActivity(it);
+                    }
                     finish();
                 }
 
@@ -199,9 +201,14 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
             contatoRepositorio.editContato(contato, new IContatoRepositorio.OnSaveContatoCallback() {
                 @Override
                 public void onSuccess(Contato contato) {
-                    Toast.makeText(getBaseContext(), "Sucesso na alteração " + contato.getCaminhoFoto(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), "Sucesso na alteração " , Toast.LENGTH_LONG).show();
+                    if(novo){
+                        Intent it = new Intent(ContatoCadastramentoActivity.this, PrincipalActivity.class);
+                        startActivity(it);
+                    }
                     finish();
                 }
+
 
                 @Override
                 public void onError(String message) {
@@ -239,26 +246,25 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
 
                 imgFresco.setImageURI(resultUri);
 
-                String root = Environment.getExternalStorageDirectory().toString();
-                File myDir = new File(root + "/saved_images");
-                myDir.mkdirs();
-                Random generator = new Random();
-                int n = 10000;
-                n = generator.nextInt(n);
-                String fname = "Image-"+ n +".jpg";
-                File file = new File (myDir, fname);
-
-                if (file.exists ())
-                    file.delete ();
                 InputStream stream = null;
                 FileOutputStream out = null;
                 try {
+                    File file = createImageFile();
+
+                    if (file == null) {
+                        return;
+                    }
+                    Uri photoURI = FileProvider.getUriForFile(this,
+                            "com.example.android.fileprovider",
+                            file);
+
                     out = new FileOutputStream(file);
                     stream = getContentResolver().openInputStream(resultUri);
                     bitmapSELECIONADO = BitmapFactory.decodeStream(stream);
 
                     bitmapSELECIONADO.compress(Bitmap.CompressFormat.JPEG, 90, out);
                     contatoSelecionado.setCaminhoFoto(file.getAbsolutePath());
+
                     out.flush();
                     out.close();
                 } catch (Exception e) {
@@ -270,4 +276,23 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
             }
         }
     }
+
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        //mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        return image;
+    }
+
+
 }

@@ -35,6 +35,8 @@ public interface IContatoRepositorio {
 
     Contato addContato(Contato contato, OnSaveContatoCallback callback);
 
+    Contato getContatosByEmail(String email, OnGetContatoByIdCallback callback);
+
     void editContato(Contato contato, OnSaveContatoCallback callback);
 
     void deleteContatoById(String id, OnDeleteContatoCallback callback);

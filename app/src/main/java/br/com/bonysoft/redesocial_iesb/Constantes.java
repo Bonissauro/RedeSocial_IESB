@@ -6,8 +6,8 @@ package br.com.bonysoft.redesocial_iesb;
 public class Constantes {
 
     public static final String ID_USUARIO_PESQUISA = "IdUsarioPesquisa";
-
-
+    public static final String NOVO = "ContatoCadastroAltera";
+    public static final String id ="id";
     public static final int RETURN_CODE_RESPONDER = 100;
     public static final int RETURN_CODE_CRIAR = 200;
 }

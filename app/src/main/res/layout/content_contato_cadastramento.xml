@@ -9,6 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/icons"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="br.com.bonysoft.redesocial_iesb.ContatoCadastramentoActivity"
     tools:showIn="@layout/activity_contato_cadastramento">
@@ -92,41 +93,29 @@
                 android:inputType="text"
                 android:hint="Endereço completo" />
 
+
+
             <LinearLayout
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_marginBottom="50dp"
+                android:gravity="center">
 
-                <ImageView
-                    android:layout_width="match_parent"
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/imgFoto"
-                    android:layout_gravity="center_horizontal" />
+                    android:text="Selecionar"
+                    android:id="@+id/btnSelecionaFoto" />
 
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="50dp"
-                    android:gravity="center">
-
-                    <Button
-                        style="?android:attr/buttonStyleSmall"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Selecionar"
-                        android:id="@+id/btnSelecionaFoto" />
-
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Fotografar"
-                        android:id="@+id/btnTiraFoto"
-                        style="?android:attr/buttonStyleSmall" />
-                </LinearLayout>
-
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fotografar"
+                    android:id="@+id/btnTiraFoto"
+                    style="?android:attr/buttonStyleSmall" />
             </LinearLayout>
-
         </LinearLayout>
     </ScrollView>
 

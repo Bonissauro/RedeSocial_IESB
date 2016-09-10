@@ -29,6 +29,7 @@ public class ContatoRepositorio implements IContatoRepositorio {
         realmContato.setSobreNome(contato.getSobreNome());
         realmContato.setUsuarioPrincipal(contato.isUsuarioPrincipal());
         realmContato.setDataNascimento(contato.getDataNascimento());
+        realmContato.setCaminhoFoto(contato.getCaminhoFoto());
         realm.commitTransaction();
 
         if (callback != null) {
@@ -76,7 +77,7 @@ public class ContatoRepositorio implements IContatoRepositorio {
         Realm realm =  Realm.getDefaultInstance();
 
         RealmResults<Contato> results = realm.where(Contato.class)
-                .findAll().sort("nome");
+            .findAll().sort("usuarioPrincipal").sort("nome");
 
         if (callback != null) {
             callback.onSuccess(results);
@@ -107,6 +108,22 @@ public class ContatoRepositorio implements IContatoRepositorio {
             contatoList.add(item);
         }
         return contatoList;
+    }
+
+    @Override
+    public Contato getContatosByEmail(String email, OnGetContatoByIdCallback callback) {
+
+        Realm realm =  Realm.getDefaultInstance();
+
+        Contato result = realm.where(Contato.class)
+                .equalTo("email",email)
+                .findFirst();
+
+        if (callback != null) {
+            callback.onSuccess(result);
+        }
+
+        return result;
     }
 
     @Override

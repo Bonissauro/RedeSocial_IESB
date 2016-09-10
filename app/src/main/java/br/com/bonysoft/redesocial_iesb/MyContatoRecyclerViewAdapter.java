@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
 
@@ -51,42 +52,33 @@ public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContato
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
         holder.mItem = mValues.get(position);
-
-        holder.mContatoNomeView.setText(mValues.get(position).getNome() + " " + mValues.get(position).getSobreNome());
+        holder.mContatoNomeView.setText(mValues.get(position).nomeCompleto());
         holder.mContatoEmailView.setText(mValues.get(position).getEmail());
 
+        if(mValues.get(position).getCaminhoFoto()!= null && !mValues.get(position).getCaminhoFoto().isEmpty()){
+            try {
+                Uri imageUri= Uri.parse(mValues.get(position).getCaminhoFoto());
+                Uri imageUri2 = Uri.fromFile(new File(mValues.get(position).getCaminhoFoto()));
+                Log.i("ContatoLog","Caminho do Item no List " + imageUri2.toString() );
+                holder.mSimpleImagem.setImageURI(imageUri2);
 
-
-        if(mValues.get(position).getCaminhoFoto() != null
-            && !mValues.get(position).getCaminhoFoto().isEmpty() ) {
-
-
-
-            if(mValues.get(position).getCaminhoFoto()!= null && !mValues.get(position).getCaminhoFoto().isEmpty()){
-                Uri imageUri= Uri.fromFile(new File(mValues.get(position).getCaminhoFoto()));// For files on device
-
-                Bitmap bitmapSELECIONADO = BitmapFactory.decodeFile(mValues.get(position).getCaminhoFoto());
-                holder.mImagem2.setImageBitmap(bitmapSELECIONADO);
-
-                holder.mImagem.setImageURI(imageUri);
-
-            } else {
-                Log.i("ContatoLog","Nao encontrou a imagem "+ mValues.get(position).getCaminhoFoto());
-                String imageUri = "drawable://" + R.drawable.ic_foto_padrao;
-                holder.mImagem.setImageURI(imageUri);
+            }catch (Exception e){
+                e.printStackTrace();
             }
+        } else {
+            Log.i("ContatoLog","Nao encontrou a imagem "+ mValues.get(position).getCaminhoFoto());
+            String imageUri = "drawable://" + R.drawable.ic_foto_padrao;
+            holder.mSimpleImagem.setImageURI(imageUri);
         }
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
                     mListener.onListFragmentInteractionContato(holder.mItem);
                 }
-
             }
         });
 
@@ -102,8 +94,7 @@ public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContato
                 PrincipalActivity pa = (PrincipalActivity) v.getContext();
 
                 Intent it = new Intent(pa, ContatoCadastramentoActivity.class);
-                it.putExtra("id",contato.getId());
-                it.putExtra("email", contato.getEmail());
+                it.putExtra(Constantes.id,contato.getId());
                 pa.startActivityForResult(it,111);
 
                 return false;
@@ -142,8 +133,8 @@ public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContato
         public final View mView;
         public final TextView mContatoNomeView;
         public final TextView mContatoEmailView;
-        public final SimpleDraweeView mImagem;
-        public final ImageView mImagem2;
+        public final SimpleDraweeView mSimpleImagem;
+
         public Contato mItem;
 
         public ViewHolder(View view) {
@@ -152,8 +143,7 @@ public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContato
             mContatoNomeView = (TextView) view.findViewById(R.id.contatoItemListaNome);
             mContatoEmailView = (TextView) view.findViewById(R.id.contatoItemListaEmail);
 
-            mImagem = (SimpleDraweeView) view.findViewById(R.id.imgListaContato);
-            mImagem2 = (ImageView) view.findViewById(R.id.imagemContato);
+            mSimpleImagem = (SimpleDraweeView) view.findViewById(R.id.imgListaContato);
         }
 
         @Override

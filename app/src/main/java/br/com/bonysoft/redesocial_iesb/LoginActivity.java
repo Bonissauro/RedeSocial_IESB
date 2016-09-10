@@ -2,14 +2,11 @@ package br.com.bonysoft.redesocial_iesb;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
@@ -26,11 +23,6 @@ import com.facebook.login.widget.LoginButton;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -39,7 +31,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import br.com.bonysoft.redesocial_iesb.modelo.Contato;
-import br.com.bonysoft.redesocial_iesb.modelo.Usuario;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.ContatoRepositorio;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.IContatoRepositorio;
 import io.realm.RealmResults;
@@ -395,17 +386,33 @@ public class LoginActivity extends AppCompatActivity {
         EditText senhaText = (EditText) this.findViewById(R.id.etxtSenha);
 
         if(loginText.getText().toString() != null && senhaText.getText().toString() != null){
-            Usuario usuarioMock = new Usuario("Nome Mock",loginText.getText().toString(),senhaText.getText().toString());
 
-            Contato c = new Contato();
-            c.setNome(usuarioMock.getNome());
-            c.setEmail(usuarioMock.getEmail());
+            ContatoRepositorio c = new ContatoRepositorio();
+            Contato contatoBusca = c.getContatosByEmail(loginText.getText().toString(), new IContatoRepositorio.OnGetContatoByIdCallback() {
+                @Override
+                public void onSuccess(Contato contato) {
 
-            gravarContato(c,true,false);
+                }
 
-            Intent it = new Intent(LoginActivity.this, PrincipalActivity.class);
-            it.putExtra(Constantes.ID_USUARIO_PESQUISA,c.getId() );
-            startActivity(it);
+                @Override
+                public void onError(String message) {
+
+                }
+            });
+
+            if(contatoBusca == null){
+                // Ir para o cadastro
+                Intent it = new Intent(LoginActivity.this, ContatoCadastramentoActivity.class);
+                contatoBusca = new Contato();
+                contatoBusca.setEmail(loginText.getText().toString());
+                contatoBusca.setUsuarioPrincipal(true);
+                it.putExtra(Constantes.NOVO,contatoBusca );
+                startActivity(it);
+            } else {
+                // Ir para Lista Contatos
+                Intent it = new Intent(LoginActivity.this, PrincipalActivity.class);
+                startActivity(it);
+            }
         } else {
             Toast.makeText(LoginActivity.this, "Informe o Login ou senha", Toast.LENGTH_LONG).show();
         }

@@ -130,6 +130,13 @@ public class Contato extends RealmObject implements Serializable {
         this.endereco = endereco;
     }
 
+    public String nomeCompleto(){
+        if(this.sobreNome != null){
+            return nome + " "+ sobreNome;
+        }
+        return nome;
+    }
+
     @Override
     public String toString() {
         return "Contato{" +
