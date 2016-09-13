@@ -62,7 +62,7 @@ public class PrincipalActivity extends AppCompatActivity implements
         tabLayout.setupWithViewPager(mViewPager);
 
         fab = (FloatingActionButton) findViewById(R.id.fabButton);
-       // fab.setVisibility(View.VISIBLE);
+        // fab.setVisibility(View.VISIBLE);
 
         fab.setOnClickListener(new View.OnClickListener() {
 

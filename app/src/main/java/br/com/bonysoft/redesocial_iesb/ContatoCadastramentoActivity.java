@@ -1,37 +1,36 @@
 package br.com.bonysoft.redesocial_iesb;
 
         import android.content.Intent;
-        import android.graphics.Bitmap;
-        import android.graphics.BitmapFactory;
-        import android.graphics.Color;
-        import android.net.Uri;
-        import android.os.Bundle;
-        import android.os.Environment;
-        import android.provider.MediaStore;
-        import android.support.design.widget.FloatingActionButton;
-        import android.support.v4.content.FileProvider;
-        import android.support.v7.app.AppCompatActivity;
-        import android.support.v7.widget.Toolbar;
-        import android.util.Log;
-        import android.view.View;
-        import android.widget.Button;
-        import android.widget.EditText;
-        import android.widget.Toast;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
-        import com.facebook.drawee.view.SimpleDraweeView;
-        import com.theartofdev.edmodo.cropper.CropImage;
-        import com.theartofdev.edmodo.cropper.CropImageView;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
-        import java.io.File;
-        import java.io.FileOutputStream;
-        import java.io.IOException;
-        import java.io.InputStream;
-        import java.text.SimpleDateFormat;
-        import java.util.Date;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-        import br.com.bonysoft.redesocial_iesb.modelo.Contato;
-        import br.com.bonysoft.redesocial_iesb.realm.repositorio.ContatoRepositorio;
-        import br.com.bonysoft.redesocial_iesb.realm.repositorio.IContatoRepositorio;
+import br.com.bonysoft.redesocial_iesb.modelo.Contato;
+import br.com.bonysoft.redesocial_iesb.realm.repositorio.ContatoRepositorio;
+import br.com.bonysoft.redesocial_iesb.realm.repositorio.IContatoRepositorio;
 
 public class ContatoCadastramentoActivity extends AppCompatActivity {
 
@@ -239,6 +238,7 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
         }
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
 
             if (resultCode == RESULT_OK) {
@@ -249,25 +249,26 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
 
                 InputStream stream = null;
                 FileOutputStream out = null;
+
                 try {
                     File file = createImageFile();
 
                     if (file == null) {
                         return;
                     }
-                    Uri photoURI = FileProvider.getUriForFile(this,
-                            "com.example.android.fileprovider",
-                            file);
 
                     out = new FileOutputStream(file);
                     stream = getContentResolver().openInputStream(resultUri);
+
                     bitmapSELECIONADO = BitmapFactory.decodeStream(stream);
 
                     bitmapSELECIONADO.compress(Bitmap.CompressFormat.JPEG, 90, out);
+
                     caminhoFoto = file.getAbsolutePath();
 
                     out.flush();
                     out.close();
+
                 } catch (Exception e) {
                     Toast.makeText(getBaseContext(), "Erro ==> " + e, Toast.LENGTH_LONG).show();
                     e.printStackTrace();
