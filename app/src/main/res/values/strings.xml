@@ -3,6 +3,7 @@
     <string name="facebook_app_id">1068176056564355</string>
 
     <string name="app_name">IESB - Rede</string>
+    <string name="action_bluetooth">Bluetooth</string>
     <string name="action_settings">Configuração</string>
     <string name="action_contatos">Contatos</string>
     <string name="action_conversas">Conversas</string>
@@ -30,5 +31,6 @@
     <string name="title_activity_contato_cadastramento">Novo contato</string>
 
     <string name="crop_image_menu_crop">Feito</string>
+    <string name="title_activity_bluetooth_selecao">Selecione um aparelho</string>
 
 </resources>

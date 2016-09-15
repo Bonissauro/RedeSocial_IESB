@@ -1,5 +1,6 @@
 package br.com.bonysoft.redesocial_iesb;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -55,6 +56,9 @@ public class LoginActivity extends AppCompatActivity {
 
         EditText loginText = (EditText) this.findViewById(R.id.etxtEmail);
         EditText senhaText = (EditText) this.findViewById(R.id.etxtSenha);
+
+        loginText.setText("bonissauro@gmail.com");
+        senhaText.setText("111222333");
 
         loginButton.setReadPermissions(Arrays.asList(
                     "public_profile", "email", "user_friends"));
@@ -382,24 +386,52 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void logarComLoginSenha(View v){
-        EditText loginText = (EditText) this.findViewById(R.id.etxtEmail);
+
+        final ProgressDialog dialog = ProgressDialog.show(v.getContext(), "Aguarde", "Validando e-mail...", true);
+
+        final EditText loginText = (EditText) this.findViewById(R.id.etxtEmail);
         EditText senhaText = (EditText) this.findViewById(R.id.etxtSenha);
 
         if(loginText.getText().toString() != null && senhaText.getText().toString() != null){
 
             ContatoRepositorio c = new ContatoRepositorio();
             Contato contatoBusca = c.getContatosByEmail(loginText.getText().toString(), new IContatoRepositorio.OnGetContatoByIdCallback() {
+
                 @Override
                 public void onSuccess(Contato contato) {
+
+                    dialog.dismiss();
+
+                    if(contato == null){
+
+                        Intent it = new Intent(LoginActivity.this, ContatoCadastramentoActivity.class);
+
+                        contato = new Contato();
+                        contato.setEmail(loginText.getText().toString());
+                        contato.setUsuarioPrincipal(true);
+                        it.putExtra(Constantes.NOVO,contato );
+                        startActivity(it);
+
+                    } else {
+
+                        // Ir para Lista Contatos
+                        Intent it = new Intent(LoginActivity.this, PrincipalActivity.class);
+                        startActivity(it);
+
+                    }
+
 
                 }
 
                 @Override
                 public void onError(String message) {
 
+                    dialog.dismiss();
+
                 }
             });
 
+            /*
             if(contatoBusca == null){
                 // Ir para o cadastro
                 Intent it = new Intent(LoginActivity.this, ContatoCadastramentoActivity.class);
@@ -413,6 +445,8 @@ public class LoginActivity extends AppCompatActivity {
                 Intent it = new Intent(LoginActivity.this, PrincipalActivity.class);
                 startActivity(it);
             }
+            */
+
         } else {
             Toast.makeText(LoginActivity.this, "Informe o Login ou senha", Toast.LENGTH_LONG).show();
         }
@@ -429,8 +463,6 @@ public class LoginActivity extends AppCompatActivity {
     public void setIdUsuarioLogado(String idUsuarioLogado) {
         this.idUsuarioLogado = idUsuarioLogado;
     }
-
-
 
 }
 
