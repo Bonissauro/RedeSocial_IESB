@@ -29,6 +29,8 @@ public class PrincipalActivity extends AppCompatActivity implements
         ContatoFragment.OnListFragmentInteractionListener,
         ConfiguracaoFragment.OnFragmentInteractionListener{
 
+    public static int VK_CADASTROU_NOVO_CONTATO = 1111;
+
     MyContatoRecyclerViewAdapter myContatoRecyclerViewAdapter;
 
     List<Contato> listaContatos;
@@ -62,7 +64,6 @@ public class PrincipalActivity extends AppCompatActivity implements
         tabLayout.setupWithViewPager(mViewPager);
 
         fab = (FloatingActionButton) findViewById(R.id.fabButton);
-        // fab.setVisibility(View.VISIBLE);
 
         fab.setOnClickListener(new View.OnClickListener() {
 
@@ -71,7 +72,7 @@ public class PrincipalActivity extends AppCompatActivity implements
 
                 Intent it = new Intent(PrincipalActivity.this, ContatoCadastramentoActivity.class);
 
-                startActivityForResult(it,111);
+                startActivityForResult(it,VK_CADASTROU_NOVO_CONTATO);
 
             }
         });

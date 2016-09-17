@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Estes são os aparelhos já pareados via bluetooth com o seu! Selecione um deles para conectar."
-        android:id="@+id/textView"
+        android:id="@+id/idBluetoothSelecao_textoTitulo"
         android:textAlignment="center"
         android:layout_margin="10dp" />
 
@@ -28,11 +28,11 @@
     </RadioGroup>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/fab_bluetooth_selecao"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_add_circle_outline_black_48dp" />
+        android:src="@drawable/ic_autorenew_white_48dp" />
 
 </android.support.design.widget.CoordinatorLayout>

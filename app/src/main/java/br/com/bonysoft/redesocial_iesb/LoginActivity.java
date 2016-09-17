@@ -38,6 +38,8 @@ import io.realm.RealmResults;
 
 public class LoginActivity extends AppCompatActivity {
 
+    ProgressDialog dialog;
+
     CallbackManager callbackManager;
     String idUsuarioLogado;
     private EditText loginText;
@@ -193,8 +195,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean usuarioJaRegistradoComoContato(Contato contato){
-        IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
 
+        IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
 
         Log.i("ContatoLog","IdProfile-"+contato.getId_usuario());
         List<Contato> contatoList = contatoRepositorio.getAllContatosByUsuarioId(contato.getId_usuario(), new IContatoRepositorio.OnGetAllContatosCallback() {
@@ -240,12 +242,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void gravarContato(Contato contato, boolean isPrincipal,boolean isViaFacebook){
+
         try {
+
             Log.i("ContatoLog", "IdUsuarioFace" + contato.getId_usuario());
+
             contato.setUsuarioPrincipal(isPrincipal);
 
             IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
-
 
             IContatoRepositorio.OnSaveContatoCallback callBackFace =
                     new IContatoRepositorio.OnSaveContatoCallback() {
@@ -387,7 +391,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void logarComLoginSenha(View v){
 
-        final ProgressDialog dialog = ProgressDialog.show(v.getContext(), "Aguarde", "Validando e-mail...", true);
+        dialog = ProgressDialog.show(v.getContext(), "Aguarde", "Validando conta...", true);
 
         final EditText loginText = (EditText) this.findViewById(R.id.etxtEmail);
         EditText senhaText = (EditText) this.findViewById(R.id.etxtSenha);
@@ -395,7 +399,8 @@ public class LoginActivity extends AppCompatActivity {
         if(loginText.getText().toString() != null && senhaText.getText().toString() != null){
 
             ContatoRepositorio c = new ContatoRepositorio();
-            Contato contatoBusca = c.getContatosByEmail(loginText.getText().toString(), new IContatoRepositorio.OnGetContatoByIdCallback() {
+
+            c.getContatosByEmail(loginText.getText().toString(), new IContatoRepositorio.OnGetContatoByIdCallback() {
 
                 @Override
                 public void onSuccess(Contato contato) {
@@ -414,12 +419,10 @@ public class LoginActivity extends AppCompatActivity {
 
                     } else {
 
-                        // Ir para Lista Contatos
                         Intent it = new Intent(LoginActivity.this, PrincipalActivity.class);
                         startActivity(it);
 
                     }
-
 
                 }
 
@@ -430,22 +433,6 @@ public class LoginActivity extends AppCompatActivity {
 
                 }
             });
-
-            /*
-            if(contatoBusca == null){
-                // Ir para o cadastro
-                Intent it = new Intent(LoginActivity.this, ContatoCadastramentoActivity.class);
-                contatoBusca = new Contato();
-                contatoBusca.setEmail(loginText.getText().toString());
-                contatoBusca.setUsuarioPrincipal(true);
-                it.putExtra(Constantes.NOVO,contatoBusca );
-                startActivity(it);
-            } else {
-                // Ir para Lista Contatos
-                Intent it = new Intent(LoginActivity.this, PrincipalActivity.class);
-                startActivity(it);
-            }
-            */
 
         } else {
             Toast.makeText(LoginActivity.this, "Informe o Login ou senha", Toast.LENGTH_LONG).show();
