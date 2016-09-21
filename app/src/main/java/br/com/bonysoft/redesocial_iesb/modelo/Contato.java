@@ -1,5 +1,6 @@
 package br.com.bonysoft.redesocial_iesb.modelo;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import io.realm.RealmObject;
@@ -9,7 +10,7 @@ import io.realm.annotations.PrimaryKey;
 /**
  * Created by carlospanarello on 04/09/16.
  */
-public class Contato extends RealmObject {
+public class Contato extends RealmObject implements Serializable{
 
     @PrimaryKey
     String id;

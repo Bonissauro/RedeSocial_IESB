@@ -1,5 +1,7 @@
 package br.com.bonysoft.redesocial_iesb;
 
+import android.*;
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -7,8 +9,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.RadioButton;
@@ -77,6 +82,42 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
 
         });
 
+        if(!checkPermissaoBluetooth()){
+           Toast.makeText(this,"Sem permissao concedida nao e possivel acessar essa tela",Toast.LENGTH_LONG);
+        }
+
+    }
+
+    private boolean checkPermissaoBluetooth(){
+        int hasPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+        if(hasPermission == PackageManager.PERMISSION_GRANTED){
+           // discoveryBluetooth();
+            continueProcessoBluetooth();
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, Constantes.REQUEST_COARSE_LOCATION_PERMISSIONS);
+        }
+        return false;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == Constantes.REQUEST_COARSE_LOCATION_PERMISSIONS){
+            boolean resposta = true;
+            for(int r:grantResults){
+                if(r == PackageManager.PERMISSION_DENIED){
+                    resposta = false;
+                    break;
+                }
+            }
+
+            if(resposta){
+                continueProcessoBluetooth();
+            }
+        }
+        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    private void continueProcessoBluetooth(){
         btAdapter = BluetoothAdapter.getDefaultAdapter();
 
         Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
@@ -123,7 +164,6 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
             }
 
         });
-
     }
 
     private void montaRadioGroup() {
