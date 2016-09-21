@@ -1,8 +1,5 @@
 package br.com.bonysoft.redesocial_iesb.modelo;
 
-import android.os.Environment;
-
-import java.io.Serializable;
 import java.util.Date;
 
 import io.realm.RealmObject;
@@ -12,7 +9,7 @@ import io.realm.annotations.PrimaryKey;
 /**
  * Created by carlospanarello on 04/09/16.
  */
-public class Contato extends RealmObject implements Serializable {
+public class Contato extends RealmObject {
 
     @PrimaryKey
     String id;
@@ -24,6 +21,7 @@ public class Contato extends RealmObject implements Serializable {
     String nomeSkype;
     String endereco;
     Date dataNascimento;
+
     // aqui iremos definir o dono dos contatos
     // assim qdo sera possivel 2 pessoas diferentes logar no app e ter uma lista de contatos propria.
     @Index

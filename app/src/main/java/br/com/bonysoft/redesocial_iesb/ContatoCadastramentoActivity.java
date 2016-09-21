@@ -296,5 +296,4 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
         return image;
     }
 
-
 }

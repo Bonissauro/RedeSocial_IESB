@@ -1,11 +1,9 @@
 package br.com.bonysoft.redesocial_iesb.modelo;
 
-import java.io.Serializable;
-
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class BluetoothPareado extends RealmObject implements Serializable {
+public class BluetoothPareado extends RealmObject {
 
     @PrimaryKey
     public String endereco;
