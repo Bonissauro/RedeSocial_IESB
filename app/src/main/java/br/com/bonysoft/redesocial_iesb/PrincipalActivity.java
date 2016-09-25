@@ -164,6 +164,15 @@ public class PrincipalActivity extends AppCompatActivity implements
 
             return true;
 
+        }else if (id == R.id.idMenuPrincipal_Action_cade_eu) {
+
+
+            Intent it = new Intent(PrincipalActivity.this, CadeEuActivity.class);
+
+            startActivity(it);
+
+            return true;
+
         }
 
         return super.onOptionsItemSelected(item);

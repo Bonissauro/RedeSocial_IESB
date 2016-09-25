@@ -71,16 +71,19 @@ public class LoginActivity extends AppCompatActivity {
             new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
+
                     String accessToken = loginResult.getAccessToken().getToken();
                     Log.i("ContatosLogAcessToken", accessToken);
 
                     GraphRequest requestMe = GraphRequest.newMeRequest(
                             loginResult.getAccessToken(),
                             new GraphRequest.GraphJSONObjectCallback() {
+
                                 @Override
                                 public void onCompleted(
                                         JSONObject jsonObject,
                                         GraphResponse response) {
+
                                     Log.i("ContatoLog", "RespostaJsonUsuario->" + response.toString());
 
                                     Log.i("ContatoLogJUser", jsonObject.toString());
@@ -90,6 +93,7 @@ public class LoginActivity extends AppCompatActivity {
                                     setIdUsuarioLogado(c.getId_usuario());
 
                                     incluirUsuarioFacebookComoContatoPrincipal(c);
+
                                 }
                             }
                     );
@@ -102,16 +106,45 @@ public class LoginActivity extends AppCompatActivity {
                                 public void onCompleted(
                                         JSONArray jsonArray,
                                         GraphResponse response) {
+
+
+                                    IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
+
                                     Log.i("ContatoLog", "RespostaJsonFriends->" + response.toString());
-                                    // Get facebook data from login
+
                                     Log.i("ContatoLogJFriend", jsonArray.toString());
                                     Log.i("ContatoLogRFriend" , response.toString());
 
                                     List<Contato> contatoList = convertFacebookJsonToContato(jsonArray,getIdUsuarioLogado());
 
                                     for(Contato contato: contatoList){
-                                        Log.i("ContatoLogFriendAdd" , contato.toString());
-                                        gravarContato(contato,false,true);
+
+                                        if (contato.getEmail()==null){
+
+                                            gravarContato(contato, false, true);
+
+                                        }else {
+
+                                            Contato c = contatoRepositorio.getContatosByEmail(contato.getEmail(), new IContatoRepositorio.OnGetContatoByIdCallback() {
+                                                @Override
+                                                public void onSuccess(Contato contato) {
+
+                                                    if (contato == null) {
+                                                        Log.i("ContatoLogFriendAdd", contato.toString());
+                                                        gravarContato(contato, false, true);
+                                                    }
+
+                                                }
+
+                                                @Override
+                                                public void onError(String message) {
+
+                                                }
+
+                                            });
+
+                                        }
+
                                     }
                                 }
                             }
@@ -186,6 +219,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean incluirUsuarioFacebookComoContatoPrincipal(Contato contato){
+
         if(!usuarioJaRegistradoComoContato(contato)){
             gravarContato(contato,true,true);
             return true;
