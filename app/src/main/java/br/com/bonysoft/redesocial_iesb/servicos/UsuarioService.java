@@ -21,6 +21,8 @@ public class UsuarioService {
             objReferencia.child(id).child("email").setValue(usuario.getEmail());
             objReferencia.child(id).child("senha").setValue(usuario.getSenha());
 
+
+
             return id;
 
         }catch (Exception e){

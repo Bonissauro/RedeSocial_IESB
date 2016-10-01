@@ -9,8 +9,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import br.com.bonysoft.redesocial_iesb.receiver.LocalizacaoReceiver;
 import io.realm.Realm;
@@ -37,7 +40,21 @@ public class RedeSocialRealm extends Application {
 
         //TODO ver se ta certo esse metodo de alarme
         //agendarAlarme()
+        testeFirebase();
+    }
 
+    public void testeFirebase(){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference objReferencia = database.getReference("localizacao");
+
+        //String mId = "-KQmhU9QQRJ6nO2Wb9qr";
+        String mId=objReferencia.child("localizacao").push().getKey();
+        //Log.d("SERVICE","Local -->" + location.getLongitude() + "-" + location.getLatitude());
+        //47.83906625--15.6543783
+
+        objReferencia.child(mId).child("email").setValue("bonissauro@gmail.com");
+        objReferencia.child(mId).child("longitude").setValue("47.83906625");
+        objReferencia.child(mId).child("latitude").setValue("15.6543783");
     }
 
     private boolean possuiPermissao(){

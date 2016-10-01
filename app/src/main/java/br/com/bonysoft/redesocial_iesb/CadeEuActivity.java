@@ -1,5 +1,6 @@
 package br.com.bonysoft.redesocial_iesb;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -19,8 +20,12 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import br.com.bonysoft.redesocial_iesb.servicos.EnviaPosicaoService;
 
 public class CadeEuActivity extends FragmentActivity
         implements
@@ -36,7 +41,11 @@ public class CadeEuActivity extends FragmentActivity
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
 
+    private LatLng latLngAtual;
     private MarkerOptions marcadorDaPosicao;
+    private MarkerOptions marcadorDaPosicaoAtualDoUsuario;
+
+    private Marker marcador;
 
     private int quantos=0;
 
@@ -46,6 +55,9 @@ public class CadeEuActivity extends FragmentActivity
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_cade_eu);
+
+        Intent startServiceIntent = new Intent(getApplicationContext(), EnviaPosicaoService.class);
+        getApplicationContext().startService(startServiceIntent);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
@@ -189,6 +201,96 @@ public class CadeEuActivity extends FragmentActivity
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.i(TAG, "Location services failed.");
+    }
+
+    private void marcarLocalizacaoUsuario(Location location) {
+
+        double currentLatitude  = location.getLatitude();
+        double currentLongitude = location.getLongitude();
+
+        latLngAtual = new LatLng(currentLatitude, currentLongitude);
+
+        CameraUpdate center = CameraUpdateFactory.newLatLng(latLngAtual);
+
+        if (marcadorDaPosicaoAtualDoUsuario == null) {
+/*
+            LocalDescarteServicos servico = new LocalDescarteServicos();
+
+            servico.listarTodosRegistros(new ILocalDescarteServicos.OnListarTodosRegistrosCallback(){
+
+                @Override
+                public void onSuccess(RealmResults<LocalDescarte> lista) {
+
+                    for (LocalDescarte localDescarte:lista){
+
+                        LatLng ll = new LatLng(localDescarte.getLatitude(), localDescarte.getLongitude());
+
+                        mMap.addMarker(new MarkerOptions()
+                                .position(ll)
+                                .title(localDescarte.getNome())
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+
+                    }
+
+                }
+
+                @Override
+                public void onError(String message) {
+
+                }
+
+            });
+
+*/
+            marcadorDaPosicaoAtualDoUsuario = new MarkerOptions()
+                    .position(latLngAtual)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                    .title("Você");
+
+            marcador = mMap.addMarker(marcadorDaPosicaoAtualDoUsuario);
+
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAtual));
+
+
+        }else{
+/*
+            String lat1 = Ferramentas.arredondarCoordenada(marcadorDaPosicaoAtualDoUsuario.getPosition().latitude);
+            String lat2 = Ferramentas.arredondarCoordenada(latLngAtual.latitude);
+
+            String long1 = Ferramentas.arredondarCoordenada(marcadorDaPosicaoAtualDoUsuario.getPosition().longitude);
+            String long2 = Ferramentas.arredondarCoordenada(latLngAtual.longitude);
+
+            if ((!lat1.equalsIgnoreCase(lat2))||(!long1.equalsIgnoreCase(long2))){
+
+                marcador.remove();
+
+                marcadorDaPosicaoAtualDoUsuario = new MarkerOptions()
+                        .position(latLngAtual)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                        .title("Você");
+
+                marcador = mMap.addMarker(marcadorDaPosicaoAtualDoUsuario);
+
+                LocalDescarte objeto = new LocalDescarte(currentLatitude, currentLongitude, "Ponto cadastrado automaticamente!");
+
+                new LocalDescarteServicos().gravar(objeto, new LocalDescarteServicos.OnGravarCallback() {
+
+                    @Override
+                    public void onSuccess(LocalDescarte objeto) {
+
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        Toast.makeText(getBaseContext(), "Erro ==> " + message, Toast.LENGTH_LONG).show();
+                    }
+
+                });
+
+            }
+*/
+        }
+
     }
 
 }

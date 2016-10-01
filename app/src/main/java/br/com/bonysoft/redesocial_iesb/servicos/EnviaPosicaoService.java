@@ -19,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import br.com.bonysoft.redesocial_iesb.Constantes;
 import br.com.bonysoft.redesocial_iesb.modelo.Contato;
 import br.com.bonysoft.redesocial_iesb.modelo.Localizacao;
 import io.realm.Realm;
@@ -43,6 +44,7 @@ public class EnviaPosicaoService extends Service {
     public void onCreate() {
 
         Realm realm = Realm.getDefaultInstance();
+        Log.d("SERVICE","TESTE");
 
         //TODO temos que colocar uma forma de gravar o usuario logado no celular
         // e buscar somente ele para enviar a posicao no firebase
@@ -58,11 +60,10 @@ public class EnviaPosicaoService extends Service {
         realm.close();
 
 
-
         locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
 
         //noinspection MissingPermission
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000*60*5,0,listener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000*5,0,listener);
 
     }
 
@@ -89,8 +90,11 @@ public class EnviaPosicaoService extends Service {
         public void onLocationChanged(Location location) {
             // Realiza a gravacao no fireBase do resultado da latitude e longitude
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-
             DatabaseReference objReferencia = database.getReference("localizacao");
+
+            Log.d("SERVICE","Local -->" + location.getLongitude() + "-" + location.getLatitude());
+            //47.83906625--15.6543783
+
             objReferencia.child(mId).child("email").setValue(mEmail);
             objReferencia.child(mId).child("longitude").setValue(location.getLongitude());
             objReferencia.child(mId).child("latitude").setValue(location.getLatitude());
