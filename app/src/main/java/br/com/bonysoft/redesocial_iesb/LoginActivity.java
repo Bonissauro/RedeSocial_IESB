@@ -107,7 +107,7 @@ public class LoginActivity extends AppCompatActivity {
             Log.i(TAG_LOG,"Mensagem de novoUsuario -->"+novoUsuario);
 
             if(contatoObtidoPeloFacebook!= null){
-                salvarFotoPerfilFacebook(contato);
+                salvarFotoPerfilFacebook(contato.copy());
             }
         }
 
@@ -210,7 +210,7 @@ public class LoginActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onSuccess(Contato contato) {
                                                     Toast.makeText(getApplicationContext(),"Obtendo amigos pelo Facebook feito com sucesso!",Toast.LENGTH_LONG);
-                                                    salvarFotoPerfilFacebook(contato);
+                                                    salvarFotoPerfilFacebook(contato.copy());
                                                 }
 
                                                 @Override
@@ -395,7 +395,11 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         try {
-            File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            File dir = getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+            if(dir == null){
+                dir = getApplicationContext().getFilesDir();
+            }
 
             contato.setCaminhoFoto(dir + "/" + contato.getId() + ".jpg");
             Log.i(TAG_LOG, "Caminho da foto-> " + contato.getCaminhoFoto());

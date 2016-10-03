@@ -326,6 +326,9 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
         //String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         //String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        if(storageDir == null){
+            storageDir = getApplicationContext().getFilesDir();
+        }
         File image = File.createTempFile(
                 idFoto,  /* prefix */
                 ".jpg",         /* suffix */
