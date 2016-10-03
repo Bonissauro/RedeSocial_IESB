@@ -51,6 +51,7 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
     Button btnEnvioCartao ;
     Contato enviarContato;
     TextView txtTitulo;
+    String endereco;
 
     ProgressDialog dialog;
 
@@ -161,7 +162,8 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
             public void onSuccess(RealmResults<BluetoothPareado> lista) {
 
                 listaAparelhos = lista;
-
+                //Ja cria um socket para comunicacao
+                ComunicadorBluethooth.getInstance().start();
                 montaRadioGroup();
 
                 btnEnvioCartao.setOnClickListener(new View.OnClickListener() {
@@ -227,7 +229,7 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     Log.i(TAG_LOG,"Clicou no option Nenhum -->"+isChecked);
                     if(isChecked){
-                        ComunicadorBluethooth.getInstance().disconnect();
+                        //ComunicadorBluethooth.getInstance().disconnect();
                         //btnEnvioCartao.setEnabled(false);
                     }
                 }
@@ -248,15 +250,15 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         Log.i(TAG_LOG,"Clicou no option -->"+isChecked);
                         if(isChecked){
-                            String endereco = listaAparelhos.get(buttonView.getId()-1).getEndereco();
+                            endereco = listaAparelhos.get(buttonView.getId()-1).getEndereco();
 
                             Log.i(TAG_LOG,"Indice --> "+ buttonView.getId());
                             Log.i(TAG_LOG,"Nome --> "+ listaAparelhos.get(buttonView.getId()-1).getNome());
                             Log.i(TAG_LOG,"Endereco --> "+ listaAparelhos.get(buttonView.getId()-1).getEndereco());
-                            ComunicadorBluethooth.getInstance().start();
-                            ComunicadorBluethooth.getInstance().connect(endereco);
+                            
+                            
                         }else{
-                            ComunicadorBluethooth.getInstance().disconnect();
+                            //ComunicadorBluethooth.getInstance().disconnect();
                         }
 
                     //btnEnvioCartao.setEnabled(isChecked);
@@ -283,7 +285,13 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
     private void envioCartao(){
         //String id = getIntent().getStringExtra(Constantes.ID_USUARIO_LOGADO);
         Log.i(TAG_LOG,"Envio de Cartao");
-        ComunicadorBluethooth.getInstance().send("ID_USUARIO-->"+ 234123 +"<--"+ Constantes.FIM_TRANSMISSAO);
+        
+        Log.i(TAG_LOG,"Endereco --> "+ endereco);
+        if(endereco != null && !endereco.trim().isEmpty()){
+            ComunicadorBluethooth.getInstance().connect(endereco);
+            ComunicadorBluethooth.getInstance().send("ID_USUARIO-->"+ 234123 +"<--"+ Constantes.FIM_TRANSMISSAO);
+        }
+        
         /*
         ContatoRepositorio repo = new ContatoRepositorio();
         repo.getContatoById(id, new IContatoRepositorio.OnGetContato() {
