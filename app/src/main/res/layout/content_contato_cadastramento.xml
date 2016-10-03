@@ -77,6 +77,16 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLength="8"
+                android:id="@+id/edtSenhaCadastro"
+                android:backgroundTint="@color/primary_light"
+                android:layout_gravity="left"
+                android:inputType="textVisiblePassword"
+                android:hint="Senha com no maximo 8 caracteres" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/edtNome"
                 android:backgroundTint="@color/primary_light"
                 android:layout_gravity="left"

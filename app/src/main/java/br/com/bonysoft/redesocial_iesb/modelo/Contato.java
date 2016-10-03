@@ -1,7 +1,11 @@
 package br.com.bonysoft.redesocial_iesb.modelo;
 
+import android.os.Environment;
+
+import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
 
 import io.realm.RealmObject;
 import io.realm.annotations.Index;
@@ -22,14 +26,22 @@ public class Contato extends RealmObject implements Serializable{
     String nomeSkype;
     String endereco;
     Date dataNascimento;
+    String senha;
+    String idFacebook;
 
     // aqui iremos definir o dono dos contatos
     // assim qdo sera possivel 2 pessoas diferentes logar no app e ter uma lista de contatos propria.
-    @Index
+    /*@Index
     String id_usuario;
     boolean usuarioPrincipal;
-
+    */
     public Contato() {
+    }
+
+    public Contato(boolean gerarID) {
+        if(gerarID){
+            this.setId(UUID.randomUUID().toString());
+        }
     }
 
     public Contato(String id, String nome) {
@@ -69,8 +81,18 @@ public class Contato extends RealmObject implements Serializable{
         caminhoFoto = caminho;
     }
 
+
     public String getCaminhoFotoFacebook(){
-        return  "https://graph.facebook.com/" + getId_usuario() + "/picture?width=200&height=150";
+        return  "https://graph.facebook.com/" + getIdFacebook() + "/picture?width=200&height=150";
+    }
+
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 
     public String getEmail() {
@@ -78,23 +100,9 @@ public class Contato extends RealmObject implements Serializable{
     }
 
     public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public boolean isUsuarioPrincipal() {
-        return usuarioPrincipal;
-    }
-
-    public void setUsuarioPrincipal(boolean usuarioPrincipal) {
-        this.usuarioPrincipal = usuarioPrincipal;
-    }
-
-    public String getId_usuario() {
-        return id_usuario;
-    }
-
-    public void setId_usuario(String id_usuario) {
-        this.id_usuario = id_usuario;
+        if(email != null)
+        this.email = email.toLowerCase();
+        else this.email = null;
     }
 
     public Date getDataNascimento() {
@@ -136,6 +144,30 @@ public class Contato extends RealmObject implements Serializable{
         return nome;
     }
 
+    public String getIdFacebook() {
+        return idFacebook;
+    }
+
+    public void setIdFacebook(String idFacebook) {
+        this.idFacebook = idFacebook;
+    }
+
+    public Contato copy(){
+        Contato c = new Contato();
+        c.setIdFacebook(this.getIdFacebook());
+        c.setId(this.getId());
+        c.setSenha(this.getSenha());
+        c.setSobreNome(this.getSobreNome());
+        c.setEmail(this.getEmail());
+        c.setNome(this.getNome());
+        c.setCaminhoFoto(this.getCaminhoFoto());
+        c.setDataNascimento(this.getDataNascimento());
+        c.setEndereco(this.getEndereco());
+        c.setTelefone(this.getTelefone());
+        c.setNomeSkype(this.getNomeSkype());
+        return c;
+    }
+
     @Override
     public String toString() {
         return "Contato{" +
@@ -145,9 +177,11 @@ public class Contato extends RealmObject implements Serializable{
                 ", telefone='" + telefone + '\'' +
                 ", caminhoFoto='" + caminhoFoto + '\'' +
                 ", email='" + email + '\'' +
+                ", nomeSkype='" + nomeSkype + '\'' +
+                ", endereco='" + endereco + '\'' +
                 ", dataNascimento=" + dataNascimento +
-                ", id_usuario='" + id_usuario + '\'' +
-                ", usuarioPrincipal=" + usuarioPrincipal +
+                ", senha='" + senha + '\'' +
+                ", idFacebook='" + idFacebook + '\'' +
                 '}';
     }
 }

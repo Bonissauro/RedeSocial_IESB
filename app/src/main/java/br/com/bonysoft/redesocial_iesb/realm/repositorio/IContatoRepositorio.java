@@ -1,7 +1,5 @@
 package br.com.bonysoft.redesocial_iesb.realm.repositorio;
 
-import android.content.Context;
-
 import java.util.List;
 
 import br.com.bonysoft.redesocial_iesb.modelo.Contato;
@@ -22,10 +20,16 @@ public interface IContatoRepositorio {
         void onError(String message);
     }
 
-    interface OnGetContatoByIdCallback {
+    interface OnGetContato {
 
         void onSuccess(Contato contato);
         void onError(String message);
+    }
+
+    interface OnGetContatoLogin {
+
+        void onSuccess(MensagemLogin message,Contato contato);
+        void onError(MensagemLogin message);
     }
 
     interface OnGetAllContatosCallback {
@@ -35,7 +39,14 @@ public interface IContatoRepositorio {
 
     Contato addContato(Contato contato, OnSaveContatoCallback callback);
 
-    Contato getContatosByEmail(String email, OnGetContatoByIdCallback callback);
+    boolean validarUsuarioFacebook(Contato contato, OnGetContatoLogin callback);
+
+    boolean validarUsuarioSenha(String email, String senha, OnGetContatoLogin callback);
+
+
+    Contato getContatosByEmail(String email, OnGetContato callback);
+
+    Contato addContatoPeloIdFacebookOuEmail(Contato contato, OnSaveContatoCallback callback);
 
     void editContato(Contato contato, OnSaveContatoCallback callback);
 
@@ -45,6 +56,8 @@ public interface IContatoRepositorio {
 
     List<Contato> getAllContatosByUsuarioId(String id, OnGetAllContatosCallback callback);
 
-    Contato getContatoById(String id, OnGetContatoByIdCallback callback);
+    Contato getContatoById(String id, OnGetContato callback);
+
+    void close();
 
 }

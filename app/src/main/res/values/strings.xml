@@ -34,5 +34,6 @@
     <string name="crop_image_menu_crop">Feito</string>
     <string name="title_activity_bluetooth_selecao">Selecione um aparelho</string>
     <string name="title_activity_cade_eu">Map</string>
+    <string name="title_activity_login_novo">Rede Social IESB</string>
 
 </resources>

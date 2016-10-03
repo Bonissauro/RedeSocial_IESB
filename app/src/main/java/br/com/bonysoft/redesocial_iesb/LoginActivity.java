@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -24,6 +25,7 @@ import com.facebook.login.widget.LoginButton;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -34,181 +36,217 @@ import java.util.List;
 import br.com.bonysoft.redesocial_iesb.modelo.Contato;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.ContatoRepositorio;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.IContatoRepositorio;
-import io.realm.RealmResults;
+import br.com.bonysoft.redesocial_iesb.realm.repositorio.MensagemLogin;
+import br.com.bonysoft.redesocial_iesb.utilitarios.BasicImageDownloader;
+import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
 
 public class LoginActivity extends AppCompatActivity {
 
-    ProgressDialog dialog;
+    String TAG_LOG = Constantes.TAG_LOG;
 
+    ProgressDialog dialog;
     CallbackManager callbackManager;
+    LoginButton loginFacebookButton;
+    EditText loginText;
+    EditText senhaText;
+
     String idUsuarioLogado;
-    private EditText loginText;
-    private EditText senhaText;
+    boolean loginComSucesso;
+    boolean novoUsuario;
+
+    Contato contatoObtidoPeloFacebook;
+    List<Contato> listaContatosAmigosFacebook;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-
         FacebookSdk.sdkInitialize(getApplicationContext());
 
         setContentView(R.layout.activity_login);
+        inicializarItens();
 
-        LoginButton loginButton = (LoginButton) this.findViewById(R.id.login_button);
+        processoLoginFace();
+    }
 
-        EditText loginText = (EditText) this.findViewById(R.id.etxtEmail);
-        EditText senhaText = (EditText) this.findViewById(R.id.etxtSenha);
+    private void inicializarItens(){
+        contatoObtidoPeloFacebook = null;
+        listaContatosAmigosFacebook = new ArrayList<>();
 
-        loginText.setText("bonissauro@gmail.com");
-        senhaText.setText("111222333");
+        loginComSucesso = false;
+        novoUsuario = false;
 
-        loginButton.setReadPermissions(Arrays.asList(
-                    "public_profile", "email", "user_friends"));
+        loginFacebookButton = (LoginButton) this.findViewById(R.id.login_button);
+        loginText = (EditText) this.findViewById(R.id.etxtEmail);
+        senhaText = (EditText) this.findViewById(R.id.etxtSenha);
+
+        //TODO remover depois dos testes
+        loginText.setText("teste@gmail.com");
+        senhaText.setText("12345678");
+
+        idUsuarioLogado = null;
+    }
+
+    IContatoRepositorio.OnGetContatoLogin tratamentoLogin = new IContatoRepositorio.OnGetContatoLogin() {
+        @Override
+        public void onSuccess(MensagemLogin message, Contato contato) {
+
+            idUsuarioLogado = contato.getId();
+            Log.i(TAG_LOG,"Id Usuario Logado -->"+idUsuarioLogado);
+            Log.i(TAG_LOG,"Mensagem de Sucesso -->"+message.getMsg());
+            switch (message){
+                case CADASTRAR:
+                case CADASTRAR_COM_SUCESSO:
+                    novoUsuario = true;
+                    break;
+
+                case LOGIN_COM_SUCESSO:
+                    loginComSucesso = true;
+                    break;
+            }
+            Log.i(TAG_LOG,"Mensagem de loginComSucesso -->"+loginComSucesso);
+            Log.i(TAG_LOG,"Mensagem de novoUsuario -->"+novoUsuario);
+
+            if(contatoObtidoPeloFacebook!= null){
+                salvarFotoPerfilFacebook(contato);
+            }
+        }
+
+        @Override
+        public void onError(MensagemLogin message) {
+            Log.i(TAG_LOG,"Mensagem de Erro -->"+message.getMsg());
+            Toast.makeText(LoginActivity.this,message.getMsg(),Toast.LENGTH_LONG);
+        }
+    };
+
+    private void realizaNavegacao(){
+
+        if(loginComSucesso){
+            Intent it = new Intent(this, PrincipalActivity.class);
+            it.putExtra(Constantes.ID_USUARIO_LOGADO, idUsuarioLogado);
+            startActivity(it);
+        }
+
+        if(novoUsuario){
+            Intent it = new Intent(this, ContatoCadastramentoActivity.class);
+            it.putExtra(Constantes.ID_USUARIO_LOGADO, idUsuarioLogado);
+            it.putExtra(Constantes.ID_CONTATO, idUsuarioLogado);
+            startActivity(it);
+        }
+    }
+
+    private void processoLoginFace() {
+
+        loginFacebookButton.setReadPermissions(Arrays.asList(
+                "public_profile", "email", "user_friends"));
 
         callbackManager = CallbackManager.Factory.create();
 
         LoginManager.getInstance().registerCallback(callbackManager,
-            new FacebookCallback<LoginResult>() {
-                @Override
-                public void onSuccess(LoginResult loginResult) {
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(final LoginResult loginResult) {
+                        String accessToken = loginResult.getAccessToken().getToken();
+                        Log.i(TAG_LOG,"Token Acesso -->" + accessToken);
 
-                    String accessToken = loginResult.getAccessToken().getToken();
-                    Log.i("ContatosLogAcessToken", accessToken);
+                        GraphRequest requestMe = GraphRequest.newMeRequest(
+                                loginResult.getAccessToken(),
+                                new GraphRequest.GraphJSONObjectCallback() {
 
-                    GraphRequest requestMe = GraphRequest.newMeRequest(
-                            loginResult.getAccessToken(),
-                            new GraphRequest.GraphJSONObjectCallback() {
+                                    @Override
+                                    public void onCompleted(
+                                            JSONObject jsonObject,
+                                            GraphResponse response) {
 
-                                @Override
-                                public void onCompleted(
-                                        JSONObject jsonObject,
-                                        GraphResponse response) {
+                                        Log.i(TAG_LOG, "RespostaJsonUsuario->" + response.toString());
 
-                                    Log.i("ContatoLog", "RespostaJsonUsuario->" + response.toString());
+                                        Log.i(TAG_LOG, "Json -->" + jsonObject.toString());
 
-                                    Log.i("ContatoLogJUser", jsonObject.toString());
-                                    Log.i("ContatoLogRUser" , response.toString());
-                                    Contato c = convertFacebookJsonToContato(jsonObject,null);
+                                        contatoObtidoPeloFacebook = convertFacebookJsonToContato(jsonObject);
 
-                                    setIdUsuarioLogado(c.getId_usuario());
-
-                                    incluirUsuarioFacebookComoContatoPrincipal(c);
-
+                                        //TODO: aqui ele ta colocando a senha como sendo o login do face
+                                        contatoObtidoPeloFacebook.setSenha(contatoObtidoPeloFacebook.getIdFacebook());
+                                    }
                                 }
-                            }
-                    );
+                        );
 
+                        GraphRequest requestFriends = GraphRequest.newMyFriendsRequest(
+                                loginResult.getAccessToken(),
+                                new GraphRequest.GraphJSONArrayCallback() {
+                                    @Override
+                                    public void onCompleted(
+                                            JSONArray jsonArray,
+                                            GraphResponse response) {
 
-                    GraphRequest requestFriends = GraphRequest.newMyFriendsRequest(
-                            loginResult.getAccessToken(),
-                            new GraphRequest.GraphJSONArrayCallback() {
-                                @Override
-                                public void onCompleted(
-                                        JSONArray jsonArray,
-                                        GraphResponse response) {
+                                        Log.i(TAG_LOG, "Resposta Json Friends -->" + response.toString());
+                                        Log.i(TAG_LOG, jsonArray.toString());
+                                        listaContatosAmigosFacebook = convertFacebookJsonToContato(jsonArray);
 
+                                    }
+                                }
+                        );
+                        Bundle parameters = new Bundle();
+                        parameters.putString("fields", "id, first_name, last_name, email, gender, birthday, location"); // Parametros que pedimos ao facebook
+                        requestMe.setParameters(parameters);
+                        requestFriends.setParameters(parameters);
 
-                                    IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
+                        GraphRequestBatch batch = new GraphRequestBatch(
+                                requestMe, requestFriends);
 
-                                    Log.i("ContatoLog", "RespostaJsonFriends->" + response.toString());
+                        batch.addCallback(new GraphRequestBatch.Callback() {
+                            @Override
+                            public void onBatchCompleted(GraphRequestBatch graphRequests) {
+                                //aqui ele chama qdo terminar os dois requests do facebook
 
-                                    Log.i("ContatoLogJFriend", jsonArray.toString());
-                                    Log.i("ContatoLogRFriend" , response.toString());
+                                if(contatoObtidoPeloFacebook!=null){
 
-                                    List<Contato> contatoList = convertFacebookJsonToContato(jsonArray,getIdUsuarioLogado());
+                                    ContatoRepositorio repo = new ContatoRepositorio();
 
-                                    for(Contato contato: contatoList){
+                                    boolean resultado = repo.validarUsuarioFacebook(contatoObtidoPeloFacebook, tratamentoLogin);
+                                    // So adiciona os amigos se o login for feito com sucesso
+                                    if(!listaContatosAmigosFacebook.isEmpty() && resultado){
+                                        for (Contato contatoAmigo : listaContatosAmigosFacebook) {
 
-                                        if (contato.getEmail()==null){
-
-                                            gravarContato(contato, false, true);
-
-                                        }else {
-
-                                            Contato c = contatoRepositorio.getContatosByEmail(contato.getEmail(), new IContatoRepositorio.OnGetContatoByIdCallback() {
+                                            repo.addContatoPeloIdFacebookOuEmail(contatoAmigo, new IContatoRepositorio.OnSaveContatoCallback() {
                                                 @Override
                                                 public void onSuccess(Contato contato) {
-
-                                                    if (contato == null) {
-                                                        Log.i("ContatoLogFriendAdd", contato.toString());
-                                                        gravarContato(contato, false, true);
-                                                    }
-
+                                                    Toast.makeText(getApplicationContext(),"Obtendo amigos pelo Facebook feito com sucesso!",Toast.LENGTH_LONG);
+                                                    salvarFotoPerfilFacebook(contato);
                                                 }
 
                                                 @Override
                                                 public void onError(String message) {
-
+                                                    Toast.makeText(getApplicationContext(),"Erro ao obter os amigos do Facebook!",Toast.LENGTH_LONG);
                                                 }
-
                                             });
-
                                         }
-
                                     }
+                                    repo.close();
+                                    realizaNavegacao();
                                 }
                             }
-                    );
-                    Bundle parameters = new Bundle();
-                    parameters.putString("fields", "id, first_name, last_name, email,gender, birthday, location"); // Parámetros que pedimos a facebook
-                    requestMe.setParameters(parameters);
-                    requestFriends.setParameters(parameters);
-
-                    GraphRequestBatch batch = new GraphRequestBatch(
-                            requestMe,requestFriends);
-
-                    batch.addCallback(new GraphRequestBatch.Callback() {
-                        @Override
-                        public void onBatchCompleted(GraphRequestBatch graphRequests) {
-                            //TODO: aqui ele chama qdo terminar os dois requests do facebook
-
-                            Intent it = new Intent(LoginActivity.this, PrincipalActivity.class);
-                            it.putExtra(Constantes.ID_USUARIO_PESQUISA,getIdUsuarioLogado() );
-                            startActivity(it);
-                        }
-                    });
-
-                    batch.executeAsync();
-                }
+                        });
+                        batch.executeAsync();
+                    }
 
                     @Override
                     public void onCancel() {
-                        Log.i("ContatoLogCancel", "Entrou no onCancel Facebook");
+                        Log.i(TAG_LOG, "Entrou no onCancel Facebook");
                     }
 
                     @Override
                     public void onError(FacebookException exception) {
-                        Log.i("ContatoLogLoginActivity", "Entrou no onError Facebook");
+                        Log.i(TAG_LOG, "Entrou no onError Facebook");
                         exception.printStackTrace();
-                        Log.i("ContatoLogLoginActivity", exception.toString());
+                        Log.i(TAG_LOG, exception.toString());
                     }
-            });
+                });
     }
 
     @Override
     protected void onStart() {
-
         super.onStart();
-/*
-        IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
-        contatoRepositorio.getAllContatos(new IContatoRepositorio.OnGetAllContatosCallback() {
-            @Override
-            public void onSuccess(RealmResults<Contato> itens) {
-                Log.i("ContatoLog", "Quantidade Itens => "+itens.size());
-            }
-
-            @Override
-            public void onError(String message) {
-                Log.i("ContatoLogGetAll", message);
-            }
-        });
-
-*/
-        //
         // Caso o cara retorne da ActivityPrincipal para cá "desloga" ele do Facebook e obriga
         // ele a relogar pra desfazer a caca que ele fez
-        //
-
         LoginManager.getInstance().logOut();
     }
 
@@ -218,153 +256,41 @@ public class LoginActivity extends AppCompatActivity {
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-    private boolean incluirUsuarioFacebookComoContatoPrincipal(Contato contato){
-
-        if(!usuarioJaRegistradoComoContato(contato)){
-            gravarContato(contato,true,true);
-            return true;
-        }
-
-        return false;
-    }
-
-    private boolean usuarioJaRegistradoComoContato(Contato contato){
-
+    public void deleteAll(View v) {
+        //TODO remover deposi dos testes
         IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
-
-        Log.i("ContatoLog","IdProfile-"+contato.getId_usuario());
-        List<Contato> contatoList = contatoRepositorio.getAllContatosByUsuarioId(contato.getId_usuario(), new IContatoRepositorio.OnGetAllContatosCallback() {
-            @Override
-            public void onSuccess(RealmResults<Contato> itens) {
-                Log.i("ContatoLog","Sucesso na Consulta Usuario Id->" + itens.size() );
-            }
-
-            @Override
-            public void onError(String message) {
-                Log.i("ContatoLog","Erro Consulta Usuario Id ==> "+message);
-            }
-        });
-        contato = null;
-        Log.i("ContatoLog","Quantidade Por Id Usuario->"+contatoList.size());
-        for(Contato item : contatoList){
-            Log.i("ContatoLog","Item-"+item.getNome() + " ID_Usuario-" + item.getId_usuario() + " Id-" + item.getId());
-            if(item.isUsuarioPrincipal()){
-                Log.i("ContatoLog","E usuario Principal");
-                contato = item;
-                break;
-            }
-        }
-
-        return (contato != null && contato.getId_usuario()!=null && !contato.getId_usuario().trim().isEmpty());
-    }
-
-    public void deleteAll(View v){
-
-
-        IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
-        contatoRepositorio.deleteContatoById( "", new IContatoRepositorio.OnDeleteContatoCallback() {
+        contatoRepositorio.deleteContatoById("", new IContatoRepositorio.OnDeleteContatoCallback() {
             @Override
             public void onSuccess() {
-                Log.i("ContatoLog","Sucesso no delete all");
+                Log.i(TAG_LOG, "Sucesso no delete all");
             }
 
             @Override
             public void onError(String message) {
-                Log.i("ContatoLog","Erro delete all ==> "+message);
+                Log.i(TAG_LOG, "Erro delete all ==> " + message);
             }
         });
     }
 
-    private void gravarContato(Contato contato, boolean isPrincipal,boolean isViaFacebook){
-
-        try {
-
-            Log.i("ContatoLog", "IdUsuarioFace" + contato.getId_usuario());
-
-            contato.setUsuarioPrincipal(isPrincipal);
-
-            IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
-
-            IContatoRepositorio.OnSaveContatoCallback callBackFace =
-                    new IContatoRepositorio.OnSaveContatoCallback() {
-                        @Override
-                        public void onSuccess(Contato contato) {
-
-                            Log.i("ContatoLog", "Sucesso na Gravacao");
-                            Log.i("ContatoLog", "Caminho Login" + contato.getCaminhoFoto());
-
-                            BasicImageDownloader download = new BasicImageDownloader(new BasicImageDownloader.OnImageLoaderListener( ) {
-                                @Override
-                                public void onError(BasicImageDownloader.ImageError error) {
-
-                                }
-
-                                @Override
-                                public void onProgressChange(int percent) {
-
-                                }
-
-                                @Override
-                                public void onComplete(Bitmap result) {
-
-                                }
-                            });
-                            String url = "https://graph.facebook.com/" + contato.getId() + "/picture?width=200&height=150";
-                            Log.i("ContatoLog","Caminho da foto-> "+ contato.getCaminhoFoto());
-                            download.download(url,false,contato);
-                        }
-
-                        @Override
-                        public void onError(String message) {
-                            Log.i("ContatoLog", "Erro ==> " + message);
-                        }
-                    };
-
-            IContatoRepositorio.OnSaveContatoCallback callBackSemFace =
-                    new IContatoRepositorio.OnSaveContatoCallback() {
-                        @Override
-                        public void onSuccess(Contato contato) {
-                            Log.i("ContatoLog", "Sucesso na Gravacao");
-                        }
-
-                        @Override
-                        public void onError(String message) {
-                            Log.i("ContatoLog", "Erro ==> " + message);
-                        }
-                    };
-
-            if(isViaFacebook) {
-                contato = contatoRepositorio.addContato(contato, callBackFace);
-            } else {
-                contato = contatoRepositorio.addContato(contato, callBackSemFace);
-            }
-
-            Log.i("ContatoLog", "contato adicionado =>" + contato.toString());
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-    }
-
-    private Contato convertFacebookJsonToContato(JSONObject object, String id) {
+    private Contato convertFacebookJsonToContato(JSONObject object) {
 
         try {
             Contato contato = new Contato();
 
-            if(id == null || id.isEmpty()){
-                id = object.getString("id");
-            }
+            String id = object.getString("id");
+
+            contato.setIdFacebook(id);
 
             try {
                 URL profile_pic = new URL("https://graph.facebook.com/" + id + "/picture?width=200&height=150");
-                Log.i("ContatoLogProfilePic", profile_pic + "");
+                Log.i(TAG_LOG, profile_pic + "");
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
                 return null;
             }
 
-            contato.setId_usuario(id);
+
             if (object.has("first_name")) {
                 contato.setNome(object.getString("first_name"));
             }
@@ -378,8 +304,8 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             if (object.has("birthday")) {
-                SimpleDateFormat sdf = new SimpleDateFormat("mm/dd/yyyy");
-                contato.setDataNascimento( sdf.parse(object.getString("birthday")));
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                contato.setDataNascimento(sdf.parse(object.getString("birthday")));
             }
 
             if (object.has("gender")) {
@@ -389,101 +315,120 @@ public class LoginActivity extends AppCompatActivity {
             if (object.has("location")) {
                 object.getJSONObject("location").getString("name");
             }
-            Log.i("ContatoLog","contato Json =>"+ contato.toString());
+            Log.i(TAG_LOG, "contato Json =>" + contato.toString());
             return contato;
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private List<Contato> convertFacebookJsonToContato(JSONArray object,String id) {
+    private List<Contato> convertFacebookJsonToContato(JSONArray object) {
         List<Contato> listaContato = new ArrayList<>();
 
         try {
             if (object.length() > 0) {
                 for (int i = 0; i < object.length(); i++) {
-                    listaContato.add(convertFacebookJsonToContato(object.optJSONObject(i),id));
+                    listaContato.add(convertFacebookJsonToContato(object.optJSONObject(i)));
                 }
             }
 
             return listaContato;
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return listaContato;
     }
 
-    public void esqueciMinhaSenha(View v){
+    public void esqueciMinhaSenha(View v) {
         Toast.makeText(LoginActivity.this, "Esqueci minha senha nao implementado", Toast.LENGTH_LONG).show();
 
     }
 
-    public void lembrarSenha(View v){
+    public void lembrarSenha(View v) {
         Toast.makeText(LoginActivity.this, "Lembrar senha nao implementado", Toast.LENGTH_LONG).show();
     }
 
-    public void logarComLoginSenha(View v){
+    public void logarComLoginSenha(View v) {
+        Log.i(TAG_LOG,"Entrou no logarComLoginSenha");
 
-        dialog = ProgressDialog.show(v.getContext(), "Aguarde", "Validando conta...", true);
+        //Toast.makeText(LoginActivity.this,"Teste LoginActivity",Toast.LENGTH_SHORT).show();
 
-        final EditText loginText = (EditText) this.findViewById(R.id.etxtEmail);
-        EditText senhaText = (EditText) this.findViewById(R.id.etxtSenha);
+        dialog = ProgressDialog.show(LoginActivity.this, "Aguarde", "Validando conta...", true);
+        dialog.show();
+        /*
+        new Thread(){
+            public void run(){
+                try {
+                    Thread.sleep(9000);
+                    dialog.dismiss();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+        */
+        try {
 
-        if(loginText.getText().toString() != null && senhaText.getText().toString() != null){
 
-            ContatoRepositorio c = new ContatoRepositorio();
+            ContatoRepositorio repo = new ContatoRepositorio();
+            boolean res = repo.validarUsuarioSenha(loginText.getText().toString(), senhaText.getText().toString(), tratamentoLogin);
 
-            c.getContatosByEmail(loginText.getText().toString(), new IContatoRepositorio.OnGetContatoByIdCallback() {
+            Log.i(TAG_LOG,"Resulado do Login" + res);
+
+            repo.close();
+            realizaNavegacao();
+        } catch ( Exception e){
+            e.printStackTrace();
+            Toast.makeText(LoginActivity.this,"Erro ao logar",Toast.LENGTH_LONG);
+        }
+
+        dialog.dismiss();
+
+    }
+
+    private boolean salvarFotoPerfilFacebook(Contato contato){
+        //TODO: implementar uma forma de salvar a foto de perfil do amigo
+        Log.i(TAG_LOG, "Salvar Foto Perfil");
+        if(contato== null || contato.getId() == null || contato.getId().trim().isEmpty() ){
+            return false;
+        }
+
+        try {
+            File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+            contato.setCaminhoFoto(dir + "/" + contato.getId() + ".jpg");
+            Log.i(TAG_LOG, "Caminho da foto-> " + contato.getCaminhoFoto());
+
+            BasicImageDownloader downloader = new BasicImageDownloader(new BasicImageDownloader.OnImageLoaderListener() {
+                @Override
+                public void onError(BasicImageDownloader.ImageError error) {
+                    Log.i(TAG_LOG, "Erro ao baixar Foto do face ");
+                }
 
                 @Override
-                public void onSuccess(Contato contato) {
-
-                    dialog.dismiss();
-
-                    if(contato == null){
-
-                        Intent it = new Intent(LoginActivity.this, ContatoCadastramentoActivity.class);
-
-                        contato = new Contato();
-                        contato.setEmail(loginText.getText().toString());
-                        contato.setUsuarioPrincipal(true);
-                        it.putExtra(Constantes.NOVO,contato );
-                        startActivity(it);
-
-                    } else {
-
-                        Intent it = new Intent(LoginActivity.this, PrincipalActivity.class);
-                        startActivity(it);
-
-                    }
+                public void onProgressChange(int percent) {
 
                 }
 
                 @Override
-                public void onError(String message) {
-
-                    dialog.dismiss();
-
+                public void onComplete(Bitmap result) {
+                    Log.i(TAG_LOG, "Imagem baixada");
                 }
             });
+            String url = "https://graph.facebook.com/" + contato.getIdFacebook() + "/picture?width=200&height=150";
 
-        } else {
-            Toast.makeText(LoginActivity.this, "Informe o Login ou senha", Toast.LENGTH_LONG).show();
+            downloader.download(url, false, contato);
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
-    public void naoTenhoConta(View v){
+
+    public void naoTenhoConta(View v) {
+        //TODO acho que nao precisa mais desse metodo pois se o cara nao existe ele ja vai para tela de cadastro
         Toast.makeText(LoginActivity.this, "Ainda nao tenho conta nao implementado", Toast.LENGTH_LONG).show();
     }
-
-    public String getIdUsuarioLogado() {
-        return idUsuarioLogado;
-    }
-
-    public void setIdUsuarioLogado(String idUsuarioLogado) {
-        this.idUsuarioLogado = idUsuarioLogado;
-    }
-
 }
-

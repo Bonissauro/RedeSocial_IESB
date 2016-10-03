@@ -22,6 +22,7 @@ import java.util.List;
 import br.com.bonysoft.redesocial_iesb.modelo.Contato;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.ContatoRepositorio;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.IContatoRepositorio;
+import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
 import io.realm.RealmResults;
 
 public class PrincipalActivity extends AppCompatActivity implements
@@ -30,7 +31,7 @@ public class PrincipalActivity extends AppCompatActivity implements
         ConfiguracaoFragment.OnFragmentInteractionListener{
 
     public static int VK_CADASTROU_NOVO_CONTATO = 1111;
-
+    final String TAG_LOG = "PrincipalActivity";
     MyContatoRecyclerViewAdapter myContatoRecyclerViewAdapter;
 
     List<Contato> listaContatos;
@@ -50,6 +51,13 @@ public class PrincipalActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_principal);
+
+        String id =getIntent().getStringExtra(Constantes.ID_USUARIO_LOGADO);
+
+        Toast.makeText(this,"ID_USUARIO " + id,Toast.LENGTH_SHORT);
+
+        Log.i(TAG_LOG,"Entrou no Principal-->"+id);
+
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -159,7 +167,6 @@ public class PrincipalActivity extends AppCompatActivity implements
         }else if (id == R.id.idMenuPrincipal_Action_bluetooth) {
 
             Intent it = new Intent(PrincipalActivity.this, BluetoothSelecaoActivity.class);
-
             startActivity(it);
 
             return true;

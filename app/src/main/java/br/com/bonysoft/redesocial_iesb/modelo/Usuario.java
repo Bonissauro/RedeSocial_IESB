@@ -3,7 +3,7 @@ package br.com.bonysoft.redesocial_iesb.modelo;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Usuario {
+public class Usuario  {
 
     public String id_usuario;
     public String nome;

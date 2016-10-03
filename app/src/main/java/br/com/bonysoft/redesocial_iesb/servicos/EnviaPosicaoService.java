@@ -12,16 +12,10 @@ import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
-import br.com.bonysoft.redesocial_iesb.Constantes;
 import br.com.bonysoft.redesocial_iesb.modelo.Contato;
-import br.com.bonysoft.redesocial_iesb.modelo.Localizacao;
 import io.realm.Realm;
 
 /**

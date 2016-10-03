@@ -40,7 +40,7 @@ public class RedeSocialRealm extends Application {
 
         //TODO ver se ta certo esse metodo de alarme
         //agendarAlarme()
-        testeFirebase();
+        //testeFirebase();
     }
 
     public void testeFirebase(){

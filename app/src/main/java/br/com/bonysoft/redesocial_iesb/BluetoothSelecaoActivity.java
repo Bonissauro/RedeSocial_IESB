@@ -1,6 +1,5 @@
 package br.com.bonysoft.redesocial_iesb;
 
-import android.*;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -16,6 +15,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -26,8 +27,13 @@ import java.util.List;
 import java.util.Set;
 
 import br.com.bonysoft.redesocial_iesb.modelo.BluetoothPareado;
+import br.com.bonysoft.redesocial_iesb.modelo.Contato;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.BluetoothPareadoRepositorio;
+import br.com.bonysoft.redesocial_iesb.realm.repositorio.ContatoRepositorio;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.IBluetoothPareadoRepositorio;
+import br.com.bonysoft.redesocial_iesb.realm.repositorio.IContatoRepositorio;
+import br.com.bonysoft.redesocial_iesb.utilitarios.ComunicadorBluethooth;
+import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
 import io.realm.RealmResults;
 
 public class BluetoothSelecaoActivity extends AppCompatActivity {
@@ -39,8 +45,8 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
     List<BluetoothPareado> listaAparelhos;
 
     BluetoothAdapter btAdapter;
-
-
+    Button btnEnvioCartao ;
+    Contato enviarContato;
     TextView txtTitulo;
 
     ProgressDialog dialog;
@@ -57,6 +63,8 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
         setTitle("Aparelhos conhecidos");
 
         txtTitulo = (TextView) findViewById(R.id.idBluetoothSelecao_textoTitulo);
+        btnEnvioCartao = (Button)  findViewById(R.id.btnEnviarCartao);
+        btnEnvioCartao.setEnabled(false);
 
         listaAparelhos = new ArrayList<BluetoothPareado>();
 
@@ -84,8 +92,14 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
 
         if(!checkPermissaoBluetooth()){
            Toast.makeText(this,"Sem permissao concedida nao e possivel acessar essa tela",Toast.LENGTH_LONG);
+        }else{
+            btnEnvioCartao.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    envioCartao();
+                }
+            });
         }
-
     }
 
     private boolean checkPermissaoBluetooth(){
@@ -178,15 +192,34 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
 
         }else{
 
-            int posicao=0;
 
-            for (BluetoothPareado o : listaAparelhos){
+            for(int idx =0 ;idx <=listaAparelhos.size();idx++ ){
 
                 RadioButton rdbtn = new RadioButton(this);
 
-                rdbtn.setId(posicao++);
-                rdbtn.setText(o.getNome());
+                rdbtn.setId(idx);
+                rdbtn.setText(listaAparelhos.get(idx).getNome());
                 rdgrp.addView(rdbtn);
+
+                rdbtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if(isChecked){
+
+
+                            String endereco = listaAparelhos.get(buttonView.getId()).getEndereco();
+
+                            ComunicadorBluethooth.getInstance().start();
+
+                            ComunicadorBluethooth.getInstance().connect(endereco);
+                        }else{
+                            ComunicadorBluethooth.getInstance().disconnect();
+                        }
+
+                    btnEnvioCartao.setEnabled(isChecked);
+
+                    }
+                });
 
             }
 
@@ -201,6 +234,26 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
         }
 
         dialog.dismiss();
+
+    }
+
+    private void envioCartao(){
+        String id = getIntent().getStringExtra(Constantes.ID_USUARIO_LOGADO);
+
+        ContatoRepositorio repo = new ContatoRepositorio();
+        repo.getContatoById(id, new IContatoRepositorio.OnGetContato() {
+            @Override
+            public void onSuccess(Contato contato) {
+
+                ComunicadorBluethooth.getInstance().send(contato.nomeCompleto()+ Constantes.FIM_TRANSMISSAO);
+            }
+
+            @Override
+            public void onError(String message) {
+
+            }
+        });
+
 
     }
 

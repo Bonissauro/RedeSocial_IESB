@@ -1,27 +1,23 @@
 package br.com.bonysoft.redesocial_iesb;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.List;
 
 import br.com.bonysoft.redesocial_iesb.ContatoFragment.OnListFragmentInteractionListener;
 
 import br.com.bonysoft.redesocial_iesb.modelo.Contato;
+import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
 
 public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContatoRecyclerViewAdapter.ViewHolder> {
 
@@ -94,7 +90,7 @@ public class MyContatoRecyclerViewAdapter extends RecyclerView.Adapter<MyContato
                 PrincipalActivity pa = (PrincipalActivity) v.getContext();
 
                 Intent it = new Intent(pa, ContatoCadastramentoActivity.class);
-                it.putExtra(Constantes.id,contato.getId());
+                it.putExtra(Constantes.ID_CONTATO,contato.getId());
                 pa.startActivityForResult(it,111);
 
                 return false;

@@ -35,4 +35,11 @@
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_autorenew_white_48dp" />
 
+    <Button
+        android:text="Enviar Cartão"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:id="@+id/btnEnviarCartao" />
+
 </android.support.design.widget.CoordinatorLayout>

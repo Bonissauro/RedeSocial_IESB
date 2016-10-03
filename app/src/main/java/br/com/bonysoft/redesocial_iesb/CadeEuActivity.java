@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import br.com.bonysoft.redesocial_iesb.servicos.EnviaPosicaoService;
+import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
 
 public class CadeEuActivity extends FragmentActivity
         implements
@@ -35,7 +36,7 @@ public class CadeEuActivity extends FragmentActivity
             LocationListener
 {
 
-    public static final String TAG = CadeEuActivity.class.getSimpleName();
+    String TAG_LOG = Constantes.TAG_LOG;
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
@@ -125,7 +126,7 @@ public class CadeEuActivity extends FragmentActivity
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
-        Log.i(TAG, "Location services connected.");
+        Log.i(TAG_LOG, "Location services connected.");
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -167,7 +168,7 @@ public class CadeEuActivity extends FragmentActivity
 
     private void handleNewLocation(Location location) {
 
-        Log.d(TAG, location.toString());
+        Log.d(TAG_LOG, location.toString());
 
         double currentLatitude  = location.getLatitude();
         double currentLongitude = location.getLongitude();
@@ -195,12 +196,12 @@ public class CadeEuActivity extends FragmentActivity
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.i(TAG, "Location services disconnected.");
+        Log.i(TAG_LOG, "Location services disconnected.");
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.i(TAG, "Location services failed.");
+        Log.i(TAG_LOG, "Location services failed.");
     }
 
     private void marcarLocalizacaoUsuario(Location location) {

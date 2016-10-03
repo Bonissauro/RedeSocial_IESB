@@ -1,4 +1,4 @@
-package br.com.bonysoft.redesocial_iesb;
+package br.com.bonysoft.redesocial_iesb.utilitarios;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -154,7 +154,7 @@ public class BasicImageDownloader {
             }
 
             private String saveToInternalStorage(Bitmap bitmapImage, Contato contato){
-                File file = new File(contato.getCaminhoFoto() );
+                File file = new File(contato.getCaminhoFoto());
                 FileOutputStream fos = null;
                 try {
                     InputStream inputStream = new FileInputStream(file);

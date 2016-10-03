@@ -25,6 +25,7 @@
         android:backgroundTint="@color/primary_light"
         android:textAlignment="center"
         android:ems="10"
+        android:maxLength="8"
         android:id="@+id/etxtSenha"
         android:layout_gravity="center_horizontal"
         android:hint="Senha de acesso" />
