@@ -34,4 +34,12 @@ public class BluetoothPareado extends RealmObject {
         this.endereco = endereco;
     }
 
+    public BluetoothPareado copy(){
+        BluetoothPareado b = new BluetoothPareado();
+
+        b.setEndereco(this.getEndereco());
+        b.setNome(this.getNome());
+
+        return b;
+    }
 }

@@ -14,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -42,6 +43,8 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
     final static String VK_MENSAGEM_EXISTE_MAIS_DE_UM_APARELHO = "Estes são os aparelhos já pareados via bluetooth com o seu! Selecione um deles para conectar ou clique em \"Refresh\", logo abaixo, para efetuar uma nova pesquisa.";
     final static String VK_MENSAGEM_NAO_EXISTE_APARELHO        = "Não há aparelhos Bluetooth conhecidos. Clique no botão \"Refresh\", logo abaixo, para pesquisar os aparelhos próximos neste momento.";
 
+    String TAG_LOG = "BLUETOOTH1";//Constantes.TAG_LOG;
+
     List<BluetoothPareado> listaAparelhos;
 
     BluetoothAdapter btAdapter;
@@ -64,7 +67,7 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
 
         txtTitulo = (TextView) findViewById(R.id.idBluetoothSelecao_textoTitulo);
         btnEnvioCartao = (Button)  findViewById(R.id.btnEnviarCartao);
-        btnEnvioCartao.setEnabled(false);
+        //btnEnvioCartao.setEnabled(false);
 
         listaAparelhos = new ArrayList<BluetoothPareado>();
 
@@ -91,24 +94,21 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
         });
 
         if(!checkPermissaoBluetooth()){
-           Toast.makeText(this,"Sem permissao concedida nao e possivel acessar essa tela",Toast.LENGTH_LONG);
+           Log.i(TAG_LOG,"SEM PERMISSAO");
+           Toast.makeText(getApplicationContext(),"Sem permissao concedida nao e possivel acessar essa tela",Toast.LENGTH_LONG).show();
         }else{
-            btnEnvioCartao.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    envioCartao();
-                }
-            });
+
         }
     }
-
+    //TODO rever essa logica de acesso aqui
     private boolean checkPermissaoBluetooth(){
         int hasPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
         if(hasPermission == PackageManager.PERMISSION_GRANTED){
            // discoveryBluetooth();
             continueProcessoBluetooth();
+            return true;
         } else {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, Constantes.REQUEST_COARSE_LOCATION_PERMISSIONS);
+            ActivityCompat.requestPermissions(BluetoothSelecaoActivity.this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, Constantes.REQUEST_COARSE_LOCATION_PERMISSIONS);
         }
         return false;
     }
@@ -164,6 +164,13 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
 
                 montaRadioGroup();
 
+                btnEnvioCartao.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        envioCartao();
+                    }
+                });
+
                 dialog.dismiss();
 
             }
@@ -180,6 +187,24 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
         });
     }
 
+    public void apagar(View v){
+        BluetoothPareadoRepositorio repo = new BluetoothPareadoRepositorio();
+
+        repo.deleteAll(new IBluetoothPareadoRepositorio.OnDeleteCallback() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(BluetoothSelecaoActivity.this,"Excluidos",Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(BluetoothSelecaoActivity.this,"ERRO-->" + message,Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+    }
+
     private void montaRadioGroup() {
 
         final RadioGroup rdgrp = (RadioGroup) findViewById(R.id.idBluetoothSelecao_radiogroup);
@@ -191,32 +216,50 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
             txtTitulo.setText(VK_MENSAGEM_NAO_EXISTE_APARELHO);
 
         }else{
+            Log.i(TAG_LOG,"Tamanho"+ listaAparelhos.size());
 
+            RadioButton rdbtnNenhum = new RadioButton(this);
+            rdbtnNenhum.setId(0);
+            rdbtnNenhum.setText("Nenhum");
+            rdgrp.addView(rdbtnNenhum);
+            rdbtnNenhum.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    Log.i(TAG_LOG,"Clicou no option Nenhum -->"+isChecked);
+                    if(isChecked){
+                        ComunicadorBluethooth.getInstance().disconnect();
+                        //btnEnvioCartao.setEnabled(false);
+                    }
+                }
+            });
 
-            for(int idx =0 ;idx <=listaAparelhos.size();idx++ ){
+            for(int idx = 1 ;idx < listaAparelhos.size()+1;idx++ ){
 
                 RadioButton rdbtn = new RadioButton(this);
 
-                rdbtn.setId(idx);
-                rdbtn.setText(listaAparelhos.get(idx).getNome());
+                Log.i(TAG_LOG,"Indice"+ (idx-1));
+                //Não sei pq so sei que eh assim funciona :0 , estranho né
+                rdbtn.setId(idx-(-1+1));
+                rdbtn.setText(listaAparelhos.get(idx-1).getNome());
                 rdgrp.addView(rdbtn);
-
+                Log.i(TAG_LOG,"Item"+ listaAparelhos.get(idx-1).getNome());
                 rdbtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        Log.i(TAG_LOG,"Clicou no option -->"+isChecked);
                         if(isChecked){
+                            String endereco = listaAparelhos.get(buttonView.getId()-1).getEndereco();
 
-
-                            String endereco = listaAparelhos.get(buttonView.getId()).getEndereco();
-
+                            Log.i(TAG_LOG,"Indice --> "+ buttonView.getId());
+                            Log.i(TAG_LOG,"Nome --> "+ listaAparelhos.get(buttonView.getId()-1).getNome());
+                            Log.i(TAG_LOG,"Endereco --> "+ listaAparelhos.get(buttonView.getId()-1).getEndereco());
                             ComunicadorBluethooth.getInstance().start();
-
                             ComunicadorBluethooth.getInstance().connect(endereco);
                         }else{
                             ComunicadorBluethooth.getInstance().disconnect();
                         }
 
-                    btnEnvioCartao.setEnabled(isChecked);
+                    //btnEnvioCartao.setEnabled(isChecked);
 
                     }
                 });
@@ -238,8 +281,10 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
     }
 
     private void envioCartao(){
-        String id = getIntent().getStringExtra(Constantes.ID_USUARIO_LOGADO);
-
+        //String id = getIntent().getStringExtra(Constantes.ID_USUARIO_LOGADO);
+        Log.i(TAG_LOG,"Envio de Cartao");
+        ComunicadorBluethooth.getInstance().send("ID_USUARIO-->"+ 234123 +"<--"+ Constantes.FIM_TRANSMISSAO);
+        /*
         ContatoRepositorio repo = new ContatoRepositorio();
         repo.getContatoById(id, new IContatoRepositorio.OnGetContato() {
             @Override
@@ -253,7 +298,7 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
 
             }
         });
-
+*/
 
     }
 
@@ -319,7 +364,7 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
 
         BluetoothPareadoRepositorio repositorio = new BluetoothPareadoRepositorio();
 
-        repositorio.add( objeto, new IBluetoothPareadoRepositorio.OnSaveCallback() {
+        repositorio.edit( objeto, new IBluetoothPareadoRepositorio.OnSaveCallback() {
 
             @Override
             public void onSuccess(BluetoothPareado objeto) {
@@ -335,6 +380,12 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
 
         });
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
     }
 
 }

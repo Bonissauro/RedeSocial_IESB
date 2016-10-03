@@ -262,7 +262,9 @@ public class LoginActivity extends AppCompatActivity {
         contatoRepositorio.deleteContatoById("", new IContatoRepositorio.OnDeleteContatoCallback() {
             @Override
             public void onSuccess() {
+
                 Log.i(TAG_LOG, "Sucesso no delete all");
+                Toast.makeText(LoginActivity.this,"Excluido todos os contatos",Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -270,6 +272,8 @@ public class LoginActivity extends AppCompatActivity {
                 Log.i(TAG_LOG, "Erro delete all ==> " + message);
             }
         });
+
+
     }
 
     private Contato convertFacebookJsonToContato(JSONObject object) {

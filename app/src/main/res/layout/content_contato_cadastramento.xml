@@ -108,8 +108,8 @@
                 android:id="@+id/edtTelefone"
                 android:backgroundTint="@color/primary_light"
                 android:layout_gravity="left"
-                android:inputType="text"
-                android:hint="Fone com DDD" />
+                android:inputType="phone"
+                android:hint="Telefone" />
 
             <EditText
                 android:layout_width="match_parent"

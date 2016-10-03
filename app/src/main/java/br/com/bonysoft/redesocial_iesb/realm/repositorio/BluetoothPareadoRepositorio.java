@@ -101,7 +101,7 @@ public class BluetoothPareadoRepositorio implements IBluetoothPareadoRepositorio
 
     @Override
     public BluetoothPareado getById(String id, OnGetByIdCallback callback) {
-
+        //TODO isso aqui da pau, nao tem essa propriedade id na classe
         Realm realm =  Realm.getDefaultInstance();
 
         BluetoothPareado objeto = realm.where(BluetoothPareado.class)

@@ -4,6 +4,7 @@ import android.bluetooth.*;
 import android.util.Log;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.UUID;
 
 /**
@@ -12,8 +13,10 @@ import java.util.UUID;
 
 public class ComunicadorBluethooth {
     private static final String BLUETOOTH_NAME = "BluetoothCartao";
+
     private static final UUID BLUETOOTH_UUID = UUID.fromString("0001101-0000-1000-8000-00805F9B34FB");
 
+    private final Charset UTF8_CHARSET = Charset.forName("UTF-8");
     private BluetoothServerThread serverThread = null;
     private BluetoothClientThread clientThread = null;
     private BluetoothSocket communicationSocket = null;
@@ -21,6 +24,8 @@ public class ComunicadorBluethooth {
     private boolean running = false;
     private InputStream input = null;
     private OutputStream output = null;
+
+    private static final int size = 1024;
 
     public static final int STATE_NONE = 0;
     public static final int STATE_LISTEN = 1;
@@ -69,13 +74,24 @@ public class ComunicadorBluethooth {
     }
 
     public void connect(String address) {
+        Log.i("BLUETOOTH1","Criano uma nova Thread de clientThread" );
         clientThread = new BluetoothClientThread(address);
         clientThread.setName("CLIENT THREAD");
         clientThread.start();
     }
 
     public void send(String text) {
-        clientThread.send((text + (char)3).getBytes());
+        Log.i("BLUETOOTH1","SEND Bruto--> " + text );
+        Log.i("BLUETOOTH1","SEND UTF8--> " + encodeUTF8(text) );
+        Log.i("BLUETOOTH1","SEND UTF8--> " + decodeUTF8(encodeUTF8(text)) );
+        //clientThread.send(encodeUTF8(text));
+        //Log.i("BLUETOOTH1","SEND CHAR--> " + (text + (char)3).getBytes() );
+        if(clientThread != null) {
+            clientThread.send(encodeUTF8(text));
+        } else {
+            Log.i("BLUETOOTH1","Cliente NULL--> ");
+
+        }
     }
 
     public void connected(BluetoothSocket socket) {
@@ -83,7 +99,7 @@ public class ComunicadorBluethooth {
             serverThread.cancel();
         }
 
-        Log.d("BLUETOOHT", "GET INPUT AND OUTPUT STREAM....");
+        Log.d("BLUETOOTH1", "GET INPUT AND OUTPUT STREAM....");
         communicationSocket = socket;
         try {
             input = socket.getInputStream();
@@ -92,9 +108,19 @@ public class ComunicadorBluethooth {
             e.printStackTrace();
         }
 
-        Log.d("BLUETOOHT", "CONNECTED!!!");
+        Log.d("BLUETOOTH1", "CONNECTED!!!");
 
         state = STATE_CONNECTED;
+    }
+
+
+
+    private String decodeUTF8(byte[] bytes) {
+        return new String(bytes, UTF8_CHARSET);
+    }
+
+    private byte[] encodeUTF8(String string) {
+        return string.getBytes(UTF8_CHARSET);
     }
 
     /**
@@ -108,6 +134,7 @@ public class ComunicadorBluethooth {
             try {
                 serverSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord(BLUETOOTH_NAME, BLUETOOTH_UUID);
             } catch (IOException e) {
+                Log.d("BLUETOOTH1", "BluetoothServerThread ERRRO-->"+e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -139,30 +166,48 @@ public class ComunicadorBluethooth {
         }
 
         public void run() {
+            Log.d("BLUETOOTH1", "BluetoothClientThread Rodando");
             setName("CLIENT THREAD");
             try {
                 BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(clientDevAddress);
-                clientSocket = bluetoothDevice.createRfcommSocketToServiceRecord(BLUETOOTH_UUID);
+                Log.i("BLUETOOTH1"," bluetoothDevice "+bluetoothDevice);
+
+                if(bluetoothDevice!=null){
+                    Log.i("BLUETOOTH1"," bluetoothDevice Name->"+bluetoothDevice.getName());
+                    Log.i("BLUETOOTH1"," bluetoothDevice Add->"+bluetoothDevice.getAddress());
+                }
+
+                clientSocket = bluetoothDevice.createInsecureRfcommSocketToServiceRecord(BLUETOOTH_UUID);
                 bluetoothAdapter.cancelDiscovery();
 
                 if (clientSocket != null) {
                     clientSocket.connect();
+                }else{
+                    Log.i("BLUETOOTH1"," clientSocket NULL ");
                 }
 
                 connected(clientSocket);
 
-                byte[] buffer = new byte[1024];
+                byte[] buffer = new byte[size];
                 int bytes;
                 while (running) {
                     try {
                         bytes = input.read(buffer);
-                        Log.d("BLUETOOTH", "message string bytes " + String.valueOf(bytes));
-                        Log.d("BLUETOOTH", "message buffer " + new String(buffer));
+
+                        Log.d("BLUETOOTH1", "message string bytes " + String.valueOf(bytes));
+                        Log.d("BLUETOOTH1", "message buffer " + new String(buffer));
+                        String s = decodeUTF8(buffer);
+                        Log.d("BLUETOOTH1", "Decodificado " + s);
+                        if(s.contains( Constantes.FIM_TRANSMISSAO)){
+                            Log.d("BLUETOOTH1", "POSSUI FIM ");
+                            running = false;
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
             } catch (IOException e) {
+                Log.d("BLUETOOTH1", "BluetoothClientThread ERRO-->" + e.getMessage());
                 e.printStackTrace();
                 ComunicadorBluethooth.this.start();
             }
@@ -171,6 +216,8 @@ public class ComunicadorBluethooth {
         public void send(byte[] data) {
             if (output != null) {
                 try {
+                    Log.i("BLUETOOTH1","Data-->" + data);
+                    Log.i("BLUETOOTH1","String-->" + decodeUTF8(data));
                     output.write(data);
                 } catch (IOException e) {
                     e.printStackTrace();
