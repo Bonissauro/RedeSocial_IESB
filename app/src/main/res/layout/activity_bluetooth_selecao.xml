@@ -43,7 +43,7 @@
 
     <Button
         android:text="Conectar"
-        android:layout_below="@+id/btnEnviarCartao"
+        android:layout_below="@+id/idBluetoothSelecao_radiogroup"
         android:onClick="conectar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
 
     <Button
         android:text="Enviar Cartão"
-        android:layout_below="@+id/idBluetoothSelecao_radiogroup"
+        android:layout_below="@+id/btnConectar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
