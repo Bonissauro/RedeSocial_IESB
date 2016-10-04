@@ -177,15 +177,27 @@ public class ComunicadorBluethooth {
                     Log.i("BLUETOOTH1"," bluetoothDevice Add->"+bluetoothDevice.getAddress());
                 }
 
-                //clientSocket = bluetoothDevice.createRfcommSocketToServiceRecord(BLUETOOTH_UUID);
-                clientSocket = bluetoothDevice.createInsecureRfcommSocketToServiceRecord(BLUETOOTH_UUID);
+                clientSocket = bluetoothDevice.createRfcommSocketToServiceRecord(BLUETOOTH_UUID);
+                //clientSocket = bluetoothDevice.createInsecureRfcommSocketToServiceRecord(BLUETOOTH_UUID);
 
-                bluetoothAdapter.cancelDiscovery();
+                if (!clientSocket.isConnected()){
+                    Log.i("BLUETOOTH1","SOCKET NAO CONECTADO");
+                }else {
+                    bluetoothAdapter.cancelDiscovery();
 
-                if (clientSocket != null) {
-                    clientSocket.connect();
-                }else{
-                    Log.i("BLUETOOTH1"," clientSocket NULL ");
+                    if (clientSocket != null) {
+                        try {
+                            clientSocket.connect();
+                            Log.i("BLUETOOTH1", " PASSOU PELO CONNECT ");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.i("BLUETOOTH1", " ERRO NO CLIENTE THREAD " + e.getMessage());
+                        }
+
+                    } else {
+                        Log.i("BLUETOOTH1", " clientSocket NULL ");
+                    }
+
                 }
 
                 connected(clientSocket);

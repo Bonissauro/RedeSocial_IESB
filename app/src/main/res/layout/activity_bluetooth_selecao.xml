@@ -42,12 +42,23 @@
         android:src="@drawable/ic_autorenew_white_48dp" />
 
     <Button
+        android:text="Conectar"
+        android:layout_below="@+id/btnEnviarCartao"
+        android:onClick="conectar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:id="@+id/btnConectar" />
+
+    <Button
         android:text="Enviar Cartão"
         android:layout_below="@+id/idBluetoothSelecao_radiogroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:id="@+id/btnEnviarCartao" />
+
+
 
     <Button
         android:text="Excluir Base Bluetooth"

@@ -49,6 +49,7 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
 
     BluetoothAdapter btAdapter;
     Button btnEnvioCartao ;
+    Button btnConectar;
     Contato enviarContato;
     TextView txtTitulo;
     String endereco;
@@ -68,7 +69,8 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
 
         txtTitulo = (TextView) findViewById(R.id.idBluetoothSelecao_textoTitulo);
         btnEnvioCartao = (Button)  findViewById(R.id.btnEnviarCartao);
-        //btnEnvioCartao.setEnabled(false);
+        btnConectar = (Button)  findViewById(R.id.btnConectar);
+        btnEnvioCartao.setEnabled(false);
 
         listaAparelhos = new ArrayList<BluetoothPareado>();
 
@@ -189,6 +191,16 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
         });
     }
 
+    public void conectar(View v){
+        Log.i(TAG_LOG,"Endereco --> "+ endereco);
+
+        if(endereco != null && !endereco.trim().isEmpty()){
+            ComunicadorBluethooth.getInstance().connect(endereco);
+        }
+        btnEnvioCartao.setEnabled(true);
+
+    }
+
     public void apagar(View v){
         BluetoothPareadoRepositorio repo = new BluetoothPareadoRepositorio();
 
@@ -255,7 +267,7 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
                             Log.i(TAG_LOG,"Indice --> "+ buttonView.getId());
                             Log.i(TAG_LOG,"Nome --> "+ listaAparelhos.get(buttonView.getId()-1).getNome());
                             Log.i(TAG_LOG,"Endereco --> "+ listaAparelhos.get(buttonView.getId()-1).getEndereco());
-                            
+                            btnConectar.setEnabled(true);
                             
                         }else{
                             //ComunicadorBluethooth.getInstance().disconnect();
@@ -288,7 +300,6 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
         
         Log.i(TAG_LOG,"Endereco --> "+ endereco);
         if(endereco != null && !endereco.trim().isEmpty()){
-            ComunicadorBluethooth.getInstance().connect(endereco);
             ComunicadorBluethooth.getInstance().send("ID_USUARIO-->"+ 234123 +"<--"+ Constantes.FIM_TRANSMISSAO);
         }
         
