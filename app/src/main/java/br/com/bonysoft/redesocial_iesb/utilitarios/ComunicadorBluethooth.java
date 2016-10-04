@@ -182,23 +182,22 @@ public class ComunicadorBluethooth {
 
                 if (!clientSocket.isConnected()){
                     Log.i("BLUETOOTH1","SOCKET NAO CONECTADO");
-                }else {
-                    bluetoothAdapter.cancelDiscovery();
+                }
+                bluetoothAdapter.cancelDiscovery();
 
-                    if (clientSocket != null) {
-                        try {
-                            clientSocket.connect();
-                            Log.i("BLUETOOTH1", " PASSOU PELO CONNECT ");
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.i("BLUETOOTH1", " ERRO NO CLIENTE THREAD " + e.getMessage());
-                        }
-
-                    } else {
-                        Log.i("BLUETOOTH1", " clientSocket NULL ");
+                if (clientSocket != null) {
+                    try {
+                        clientSocket.connect();
+                        Log.i("BLUETOOTH1", " PASSOU PELO CONNECT ");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.i("BLUETOOTH1", " ERRO NO CLIENTE THREAD " + e.getMessage());
                     }
 
+                } else {
+                    Log.i("BLUETOOTH1", " clientSocket NULL ");
                 }
+
 
                 connected(clientSocket);
 

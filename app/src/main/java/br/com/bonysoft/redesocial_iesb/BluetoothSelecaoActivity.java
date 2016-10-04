@@ -71,7 +71,7 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
         btnEnvioCartao = (Button)  findViewById(R.id.btnEnviarCartao);
         btnConectar = (Button)  findViewById(R.id.btnConectar);
         btnEnvioCartao.setEnabled(false);
-
+        btnConectar.setEnabled(false);
         listaAparelhos = new ArrayList<BluetoothPareado>();
 
         /*
@@ -168,12 +168,7 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
                 ComunicadorBluethooth.getInstance().start();
                 montaRadioGroup();
 
-                btnEnvioCartao.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        envioCartao();
-                    }
-                });
+
 
                 dialog.dismiss();
 
@@ -294,7 +289,7 @@ public class BluetoothSelecaoActivity extends AppCompatActivity {
 
     }
 
-    private void envioCartao(){
+    public void enviarCartao(View v){
         //String id = getIntent().getStringExtra(Constantes.ID_USUARIO_LOGADO);
         Log.i(TAG_LOG,"Envio de Cartao");
         
