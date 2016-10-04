@@ -177,7 +177,9 @@ public class ComunicadorBluethooth {
                     Log.i("BLUETOOTH1"," bluetoothDevice Add->"+bluetoothDevice.getAddress());
                 }
 
+                //clientSocket = bluetoothDevice.createRfcommSocketToServiceRecord(BLUETOOTH_UUID);
                 clientSocket = bluetoothDevice.createInsecureRfcommSocketToServiceRecord(BLUETOOTH_UUID);
+
                 bluetoothAdapter.cancelDiscovery();
 
                 if (clientSocket != null) {
@@ -198,9 +200,17 @@ public class ComunicadorBluethooth {
                         Log.d("BLUETOOTH1", "message buffer " + new String(buffer));
                         String s = decodeUTF8(buffer);
                         Log.d("BLUETOOTH1", "Decodificado " + s);
+
+
+
                         if(s.contains( Constantes.FIM_TRANSMISSAO)){
                             Log.d("BLUETOOTH1", "POSSUI FIM ");
                             running = false;
+                            /*
+                            Intent updateIntent = new Intent(MainActivity.ALARM_RECEIVED_EVENT);
+                            updateIntent.putExtra("LOC", loc);
+                            LocalBroadcastManager.getInstance(context).sendBroadcast(updateIntent);
+                            */
                         }
                     } catch (IOException e) {
                         e.printStackTrace();

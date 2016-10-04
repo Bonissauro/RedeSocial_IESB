@@ -1,5 +1,7 @@
 package br.com.bonysoft.redesocial_iesb;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -25,7 +27,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import br.com.bonysoft.redesocial_iesb.servicos.EnviaPosicaoService;
+import br.com.bonysoft.redesocial_iesb.servicos.AlarmeEnvioPosicaoService;
 import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
 
 public class CadeEuActivity extends FragmentActivity
@@ -57,8 +59,7 @@ public class CadeEuActivity extends FragmentActivity
 
         setContentView(R.layout.activity_cade_eu);
 
-        Intent startServiceIntent = new Intent(getApplicationContext(), EnviaPosicaoService.class);
-        getApplicationContext().startService(startServiceIntent);
+
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
@@ -293,5 +294,17 @@ public class CadeEuActivity extends FragmentActivity
         }
 
     }
+
+    // TODO vamos fazer a busca da localizacao dos contatos atualizar por um broacast ou pelo Realm?
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            /*
+            LatLng loc = intent.getParcelableExtra("LOC");
+            updateMap(loc);
+            */
+        }
+    };
 
 }

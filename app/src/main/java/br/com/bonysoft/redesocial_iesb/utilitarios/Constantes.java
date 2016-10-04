@@ -12,6 +12,8 @@ public class Constantes {
     public static final int RETURN_CODE_RESPONDER = 100;
     public static final int RETURN_CODE_CRIAR = 200;
 
+    public static final String ENVIO_POSICAO = "ENVIO_LOCAL";
+
     public static final String FIM_TRANSMISSAO =    "@@ƒ1µ@@";
 
     public static final String TAG_LOG = "Rede";

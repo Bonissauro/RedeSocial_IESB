@@ -182,6 +182,17 @@ public class ContatoRepositorio implements IContatoRepositorio {
         return contatoList;
     }
 
+    @Override
+    public String buscaEmailUsuarioLogado(){
+        Realm realm = Realm.getDefaultInstance();
+        Contato usuario = realm.where(Contato.class).isNotEmpty("senha").isNotNull("senha").findFirst();
+        if(usuario != null){
+            return usuario.getEmail();
+        }
+        return "";
+    }
+
+
     private boolean verificaSeExisteJaUsuarioCadastrado(){
         Realm realm = Realm.getDefaultInstance();
         Contato usuario = realm.where(Contato.class).isNotEmpty("senha").isNotNull("senha").findFirst();

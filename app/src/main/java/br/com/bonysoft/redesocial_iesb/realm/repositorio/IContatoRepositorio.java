@@ -39,6 +39,8 @@ public interface IContatoRepositorio {
 
     Contato addContato(Contato contato, OnSaveContatoCallback callback);
 
+    String buscaEmailUsuarioLogado();
+
     boolean validarUsuarioFacebook(Contato contato, OnGetContatoLogin callback);
 
     boolean validarUsuarioSenha(String email, String senha, OnGetContatoLogin callback);
