@@ -1,7 +1,9 @@
 package br.com.bonysoft.redesocial_iesb.servicos;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -40,28 +42,22 @@ public class EnviaPosicaoFireBaseService extends Service {
         localizacao = intent.getParcelableExtra(Constantes.ENVIO_POSICAO);
         Log.i(Constantes.TAG_LOG,"OnStartCommand-->" + localizacao);
 
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    @Override
-    public void onCreate() {
         ContatoRepositorio repo = new ContatoRepositorio();
         String email = repo.buscaEmailUsuarioLogado();
-        email = "teste@gmail.com";
 
         Log.i(Constantes.TAG_LOG,"Email de consulta de usuario-->"+ email);
         if(!email.isEmpty()){
-            Log.i(Constantes.TAG_LOG,"onCreate-->" + localizacao);
             Log.i(Constantes.TAG_LOG,"Entrou para chamar gravacao");
             gravaDadosFirebase(email,localizacao, FirebaseDatabase.getInstance().getReference("localizacao"));
         }
         repo.close();
+
+        return super.onStartCommand(intent, flags, startId);
     }
 
     private void gravaDadosFirebase(final String email, final LatLng location, final DatabaseReference objReferencia){
         Log.i(Constantes.TAG_LOG,"gravaDadosFirebase");
         Log.i(Constantes.TAG_LOG,"gravaDadosFirebase-->" + localizacao);
-
 
         objReferencia.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(
                 new ValueEventListener() {
@@ -90,6 +86,9 @@ public class EnviaPosicaoFireBaseService extends Service {
                            //objReferencia.push().setValue(localFire);
 
                             Log.i(Constantes.TAG_LOG,"Incluindo um novo local -->"+ localFire);
+
+                            objReferencia.push().setValue(localFire);
+                            /*
                             String mId=objReferencia.child("localizacao").push().getKey();
                             //Log.d("SERVICE","Local -->" + location.getLongitude() + "-" + location.getLatitude());
                             //47.83906625--15.6543783
@@ -97,6 +96,7 @@ public class EnviaPosicaoFireBaseService extends Service {
                             objReferencia.child(mId).child("email").setValue(localFire.email);
                             objReferencia.child(mId).child("longitude").setValue(localFire.longitude);
                             objReferencia.child(mId).child("latitude").setValue(localFire.latitude);
+                            */
                         } else {
 
                             Log.i(Constantes.TAG_LOG,"Update-->"+local.toString());
@@ -107,26 +107,6 @@ public class EnviaPosicaoFireBaseService extends Service {
                                 objReferencia.child(chave).child("latitude").setValue(location.latitude);
                             }
                         }
-                /*
-                LocalizacaoFireBase local = dataSnapshot.getValue(LocalizacaoFireBase.class);
-                Log.i(Constantes.TAG_LOG,"Resultado do firebase convertido -->"+ local);
-                if(local == null){
-                    Log.i(Constantes.TAG_LOG,"Inserindo Novo");
-
-                    LocalizacaoFireBase localFire =
-                            new LocalizacaoFireBase(email,location.latitude,location.longitude);
-
-                    objReferencia.push().setValue(localFire);
-
-
-                } else {
-                    Log.i(Constantes.TAG_LOG,"Update-->"+local.toString());
-                    String chave = dataSnapshot.getKey();
-                    Log.i(Constantes.TAG_LOG,"Id-->"+chave);
-
-                    objReferencia.child(chave).child("longitude").setValue(location.longitude);
-                    objReferencia.child(chave).child("latitude").setValue(location.latitude);
-                }*/
                     }
 
                     @Override
@@ -135,10 +115,8 @@ public class EnviaPosicaoFireBaseService extends Service {
                         Log.i(Constantes.TAG_LOG, "Erro dataBase -->" + databaseError.getDetails());
                     }
                 }
-
         );
     }
-
 
     public void testeFirebase(){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -169,4 +147,13 @@ public class EnviaPosicaoFireBaseService extends Service {
         objReferencia.updateChildren(childUpdates);
     }
 
+    @Override
+    public void onDestroy() {
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("servico_executando", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean ("servico_executando", false);
+        editor.commit();
+
+        super.onDestroy();
+    }
 }

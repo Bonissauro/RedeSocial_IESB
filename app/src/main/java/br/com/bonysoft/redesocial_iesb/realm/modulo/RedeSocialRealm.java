@@ -1,7 +1,9 @@
 package br.com.bonysoft.redesocial_iesb.realm.modulo;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -37,13 +39,7 @@ public class RedeSocialRealm extends Application {
 
         Fresco.initialize(this);
 
-        //getTeste();
-
-
-
-        Intent startServiceIntent = new Intent(getApplicationContext(), AlarmeEnvioPosicaoService.class);
-        getApplicationContext().startService(startServiceIntent);
-
+        iniciaServico();
         //TODO voltar isso aqui qdo habilitar o servico
         /*
         //Cria um alarme para enviar a posicao a cada 2 min para o firebase
@@ -54,9 +50,23 @@ public class RedeSocialRealm extends Application {
         Intent obtemPosicoes = new Intent(getApplicationContext(), ObtemLocalizacaoContatoService.class);
         getApplicationContext().startService(obtemPosicoes);
         */
+
+
     }
 
-//Como eu posso colocar a propriedade email como clausula da consulta se eu nao sei
+    private void iniciaServico(){
+        SharedPreferences sharedPref = this.getSharedPreferences("servico_executando",Context.MODE_PRIVATE);
+        boolean executando = sharedPref.getBoolean("servico_executando",false);
+
+        if(!executando){
+            Intent startServiceIntent = new Intent(getApplicationContext(), AlarmeEnvioPosicaoService.class);
+            getApplicationContext().startService(startServiceIntent);
+        }
+
+    }
+
+
+    //Como eu posso colocar a propriedade email como clausula da consulta se eu nao sei
     // a porra do id do elemento ???
     private void getTeste() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();

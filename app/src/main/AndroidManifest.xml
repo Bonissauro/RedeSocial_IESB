@@ -83,11 +83,9 @@
 
 
         <receiver android:name=".receiver.InicializacaoReceiver">
-<!--
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
--->
         </receiver>
 
         <receiver android:name=".receiver.ObtemPosicaoReceiver"/>
