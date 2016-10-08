@@ -6,8 +6,10 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import br.com.bonysoft.redesocial_iesb.receiver.ObtemPosicaoReceiver;
+import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
 
 /**
  * Created by panar on 03/10/2016.
@@ -23,7 +25,7 @@ public class AlarmeEnvioPosicaoService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
+        Log.i(Constantes.TAG_LOG,"CRIANDO ALARME");
         int seconds = 5;
         long doisMinutos = 120000;
 
@@ -33,5 +35,6 @@ public class AlarmeEnvioPosicaoService extends Service {
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
                 System.currentTimeMillis() + (seconds * 1000),doisMinutos, pendingIntent);
+        Log.i(Constantes.TAG_LOG,"ALARME CONFIGURADO");
     }
 }

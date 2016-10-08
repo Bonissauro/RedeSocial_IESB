@@ -24,11 +24,13 @@ public class ObtemPosicaoReceiver extends BroadcastReceiver {
 
         Log.i(Constantes.TAG_LOG,"onReceive ObtemPosicaoReceiver");
         if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ) {
-            Log.i(Constantes.TAG_LOG,"onReceive ObtemPosicaoReceiver Possui Permissao de LocalizacaoContatos");
+            Log.i(Constantes.TAG_LOG,"onReceive ObtemPosicaoReceiver Possui Permissao de Localizacao");
 
             LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
             Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             LatLng loc = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+
+            Log.i(Constantes.TAG_LOG,"Localizacao Long--> " + loc.longitude + " Lat--> " + loc.latitude);
 
             Intent startServiceIntent = new Intent(context, EnviaPosicaoFireBaseService.class);
 

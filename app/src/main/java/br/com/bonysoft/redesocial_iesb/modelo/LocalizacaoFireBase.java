@@ -27,14 +27,18 @@ public class LocalizacaoFireBase {
      */
 
     public String email;
-    public String latitude;
-    public String longitude;
-    public String uid;
+    public Double latitude;
+    public Double longitude;
 
     public LocalizacaoFireBase(){}
 
-    public LocalizacaoFireBase(String uid,String email, String latitude, String longitude) {
-        this.uid =uid;
+    public LocalizacaoFireBase(String email, String latitude, String longitude) {
+        this.email = email;
+        this.latitude = new Double(latitude);
+        this.longitude =  new Double(longitude);
+    }
+
+    public LocalizacaoFireBase(String email, double latitude, double longitude) {
         this.email = email;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -45,7 +49,6 @@ public class LocalizacaoFireBase {
 
         HashMap<String, Object> result = new HashMap<>();
 
-        result.put("uid", uid);
         result.put("email", email);
         result.put("latitude", latitude);
         result.put("longitude", longitude);
@@ -56,8 +59,7 @@ public class LocalizacaoFireBase {
     @Override
     public String toString() {
         return "LocalizacaoContatos{" +
-                "id_localizacao='" + uid + '\'' +
-                ", email='" + email + '\'' +
+                "email='" + email + '\'' +
                 ", latitude='" + latitude + '\'' +
                 ", longitude='" + longitude + '\'' +
                 '}';

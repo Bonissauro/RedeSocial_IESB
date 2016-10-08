@@ -17,11 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import br.com.bonysoft.redesocial_iesb.modelo.Contato;
+
 import br.com.bonysoft.redesocial_iesb.modelo.LocalizacaoContatos;
 import br.com.bonysoft.redesocial_iesb.modelo.LocalizacaoFireBase;
 import io.realm.Realm;
-import io.realm.RealmResults;
+
 
 /**
  * Created by panar on 03/10/2016.
@@ -56,8 +56,8 @@ public class ObtemLocalizacaoContatoService extends Service {
                         result.setId_localizacao(UUID.randomUUID().toString());
                     }
 
-                    result.setLatitude(local.latitude);
-                    result.setLongitude(local.longitude);
+                    result.setLatitude(local.latitude.toString());
+                    result.setLongitude(local.longitude.toString());
                     realm.insertOrUpdate(result);
 
                     realm.commitTransaction();
@@ -76,7 +76,7 @@ public class ObtemLocalizacaoContatoService extends Service {
                                    final LatLng location, final DatabaseReference objReferencia) {
         String key = objReferencia.child("posts").push().getKey();
 
-        LocalizacaoFireBase local = new LocalizacaoFireBase(uid,email,  location.latitude +"" ,  location.longitude +"");
+        LocalizacaoFireBase local = new LocalizacaoFireBase(email,  location.latitude +"" ,  location.longitude +"");
         Map<String, Object> localValues = local.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();
