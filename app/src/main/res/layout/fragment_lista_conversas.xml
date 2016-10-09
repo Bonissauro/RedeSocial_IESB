@@ -1,12 +1,13 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/listaConversasExistentes"
+    android:name="br.com.bonysoft.redesocial_iesb.ListaConversasFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ListaConversasFragment">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="AQUI MOSTRA A LISTA DE CONVERSAS" />
-
-</FrameLayout>
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:background="@color/icons"
+    app:layoutManager="LinearLayoutManager"
+    tools:context=".ListaConversasFragment"
+    tools:listitem="@layout/fragment_contato_msg" />

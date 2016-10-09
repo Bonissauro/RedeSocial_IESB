@@ -121,18 +121,15 @@ public class MensagemFragment extends Fragment {
                     //uma merda ne, mas nao conheco um jeito de colocar um OR na query do Firebase
                     Log.d(Constantes.TAG_LOG , "Populando o View Holder TextoView--> " + viewHolder.mTextoView);
                     Log.d(Constantes.TAG_LOG , "Populando o View Holder MSG --> " + msg);
-                    if(msg!= null && viewHolder != null &&  viewHolder.mTextoView != null){
-                            //&& (
-                     //   (msg.de.equalsIgnoreCase(emailContato) && msg.para.equalsIgnoreCase(emailUsuario) )
-                    //|| (msg.de.equalsIgnoreCase(emailUsuario) && msg.para.equalsIgnoreCase(emailContato) ) )){
+                    if(msg!= null && viewHolder != null &&  viewHolder.mTextoView != null && (
+                        (msg.de.equalsIgnoreCase(emailContato) && msg.para.equalsIgnoreCase(emailUsuario) )
+                     || (msg.de.equalsIgnoreCase(emailUsuario) && msg.para.equalsIgnoreCase(emailContato) ) )){
                         viewHolder.mTextoView.setText(msg.texto);
 
                         //LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         RelativeLayout.LayoutParams params =
                                 new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
                                         RelativeLayout.LayoutParams.WRAP_CONTENT);
-                        params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-
 
                         int color;
                         if(msg.de.equalsIgnoreCase(emailUsuario)) {
@@ -152,19 +149,10 @@ public class MensagemFragment extends Fragment {
 
                         viewHolder.mTextoView.setBackgroundResource(color);
                         viewHolder.mTextoView.setLayoutParams(params);
+                    }else if(viewHolder != null &&  viewHolder.mTextoView != null){
+                        viewHolder.mTextoView.setVisibility(View.GONE);
                     }
 
-
-                    //viewHolder.messengerTextView.setText(friendlyMessage.getName());
-                /*
-                if (friendlyMessage.getPhotoUrl() == null) {
-                    viewHolder.messengerImageView.setImageDrawable(ContextCompat.getDrawable(MainActivity.this,
-                            R.drawable.ic_account_circle_black_36dp));
-                } else {
-                    Glide.with(MainActivity.this)
-                            .load(friendlyMessage.getPhotoUrl())
-                            .into(viewHolder.messengerImageView);
-                }*/
                 }
             };
 

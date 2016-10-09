@@ -20,18 +20,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.bonysoft.redesocial_iesb.modelo.Contato;
+import br.com.bonysoft.redesocial_iesb.modelo.ContatoUltimaMsg;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.ContatoRepositorio;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.IContatoRepositorio;
 import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
 import io.realm.RealmResults;
 
 public class PrincipalActivity extends AppCompatActivity implements
-        ListaConversasFragment.OnFragmentInteractionListener,
+        ListaConversasFragment.OnListFragmentInteractionListener,
         ContatoFragment.OnListFragmentInteractionListener{
 
     public static int VK_CADASTROU_NOVO_CONTATO = 1111;
     final String TAG_LOG = "PrincipalActivity";
     MyContatoRecyclerViewAdapter myContatoRecyclerViewAdapter;
+    ContatoMensagemRecyclerViewAdapter contatoMensagemRecyclerViewAdapter;
 
     RealmResults<Contato> listaContatos;
 
@@ -99,10 +101,7 @@ public class PrincipalActivity extends AppCompatActivity implements
 
     }
 
-    @Override
-    public void onFragmentInteraction() {
 
-    }
 
     @Override
     public void onListFragmentInteractionContato(Contato item) {
@@ -198,7 +197,7 @@ public class PrincipalActivity extends AppCompatActivity implements
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return ContatoFragment.newInstance(position + 1);
+            return ContatoFragment.newInstance();
         }
 
         @Override
@@ -265,4 +264,8 @@ public class PrincipalActivity extends AppCompatActivity implements
 
     }
 
+    @Override
+    public void onListFragmentInteractionContato(ContatoUltimaMsg item) {
+
+    }
 }

@@ -34,7 +34,7 @@ public class ContatoFragment extends Fragment {
     public ContatoFragment() {
     }
 
-    public static ContatoFragment newInstance(int columnCount) {
+    public static ContatoFragment newInstance() {
         ContatoFragment fragment = new ContatoFragment();
         return fragment;
     }
@@ -70,14 +70,8 @@ public class ContatoFragment extends Fragment {
             mItemTouchHelper = new ItemTouchHelper(callback);
             mItemTouchHelper.attachToRecyclerView(recyclerView);
         }
-
-
-
-
         return view;
-
     }
-
 
     @Override
     public void onAttach(Context context) {

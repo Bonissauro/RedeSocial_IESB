@@ -60,6 +60,7 @@ public class ConversaActivity extends AppCompatActivity implements
                     Log.i(Constantes.TAG_LOG,"Incluindo nova Mensagem -->"+ msg);
 
                     ref.push().setValue(msg);
+                    mTextoMensagem.setText("");
                 }
             }
         });
