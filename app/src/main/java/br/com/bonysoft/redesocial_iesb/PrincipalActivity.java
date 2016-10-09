@@ -27,14 +27,13 @@ import io.realm.RealmResults;
 
 public class PrincipalActivity extends AppCompatActivity implements
         ConversaFragment.OnFragmentInteractionListener,
-        ContatoFragment.OnListFragmentInteractionListener,
-        ConfiguracaoFragment.OnFragmentInteractionListener{
+        ContatoFragment.OnListFragmentInteractionListener{
 
     public static int VK_CADASTROU_NOVO_CONTATO = 1111;
     final String TAG_LOG = "PrincipalActivity";
     MyContatoRecyclerViewAdapter myContatoRecyclerViewAdapter;
 
-    List<Contato> listaContatos;
+    RealmResults<Contato> listaContatos;
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
@@ -95,7 +94,6 @@ public class PrincipalActivity extends AppCompatActivity implements
 
         adapter.addFragment(new ContatoFragment(), "Contatos");
         adapter.addFragment(new ConversaFragment(), "Conversas");
-        //adapter.addFragment(new ConfiguracaoFragment(), "Configuração");
 
         viewPager.setAdapter(adapter);
 
@@ -160,7 +158,8 @@ public class PrincipalActivity extends AppCompatActivity implements
 
         if (id == R.id.idMenuPrincipal_Action_settings) {
 
-            Toast.makeText(this, "Abriu Configurações", Toast.LENGTH_LONG).show();
+            Intent it = new Intent(PrincipalActivity.this, ConfiguracaoActivity.class);
+            startActivity(it);
 
             return true;
 

@@ -26,15 +26,16 @@ public class AlarmeEnvioPosicaoService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.i(Constantes.TAG_LOG,"CRIANDO ALARME");
-        int seconds = 5;
+        int seconds = 10;
         long doisMinutos = 120000;
 
         Intent intent = new Intent(this, ObtemPosicaoReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
 
+        //Alarme de Envio e Recebimento de Posicao
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
                 System.currentTimeMillis() + (seconds * 1000),doisMinutos, pendingIntent);
-        Log.i(Constantes.TAG_LOG,"ALARME CONFIGURADO");
+        Log.i(Constantes.TAG_LOG,"ALARME CONFIGURADO PARA EXECUTAR EM 10 segundos");
     }
 }

@@ -81,27 +81,24 @@
             android:name=".CadeEuActivity"
             android:label="@string/title_activity_cade_eu" />
 
-
         <receiver android:name=".receiver.InicializacaoReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
-        <receiver android:name=".receiver.ObtemPosicaoReceiver"/>
+        <receiver android:name=".receiver.ObtemPosicaoReceiver" />
 
         <service
             android:name=".servicos.EnviaPosicaoFireBaseService"
             android:exported="false" />
-
         <service
             android:name=".servicos.AlarmeEnvioPosicaoService"
             android:exported="false" />
-        <!-- Servicos desabilitados
-               <service
-                   android:name=".servicos.ObtemLocalizacaoContatoService"
-                   android:exported="false" />
-               -->
+        <service
+            android:name=".servicos.ObtemLocalizacaoContatoService"
+            android:exported="false" />
+
+        <activity android:name=".ConfiguracaoActivity"></activity>
     </application>
 
 </manifest>

@@ -36,4 +36,5 @@
     <string name="title_activity_cade_eu">Map</string>
     <string name="title_activity_login_novo">Rede Social IESB</string>
 
+    <string name="servico_executando">ServicoEnvioPosicao</string>
 </resources>

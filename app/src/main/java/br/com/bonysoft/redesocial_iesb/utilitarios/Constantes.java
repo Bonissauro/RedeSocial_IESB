@@ -17,4 +17,8 @@ public class Constantes {
     public static final String FIM_TRANSMISSAO =    "@@ƒ1µ@@";
 
     public static final String TAG_LOG = "Rede";
+
+    public static final String SERVICO = "servicos";
+    public static final String SERVICO_ENVIO_EXEC = "servico_envio_executando";
+    public static final String SERVICO_REC_EXEC = "servico_rec_executando";
 }

@@ -3,6 +3,7 @@ package br.com.bonysoft.redesocial_iesb.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -12,6 +13,7 @@ import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
 
 import br.com.bonysoft.redesocial_iesb.servicos.EnviaPosicaoFireBaseService;
+import br.com.bonysoft.redesocial_iesb.servicos.ObtemLocalizacaoContatoService;
 import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
 
 /**
@@ -32,11 +34,21 @@ public class ObtemPosicaoReceiver extends BroadcastReceiver {
 
             Log.i(Constantes.TAG_LOG,"Localizacao Long--> " + loc.longitude + " Lat--> " + loc.latitude);
 
-            Intent startServiceIntent = new Intent(context, EnviaPosicaoFireBaseService.class);
+            SharedPreferences sharedPref = context.getSharedPreferences(Constantes.SERVICO,Context.MODE_PRIVATE);
+            boolean envio = sharedPref.getBoolean(Constantes.SERVICO_ENVIO_EXEC,true);
+            boolean rec = sharedPref.getBoolean(Constantes.SERVICO_REC_EXEC,true);
 
-            startServiceIntent.putExtra(Constantes.ENVIO_POSICAO, loc);
-            context.startService(startServiceIntent);
-
+            //Servico de Envio de Posicao do Usuario
+            if(envio) {
+                Intent startServiceIntent = new Intent(context, EnviaPosicaoFireBaseService.class);
+                startServiceIntent.putExtra(Constantes.ENVIO_POSICAO, loc);
+                context.startService(startServiceIntent);
+            }
+            //Servico de Recebimento de Posicao dos Contatos
+            if(rec) {
+                Intent startServiceRecebimento = new Intent(context, ObtemLocalizacaoContatoService.class);
+                context.startService(startServiceRecebimento);
+            }
 
         }
     }

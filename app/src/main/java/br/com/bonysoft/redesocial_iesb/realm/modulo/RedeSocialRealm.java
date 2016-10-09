@@ -13,6 +13,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import br.com.bonysoft.redesocial_iesb.R;
 import br.com.bonysoft.redesocial_iesb.modelo.LocalizacaoFireBase;
 import br.com.bonysoft.redesocial_iesb.servicos.AlarmeEnvioPosicaoService;
 import br.com.bonysoft.redesocial_iesb.servicos.ObtemLocalizacaoContatoService;
@@ -55,14 +56,14 @@ public class RedeSocialRealm extends Application {
     }
 
     private void iniciaServico(){
-        SharedPreferences sharedPref = this.getSharedPreferences("servico_executando",Context.MODE_PRIVATE);
-        boolean executando = sharedPref.getBoolean("servico_executando",false);
+        SharedPreferences sharedPref = this.getSharedPreferences(Constantes.SERVICO,Context.MODE_PRIVATE);
+        boolean envio = sharedPref.getBoolean(Constantes.SERVICO_ENVIO_EXEC,true);
+        boolean rec = sharedPref.getBoolean(Constantes.SERVICO_REC_EXEC,true);
 
-        if(!executando){
+        if(envio || rec){
             Intent startServiceIntent = new Intent(getApplicationContext(), AlarmeEnvioPosicaoService.class);
             getApplicationContext().startService(startServiceIntent);
         }
-
     }
 
 

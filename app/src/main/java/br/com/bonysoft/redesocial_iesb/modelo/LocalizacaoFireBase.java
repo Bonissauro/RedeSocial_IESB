@@ -30,7 +30,10 @@ public class LocalizacaoFireBase {
     public Double latitude;
     public Double longitude;
 
-    public LocalizacaoFireBase(){}
+    public LocalizacaoFireBase(){
+        latitude = 0d;
+        longitude = 0d;
+    }
 
     public LocalizacaoFireBase(String email, String latitude, String longitude) {
         this.email = email;

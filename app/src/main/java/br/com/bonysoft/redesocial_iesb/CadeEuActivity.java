@@ -27,8 +27,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import br.com.bonysoft.redesocial_iesb.modelo.Contato;
+import br.com.bonysoft.redesocial_iesb.modelo.LocalizacaoContatos;
 import br.com.bonysoft.redesocial_iesb.servicos.AlarmeEnvioPosicaoService;
 import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class CadeEuActivity extends FragmentActivity
         implements
@@ -49,6 +53,7 @@ public class CadeEuActivity extends FragmentActivity
     private MarkerOptions marcadorDaPosicaoAtualDoUsuario;
 
     private Marker marcador;
+    private Realm realm;
 
     private int quantos=0;
 
@@ -56,10 +61,9 @@ public class CadeEuActivity extends FragmentActivity
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        realm = Realm.getDefaultInstance();
 
         setContentView(R.layout.activity_cade_eu);
-
-
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
@@ -158,8 +162,22 @@ public class CadeEuActivity extends FragmentActivity
 
             handleNewLocation(location);
 
-        }
+            /* Se quiser colocar um filtro por distancia é so marcar aqui
+            Location center;
+            Location test;
+            float distanceInMeters = center.distanceTo(test);
+            boolean isWithin10km = distanceInMeters < 10000;
+            */
+            RealmResults<LocalizacaoContatos> results = realm.where(LocalizacaoContatos.class)
+                    .findAll().sort("email");
 
+            for(LocalizacaoContatos item : results){
+                //TODO colocar os novos pontos no mapa
+                Log.d(Constantes.TAG_LOG,"Localizacao dos amigos-->" + item);
+            }
+
+
+        }
     }
 
     @Override
@@ -307,4 +325,13 @@ public class CadeEuActivity extends FragmentActivity
         }
     };
 
+    @Override
+    protected void onDestroy() {
+
+        if(realm != null && !realm.isClosed()) {
+            realm.close();
+        }
+
+        super.onDestroy();
+    }
 }

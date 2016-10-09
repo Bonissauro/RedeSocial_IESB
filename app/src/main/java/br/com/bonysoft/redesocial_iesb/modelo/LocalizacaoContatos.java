@@ -5,14 +5,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by carlospanarello on 29/09/16.
  */
 
 public class LocalizacaoContatos  extends RealmObject implements Serializable {
-    public String id_localizacao;
 
+    @PrimaryKey
     public String email;
     public String latitude;
     public String longitude;
@@ -25,13 +26,7 @@ public class LocalizacaoContatos  extends RealmObject implements Serializable {
         this.longitude = longitude;
     }
 
-    public String getId_localizacao() {
-        return id_localizacao;
-    }
 
-    public void setId_localizacao(String id_localizacao) {
-        this.id_localizacao = id_localizacao;
-    }
 
     public String getEmail() {
         return email;
@@ -61,7 +56,6 @@ public class LocalizacaoContatos  extends RealmObject implements Serializable {
 
         HashMap<String, Object> result = new HashMap<>();
 
-        result.put("id_localizacao", id_localizacao);
         result.put("email", email);
         result.put("latitude", latitude);
         result.put("longitude", longitude);
@@ -72,7 +66,6 @@ public class LocalizacaoContatos  extends RealmObject implements Serializable {
     @Override
     public String toString() {
         return "LocalizacaoContatos{" +
-                "id_localizacao='" + id_localizacao + '\'' +
                 ", email='" + email + '\'' +
                 ", latitude='" + latitude + '\'' +
                 ", longitude='" + longitude + '\'' +

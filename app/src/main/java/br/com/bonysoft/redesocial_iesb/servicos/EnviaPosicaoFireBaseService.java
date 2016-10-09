@@ -19,6 +19,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import br.com.bonysoft.redesocial_iesb.R;
 import br.com.bonysoft.redesocial_iesb.modelo.LocalizacaoContatos;
 import br.com.bonysoft.redesocial_iesb.modelo.LocalizacaoFireBase;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.ContatoRepositorio;
@@ -42,6 +43,11 @@ public class EnviaPosicaoFireBaseService extends Service {
         localizacao = intent.getParcelableExtra(Constantes.ENVIO_POSICAO);
         Log.i(Constantes.TAG_LOG,"OnStartCommand-->" + localizacao);
 
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(Constantes.SERVICO,Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean (Constantes.SERVICO_ENVIO_EXEC, true);
+        editor.commit();
+
         ContatoRepositorio repo = new ContatoRepositorio();
         String email = repo.buscaEmailUsuarioLogado();
 
@@ -58,6 +64,18 @@ public class EnviaPosicaoFireBaseService extends Service {
     private void gravaDadosFirebase(final String email, final LatLng location, final DatabaseReference objReferencia){
         Log.i(Constantes.TAG_LOG,"gravaDadosFirebase");
         Log.i(Constantes.TAG_LOG,"gravaDadosFirebase-->" + localizacao);
+        /* Estrutura do firebase
+        rede-social-iesb
+          localizacao
+            -KT_oOkDWKyAQzzKU1Gx
+                email: "carlos@gmail.com"
+                latitude: -15.7571411
+                longitude: -47.8779739
+            -KR_oOkASKCKSezKEWIs
+                email: "outro@gmail.com"
+                latitude: -15.7571411
+                longitude: -47.8779739
+        */
 
         objReferencia.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(
                 new ValueEventListener() {
@@ -82,21 +100,10 @@ public class EnviaPosicaoFireBaseService extends Service {
                             LocalizacaoFireBase localFire =
                                     new LocalizacaoFireBase(email,location.latitude,location.longitude);
 
-                            //O que tem de errado nisso?
-                           //objReferencia.push().setValue(localFire);
-
                             Log.i(Constantes.TAG_LOG,"Incluindo um novo local -->"+ localFire);
 
                             objReferencia.push().setValue(localFire);
-                            /*
-                            String mId=objReferencia.child("localizacao").push().getKey();
-                            //Log.d("SERVICE","Local -->" + location.getLongitude() + "-" + location.getLatitude());
-                            //47.83906625--15.6543783
 
-                            objReferencia.child(mId).child("email").setValue(localFire.email);
-                            objReferencia.child(mId).child("longitude").setValue(localFire.longitude);
-                            objReferencia.child(mId).child("latitude").setValue(localFire.latitude);
-                            */
                         } else {
 
                             Log.i(Constantes.TAG_LOG,"Update-->"+local.toString());
@@ -118,40 +125,11 @@ public class EnviaPosicaoFireBaseService extends Service {
         );
     }
 
-    public void testeFirebase(){
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference objReferencia = database.getReference("localizacao");
-
-        //String mId = "-KQmhU9QQRJ6nO2Wb9qr";
-        String mId=objReferencia.child("localizacao").push().getKey();
-        //Log.d("SERVICE","Local -->" + location.getLongitude() + "-" + location.getLatitude());
-        //47.83906625--15.6543783
-
-        objReferencia.child(mId).child("email").setValue("bonissauro@gmail.com");
-        objReferencia.child(mId).child("longitude").setValue("47.83906625");
-        objReferencia.child(mId).child("latitude").setValue("15.6543783");
-    }
-
-    //TODO nao sei se ta certo isso aqui
-    private void gravarLocalizacao(final String uid, final String email,
-                                   final LatLng location, final DatabaseReference objReferencia) {
-        String key = objReferencia.child("posts").push().getKey();
-
-        LocalizacaoFireBase local = new LocalizacaoFireBase(email,  location.latitude +"" ,  location.longitude +"");
-        Map<String, Object> localValues = local.toMap();
-
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/localizacao/" + key, localValues);
-
-
-        objReferencia.updateChildren(childUpdates);
-    }
-
     @Override
     public void onDestroy() {
-        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("servico_executando", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(Constantes.SERVICO, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putBoolean ("servico_executando", false);
+        editor.putBoolean (Constantes.SERVICO_ENVIO_EXEC, false);
         editor.commit();
 
         super.onDestroy();

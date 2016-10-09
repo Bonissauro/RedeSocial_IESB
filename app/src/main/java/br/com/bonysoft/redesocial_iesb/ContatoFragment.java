@@ -6,11 +6,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import br.com.bonysoft.redesocial_iesb.modelo.Contato;
+import br.com.bonysoft.redesocial_iesb.utilitarios.SimpleItemTouchHelperCallback;
 
 /**
  * A fragment representing a list of Items.
@@ -24,7 +26,7 @@ public class ContatoFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-
+    private ItemTouchHelper mItemTouchHelper;
 
     // TODO: Customize parameters
     private int mColumnCount = 1;
@@ -84,6 +86,9 @@ public class ContatoFragment extends Fragment {
 
             recyclerView.setAdapter(((PrincipalActivity) getActivity()).myContatoRecyclerViewAdapter);
 
+            ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(((PrincipalActivity) getActivity()).myContatoRecyclerViewAdapter);
+            mItemTouchHelper = new ItemTouchHelper(callback);
+            mItemTouchHelper.attachToRecyclerView(recyclerView);
         }
 
         return view;
