@@ -81,7 +81,7 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
             edtSenha.setVisibility(View.VISIBLE);
         } else {
             titulo = "Cadastro de Contato";
-            edtSenha.setVisibility(View.INVISIBLE);
+            edtSenha.setVisibility(View.GONE);
         }
 
         if(id != null && !id.isEmpty()){

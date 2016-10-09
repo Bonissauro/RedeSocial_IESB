@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_conversa"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="100"
+    android:orientation="vertical"
+    tools:context="br.com.bonysoft.redesocial_iesb.ConversaActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:layout_weight="3"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:theme="?attr/actionBarTheme"
+        android:minHeight="?attr/actionBarSize"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/toolbarConversa" />
+
+
+
+        <FrameLayout
+            android:layout_weight="82"
+            android:id="@+id/lista_conversa_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="15"
+        android:weightSum="100"
+        >
+        <EditText
+            android:layout_weight="100"
+            android:id="@+id/editTextoConversa"
+            android:inputType="textMultiLine"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:src="@drawable/ic_send_black_24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|left"
+            android:tint="@android:color/white"
+            android:id="@+id/fbEnviarMensagem" />
+    </LinearLayout>
+
+
+</LinearLayout>

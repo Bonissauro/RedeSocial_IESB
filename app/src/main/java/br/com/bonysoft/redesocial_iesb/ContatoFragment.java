@@ -6,11 +6,14 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import br.com.bonysoft.redesocial_iesb.modelo.Contato;
+import br.com.bonysoft.redesocial_iesb.utilitarios.SimpleItemTouchHelperCallback;
 
 /**
  * A fragment representing a list of Items.
@@ -20,14 +23,8 @@ import br.com.bonysoft.redesocial_iesb.modelo.Contato;
  */
 public class ContatoFragment extends Fragment {
 
+    private ItemTouchHelper mItemTouchHelper;
 
-
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-
-
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
 
     /**
@@ -37,32 +34,19 @@ public class ContatoFragment extends Fragment {
     public ContatoFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static ContatoFragment newInstance(int columnCount) {
+    public static ContatoFragment newInstance() {
         ContatoFragment fragment = new ContatoFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
-
     }
 
     @Override
     public void onResume(){
-
         super.onResume();
-
     }
 
     @Override
@@ -74,22 +58,20 @@ public class ContatoFragment extends Fragment {
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
 
-            ((PrincipalActivity) getActivity()).myContatoRecyclerViewAdapter = new MyContatoRecyclerViewAdapter(((PrincipalActivity) getActivity()).listaContatos, mListener);
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+
+
+            ((PrincipalActivity) getActivity()).myContatoRecyclerViewAdapter = new MyContatoRecyclerViewAdapter(((PrincipalActivity) getActivity()).listaContatos, mListener,((PrincipalActivity) getActivity()));
 
             recyclerView.setAdapter(((PrincipalActivity) getActivity()).myContatoRecyclerViewAdapter);
 
+            ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(((PrincipalActivity) getActivity()).myContatoRecyclerViewAdapter);
+            mItemTouchHelper = new ItemTouchHelper(callback);
+            mItemTouchHelper.attachToRecyclerView(recyclerView);
         }
-
         return view;
-
     }
-
 
     @Override
     public void onAttach(Context context) {

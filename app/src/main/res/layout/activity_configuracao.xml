@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_configuracao"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="br.com.bonysoft.redesocial_iesb.ConfiguracaoActivity">
+
+        <Switch
+            android:layout_margin="16dp"
+            android:text="Envio da minha localização"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/switchEnvioLocalizacao"
+            android:layout_alignParentTop="true"/>
+
+        <Switch
+            android:text="Receber localização dos contatos"
+            android:layout_below="@+id/switchEnvioLocalizacao"
+            android:layout_margin="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/switchReceberLocalizacao" />
+
+</RelativeLayout>
