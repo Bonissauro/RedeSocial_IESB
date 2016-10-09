@@ -16,5 +16,10 @@ public class Constantes {
 
     public static final String FIM_TRANSMISSAO =    "@@ƒ1µ@@";
 
-    public static final String TAG_LOG = "Rede";
+    public static final String TAG_LOG = "NAO ESPECIFICADO";
+    public static final String TAG_LOGIN_ABERTURA = "Login - Abertura";
+    public static final String TAG_LOGIN_FACEBOOK = "Login - Facebook";
+    public static final String TAG_LOGIN_GOOGLE = "Login - Google";
+    public static final String TAG_LOGIN_EMAIL = "Login - Email";
+
 }

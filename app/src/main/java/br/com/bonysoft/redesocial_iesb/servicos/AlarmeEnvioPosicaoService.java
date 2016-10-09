@@ -1,19 +1,16 @@
 package br.com.bonysoft.redesocial_iesb.servicos;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-
-import br.com.bonysoft.redesocial_iesb.receiver.ObtemPosicaoReceiver;
 
 /**
  * Created by panar on 03/10/2016.
  */
 
 public class AlarmeEnvioPosicaoService extends Service {
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -24,6 +21,7 @@ public class AlarmeEnvioPosicaoService extends Service {
     public void onCreate() {
         super.onCreate();
 
+        /*
         int seconds = 5;
         long doisMinutos = 120000;
 
@@ -33,5 +31,7 @@ public class AlarmeEnvioPosicaoService extends Service {
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
                 System.currentTimeMillis() + (seconds * 1000),doisMinutos, pendingIntent);
+
+                */
     }
 }

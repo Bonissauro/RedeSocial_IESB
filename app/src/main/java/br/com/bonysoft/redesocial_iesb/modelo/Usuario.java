@@ -1,14 +1,18 @@
 package br.com.bonysoft.redesocial_iesb.modelo;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Usuario  {
 
     public String id_usuario;
     public String nome;
     public String email;
     public String senha;
+    public String tokenFacebook;
+    public String tokenGoogle;
+    public String tokenEmail;
+    public String urlFoto;
+
+    public Usuario() {
+    }
 
     public Usuario(String nome, String email, String senha) {
         this.nome = nome;
@@ -48,17 +52,45 @@ public class Usuario  {
         this.senha = senha;
     }
 
-    public Map<String, Object> toMap() {
+    public String getTokenFacebook() {
+        return tokenFacebook;
+    }
 
-        HashMap<String, Object> result = new HashMap<>();
+    public void setTokenFacebook(String tokenFacebook) {
+        this.tokenFacebook = tokenFacebook;
+    }
 
-        result.put("id_usuario", id_usuario);
-        result.put("nome", nome);
-        result.put("email", email);
-        result.put("senha", senha);
+    public String getTokenGoogle() {
+        return tokenGoogle;
+    }
 
-        return result;
+    public void setTokenGoogle(String tokenGoogle) {
+        this.tokenGoogle = tokenGoogle;
+    }
 
+    public String getTokenEmail() {
+        return tokenEmail;
+    }
+
+    public void setTokenEmail(String tokenEmail) {
+        this.tokenEmail = tokenEmail;
+    }
+
+    public String getUrlFoto() {
+        return urlFoto;
+    }
+
+    public void setUrlFoto(String urlFoto) {
+        this.urlFoto = urlFoto;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Usuario{" +
+                "nome='" + nome + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 
 }

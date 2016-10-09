@@ -8,7 +8,11 @@
     <string name="action_settings">Configuração</string>
     <string name="action_contatos">Contatos</string>
     <string name="action_conversas">Conversas</string>
+    <string name="action_desconectar">Desconectar</string>
     <string name="title_activity_login">Rede do IESB</string>
+    <string name="title_activity_login_facebook">Rede do IESB - via Facebook</string>
+    <string name="title_activity_login_google">Rede do IESB - via Google</string>
+    <string name="title_activity_login_email">Rede do IESB - por e-mail</string>
 
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Senha</string>

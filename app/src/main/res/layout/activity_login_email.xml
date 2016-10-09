@@ -1,0 +1,60 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="br.com.bonysoft.redesocial_iesb.LoginEmailSenhaActivity"
+    android:gravity="center">
+
+    <TextView
+        android:text="Informe seu e-mail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView2" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/idLoginEmail_edtEmail"
+        android:textAlignment="center"
+        android:layout_gravity="center_horizontal"
+        android:backgroundTint="@color/primary_light"
+        android:layout_marginBottom="20dp" />
+
+    <TextView
+        android:text="Sua senha de acesso"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView3" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/primary_light"
+        android:textAlignment="center"
+        android:ems="10"
+        android:maxLength="8"
+        android:id="@+id/idLoginEmail_edtSenha"
+        android:layout_gravity="center_horizontal" />
+
+
+    <Button
+        android:text="Confirmar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/idLoginEmail_btnConfirmaLogin" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

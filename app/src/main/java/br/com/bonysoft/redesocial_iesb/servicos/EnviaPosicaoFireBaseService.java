@@ -7,17 +7,9 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import br.com.bonysoft.redesocial_iesb.modelo.LocalizacaoContatos;
-import br.com.bonysoft.redesocial_iesb.modelo.LocalizacaoFireBase;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.ContatoRepositorio;
 import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
 
@@ -52,6 +44,8 @@ public class EnviaPosicaoFireBaseService extends Service {
     }
 
     private void gravaDadosFirebase(final String email, final LatLng location, final DatabaseReference objReferencia){
+
+        /*
         objReferencia.child("email").equalTo(email).addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
@@ -87,11 +81,18 @@ public class EnviaPosicaoFireBaseService extends Service {
                 }
 
         );
+
+        */
+
     }
 
     //TODO nao sei se ta certo isso aqui
     private void gravarLocalizacao(final String uid, final String email,
                                    final LatLng location, final DatabaseReference objReferencia) {
+
+
+        /*
+
         String key = objReferencia.child("posts").push().getKey();
 
         LocalizacaoFireBase local = new LocalizacaoFireBase(uid,email,  location.latitude +"" ,  location.longitude +"");
@@ -102,6 +103,8 @@ public class EnviaPosicaoFireBaseService extends Service {
 
 
         objReferencia.updateChildren(childUpdates);
+
+        */
     }
 
 }

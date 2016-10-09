@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "407632591322-vtb30b9kmn2m0675dama79tsvgcoju0u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.com.bonysoft.redesocial_iesb",
+            "certificate_hash": "BB2E915483ACDD8AEF4D2EF9E9117AC09093750F"
+          }
+        },
+        {
           "client_id": "407632591322-ufg1ta34lfup35oeacijibuf9vb0hhsv.apps.googleusercontent.com",
           "client_type": 3
         }

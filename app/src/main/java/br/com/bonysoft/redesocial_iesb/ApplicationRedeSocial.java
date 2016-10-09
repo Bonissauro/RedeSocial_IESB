@@ -1,17 +1,19 @@
-package br.com.bonysoft.redesocial_iesb.realm.modulo;
+package br.com.bonysoft.redesocial_iesb;
 
 import android.app.Application;
-import android.content.Intent;
+
 import com.facebook.drawee.backends.pipeline.Fresco;
 
-import br.com.bonysoft.redesocial_iesb.servicos.AlarmeEnvioPosicaoService;
-import br.com.bonysoft.redesocial_iesb.servicos.ObtemLocalizacaoContatoService;
+import br.com.bonysoft.redesocial_iesb.modelo.Usuario;
+import br.com.bonysoft.redesocial_iesb.realm.modulo.RedeSocialRealmModule;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
-public class RedeSocialRealm extends Application {
+public class ApplicationRedeSocial extends Application {
 
-    private static RedeSocialRealm instance;
+    private static ApplicationRedeSocial instance;
+
+    private Usuario usuarioLogado;
 
     @Override
     public void onCreate() {
@@ -40,7 +42,15 @@ public class RedeSocialRealm extends Application {
         */
     }
 
-    public static RedeSocialRealm getInstance() {
+    public static ApplicationRedeSocial getInstance() {
         return instance;
+    }
+
+    public Usuario getUsuarioLogado() {
+        return usuarioLogado;
+    }
+
+    public void setUsuarioLogado(Usuario usuarioLogado) {
+        this.usuarioLogado = usuarioLogado;
     }
 }
