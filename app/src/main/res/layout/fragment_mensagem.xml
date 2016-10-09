@@ -5,7 +5,7 @@
     >
     <TextView
         android:id="@+id/textoMensagem"
-        android:text="sdafsdfasdf."
+        android:text="Texto de Teste de Mensagem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?attr/textAppearanceListItem"/>

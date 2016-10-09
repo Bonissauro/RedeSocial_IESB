@@ -8,17 +8,14 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
 
 import br.com.bonysoft.redesocial_iesb.modelo.Mensagem;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.ContatoRepositorio;

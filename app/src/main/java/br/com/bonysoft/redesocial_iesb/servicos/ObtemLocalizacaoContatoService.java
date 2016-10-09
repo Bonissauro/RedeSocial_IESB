@@ -35,11 +35,6 @@ public class ObtemLocalizacaoContatoService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(Constantes.SERVICO,Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putBoolean (Constantes.SERVICO_REC_EXEC, true);
-        editor.commit();
-
         buscarLocalizacaoGPSContatos(FirebaseDatabase.getInstance().getReference("localizacao"));
         return super.onStartCommand(intent, flags, startId);
     }

@@ -1,11 +1,16 @@
 package br.com.bonysoft.redesocial_iesb;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 
 import br.com.bonysoft.redesocial_iesb.modelo.Usuario;
 import br.com.bonysoft.redesocial_iesb.realm.modulo.RedeSocialRealmModule;
+import br.com.bonysoft.redesocial_iesb.servicos.AlarmeEnvioPosicaoService;
+import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -30,16 +35,18 @@ public class ApplicationRedeSocial extends Application {
 
         Fresco.initialize(this);
 
-        //TODO voltar isso aqui qdo habilitar o servico
-        /*
-        //Cria um alarme para enviar a posicao a cada 2 min para o firebase
-        Intent envioPosicao = new Intent(getApplicationContext(), AlarmeEnvioPosicaoService.class);
-        getApplicationContext().startService(envioPosicao);
+        iniciaServico();
+    }
 
-        //Criar um servico para atualizar as localizaçoes dos amigos
-        Intent obtemPosicoes = new Intent(getApplicationContext(), ObtemLocalizacaoContatoService.class);
-        getApplicationContext().startService(obtemPosicoes);
-        */
+    private void iniciaServico(){
+        SharedPreferences sharedPref = this.getSharedPreferences(Constantes.SERVICO, Context.MODE_PRIVATE);
+        boolean envio = sharedPref.getBoolean(Constantes.SERVICO_ENVIO_EXEC,true);
+        boolean rec = sharedPref.getBoolean(Constantes.SERVICO_REC_EXEC,true);
+
+        if(envio || rec){
+            Intent startServiceIntent = new Intent(getApplicationContext(), AlarmeEnvioPosicaoService.class);
+            getApplicationContext().startService(startServiceIntent);
+        }
     }
 
     public static ApplicationRedeSocial getInstance() {

@@ -71,7 +71,7 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
         String titulo = "";
 
         String id_Usuario = getIntent().getStringExtra(Constantes.ID_USUARIO_LOGADO);
-        Toast.makeText(this,"ID_USUARIO " + id_Usuario,Toast.LENGTH_SHORT);
+
         Log.i(TAG_LOG,"Entrou no Cadastro-->"+id_Usuario);
 
         String id = getIntent().getStringExtra(Constantes.ID_CONTATO);
@@ -172,7 +172,7 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if(edtSenha.getVisibility() == View.VISIBLE && (edtSenha.getText().toString().trim().isEmpty()
                 || edtSenha.getText().toString().trim().length() < 4)){
-                    Toast.makeText(ContatoCadastramentoActivity.this,"Informe uma senha com no minimo 4 caracteres.",Toast.LENGTH_LONG);
+                    Toast.makeText(ContatoCadastramentoActivity.this,"Informe uma senha com no minimo 4 caracteres.",Toast.LENGTH_LONG).show();
                 } else{
                     salvarContato();
                     //gravaContato();

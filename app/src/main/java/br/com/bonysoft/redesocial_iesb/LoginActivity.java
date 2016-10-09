@@ -4,14 +4,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import br.com.bonysoft.redesocial_iesb.realm.repositorio.ContatoRepositorio;
+import br.com.bonysoft.redesocial_iesb.realm.repositorio.IContatoRepositorio;
 import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
 
 public class LoginActivity extends AppCompatActivity {
@@ -99,6 +103,24 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
 
+    }
+
+    public void deleteAll(View v) {
+        //TODO remover deposi dos testes
+        IContatoRepositorio contatoRepositorio = new ContatoRepositorio();
+        contatoRepositorio.deleteContatoById("", new IContatoRepositorio.OnDeleteContatoCallback() {
+            @Override
+            public void onSuccess() {
+
+                Log.i(Constantes.TAG_LOG, "Sucesso no delete all");
+                Toast.makeText(LoginActivity.this,"Excluido todos os contatos",Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(String message) {
+                Log.i(Constantes.TAG_LOG, "Erro delete all ==> " + message);
+            }
+        });
     }
 
     @Override

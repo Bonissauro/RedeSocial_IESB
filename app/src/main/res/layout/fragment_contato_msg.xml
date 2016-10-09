@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/icons">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/imgListaContatoMsg"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        fresco:placeholderImage="@drawable/contatosemfoto"
+        fresco:roundAsCircle="true"
+        fresco:roundBottomLeft="false"
+        fresco:roundBottomRight="false"
+        fresco:roundWithOverlayColor="@color/icons"
+        fresco:roundingBorderWidth="1dp"
+        fresco:roundingBorderColor="@color/primary_text"
+        fresco:actualImageScaleType="fitXY"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/contatoItemListaNomeMsg"
+        android:text="Nome Do Contato"
+        android:layout_toRightOf="@+id/imgListaContatoMsg"
+        android:layout_alignParentTop="true"
+        android:layout_margin ="4dp"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceListItem" />
+
+    <TextView
+        android:id="@+id/textoUltimoMensagem"
+        android:text="Texto da ultima mensagem..."
+        android:layout_toRightOf="@+id/imgListaContatoMsg"
+        android:layout_below="@+id/contatoItemListaNomeMsg"
+        android:layout_width="wrap_content"
+        android:layout_margin ="4dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceListItem" />
+
+</RelativeLayout>

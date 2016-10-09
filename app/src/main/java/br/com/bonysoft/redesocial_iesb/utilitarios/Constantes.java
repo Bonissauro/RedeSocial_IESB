@@ -16,10 +16,17 @@ public class Constantes {
 
     public static final String FIM_TRANSMISSAO =    "@@ƒ1µ@@";
 
-    public static final String TAG_LOG = "NAO ESPECIFICADO";
     public static final String TAG_LOGIN_ABERTURA = "Login - Abertura";
     public static final String TAG_LOGIN_FACEBOOK = "Login - Facebook";
     public static final String TAG_LOGIN_GOOGLE = "Login - Google";
     public static final String TAG_LOGIN_EMAIL = "Login - Email";
 
+    public static final String EMAIL_CONVERSA = "EMAIL_CONVERSA";
+    public static final String TAG_LOG = "RedeSocialLOG";
+
+    public static final String SERVICO = "servicos";
+    public static final String SERVICO_ENVIO_EXEC = "servico_envio_executando";
+    public static final String SERVICO_REC_EXEC = "servico_rec_executando";
+
+    public static final String LISTA_MENS_CONTATO = "LISTA_MENS_CONTATO";
 }
