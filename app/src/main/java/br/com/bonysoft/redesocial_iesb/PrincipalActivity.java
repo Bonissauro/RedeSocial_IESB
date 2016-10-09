@@ -26,7 +26,7 @@ import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
 import io.realm.RealmResults;
 
 public class PrincipalActivity extends AppCompatActivity implements
-        ConversaFragment.OnFragmentInteractionListener,
+        ListaConversasFragment.OnFragmentInteractionListener,
         ContatoFragment.OnListFragmentInteractionListener{
 
     public static int VK_CADASTROU_NOVO_CONTATO = 1111;
@@ -93,7 +93,7 @@ public class PrincipalActivity extends AppCompatActivity implements
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         adapter.addFragment(new ContatoFragment(), "Contatos");
-        adapter.addFragment(new ConversaFragment(), "Conversas");
+        adapter.addFragment(new ListaConversasFragment(), "Conversas");
 
         viewPager.setAdapter(adapter);
 

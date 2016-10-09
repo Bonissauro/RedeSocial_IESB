@@ -12,6 +12,8 @@ public class Constantes {
     public static final int RETURN_CODE_RESPONDER = 100;
     public static final int RETURN_CODE_CRIAR = 200;
 
+    public static final String EMAIL_CONVERSA = "EMAIL_CONVERSA";
+
     public static final String ENVIO_POSICAO = "ENVIO_LOCAL";
 
     public static final String FIM_TRANSMISSAO =    "@@ƒ1µ@@";
@@ -21,4 +23,7 @@ public class Constantes {
     public static final String SERVICO = "servicos";
     public static final String SERVICO_ENVIO_EXEC = "servico_envio_executando";
     public static final String SERVICO_REC_EXEC = "servico_rec_executando";
+
+    public static final String LISTA_MENS_CONTATO = "LISTA_MENS_CONTATO";
+
 }

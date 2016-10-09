@@ -12,12 +12,12 @@ import android.view.ViewGroup;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ConversaFragment.OnFragmentInteractionListener} interface
+ * {@link ListaConversasFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ConversaFragment#newInstance} factory method to
+ * Use the {@link ListaConversasFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ConversaFragment extends Fragment {
+public class ListaConversasFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -28,13 +28,13 @@ public class ConversaFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public ConversaFragment() {
+    public ListaConversasFragment() {
         // Required empty public constructor
     }
 
-    public static ConversaFragment newInstance(String param1) {
+    public static ListaConversasFragment newInstance(String param1) {
 
-        ConversaFragment fragment = new ConversaFragment();
+        ListaConversasFragment fragment = new ListaConversasFragment();
 
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
@@ -67,7 +67,7 @@ public class ConversaFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_conversa, container, false);
+        return inflater.inflate(R.layout.fragment_lista_conversas, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

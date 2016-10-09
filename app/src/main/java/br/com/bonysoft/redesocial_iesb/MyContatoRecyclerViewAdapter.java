@@ -1,5 +1,6 @@
 package br.com.bonysoft.redesocial_iesb;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -18,6 +20,7 @@ import java.util.Collections;
 import br.com.bonysoft.redesocial_iesb.ContatoFragment.OnListFragmentInteractionListener;
 
 import br.com.bonysoft.redesocial_iesb.modelo.Contato;
+import br.com.bonysoft.redesocial_iesb.realm.repositorio.ContatoRepositorio;
 import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
 import br.com.bonysoft.redesocial_iesb.utilitarios.ItemTouchHelperAdapter;
 import io.realm.Realm;
@@ -29,6 +32,8 @@ public class MyContatoRecyclerViewAdapter
 
     private final RealmResults<Contato> mValues;
     private final OnListFragmentInteractionListener mListener;
+    private Activity mActivity;
+    private String emailUsuario;
 
     public interface OnItemClickListener {
         public void onItemClicked(int position);
@@ -63,9 +68,14 @@ public class MyContatoRecyclerViewAdapter
        //return true;
     }
 
-    public MyContatoRecyclerViewAdapter(RealmResults<Contato> items, OnListFragmentInteractionListener listener) {
+    public MyContatoRecyclerViewAdapter(RealmResults<Contato> items, OnListFragmentInteractionListener listener, Activity activity) {
         mValues = items;
         mListener = listener;
+        mActivity = activity;
+
+        ContatoRepositorio repo = new ContatoRepositorio();
+        emailUsuario = repo.buscaEmailUsuarioLogado();
+        repo.close();
     }
 
     @Override
@@ -106,6 +116,27 @@ public class MyContatoRecyclerViewAdapter
                     // fragment is attached to one) that an item has been selected.
                     mListener.onListFragmentInteractionContato(holder.mItem);
                 }
+            }
+        });
+
+        if( holder.mItem != null && holder.mItem.getEmail() != null && holder.mItem.getEmail().equalsIgnoreCase(emailUsuario) ){
+            holder.mImgBotao.setVisibility(View.INVISIBLE);
+        } else {
+            holder.mImgBotao.setVisibility(View.VISIBLE);
+        }
+
+        holder.mImgBotao.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+
+                int p = position;
+                Contato contato = mValues.get(p);
+
+                Intent it = new Intent(mActivity, ConversaActivity.class);
+                it.putExtra(Constantes.EMAIL_CONVERSA,contato.getEmail());
+                mActivity.startActivity(it);
             }
         });
 
@@ -161,6 +192,7 @@ public class MyContatoRecyclerViewAdapter
         public final TextView mContatoNomeView;
         public final TextView mContatoEmailView;
         public final SimpleDraweeView mSimpleImagem;
+        public final ImageButton mImgBotao;
 
         public Contato mItem;
 
@@ -169,8 +201,10 @@ public class MyContatoRecyclerViewAdapter
             mView = view;
             mContatoNomeView = (TextView) view.findViewById(R.id.contatoItemListaNome);
             mContatoEmailView = (TextView) view.findViewById(R.id.contatoItemListaEmail);
-
+            mImgBotao = (ImageButton) view.findViewById(R.id.btnItemConversa);
             mSimpleImagem = (SimpleDraweeView) view.findViewById(R.id.imgListaContato);
+
+
         }
 
         @Override

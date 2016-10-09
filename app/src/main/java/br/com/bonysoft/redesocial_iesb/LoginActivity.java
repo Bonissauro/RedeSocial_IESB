@@ -80,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
         senhaText = (EditText) this.findViewById(R.id.etxtSenha);
 
         //TODO remover depois dos testes
-        loginText.setText("teste@gmail.com");
+        loginText.setText("carlos@gmail.com");
         senhaText.setText("12345678");
 
         idUsuarioLogado = null;

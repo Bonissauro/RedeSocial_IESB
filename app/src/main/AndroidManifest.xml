@@ -98,7 +98,8 @@
             android:name=".servicos.ObtemLocalizacaoContatoService"
             android:exported="false" />
 
-        <activity android:name=".ConfiguracaoActivity"></activity>
+        <activity android:name=".ConfiguracaoActivity" />
+        <activity android:name=".ConversaActivity" />
     </application>
 
 </manifest>
