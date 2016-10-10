@@ -26,8 +26,6 @@ public class AlarmeEnvioPosicaoService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        super.onCreate();
         Log.i(Constantes.TAG_LOG,"CRIANDO ALARME");
         int seconds = 10;
         long doisMinutos = 120000;

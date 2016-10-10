@@ -69,9 +69,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/edtEmail"
+                android:inputType="textWebEmailAddress"
                 android:backgroundTint="@color/primary_light"
                 android:layout_gravity="left"
-                android:inputType="text"
                 android:hint="E-mail do contato" />
 
             <EditText

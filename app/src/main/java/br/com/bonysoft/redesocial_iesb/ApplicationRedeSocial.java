@@ -20,6 +20,8 @@ public class ApplicationRedeSocial extends Application {
 
     private Usuario usuarioLogado;
 
+    private String emailRegistro;
+
     @Override
     public void onCreate() {
 
@@ -36,6 +38,9 @@ public class ApplicationRedeSocial extends Application {
         Fresco.initialize(this);
 
         iniciaServico();
+
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(Constantes.CONTA_REGISTRADA, Context.MODE_PRIVATE);
+        emailRegistro = sharedPref.getString(Constantes.CONTA_REGISTRADA,"");
     }
 
     private void iniciaServico(){
@@ -57,7 +62,25 @@ public class ApplicationRedeSocial extends Application {
         return usuarioLogado;
     }
 
+    public boolean isRegistrado(){
+        return (emailRegistro != null && !emailRegistro.trim().isEmpty());
+    }
+
+    public String emailRegistrado(){
+        return emailRegistro;
+    }
+
     public void setUsuarioLogado(Usuario usuarioLogado) {
+
         this.usuarioLogado = usuarioLogado;
+
+        if(usuarioLogado!=null && usuarioLogado.getEmail()!= null && !usuarioLogado.getEmail().trim().isEmpty()) {
+            emailRegistro = usuarioLogado.getEmail();
+
+            SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(Constantes.CONTA_REGISTRADA, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString(Constantes.CONTA_REGISTRADA, usuarioLogado.getEmail());
+            editor.commit();
+        }
     }
 }

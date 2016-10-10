@@ -29,4 +29,6 @@ public class Constantes {
     public static final String SERVICO_REC_EXEC = "servico_rec_executando";
 
     public static final String LISTA_MENS_CONTATO = "LISTA_MENS_CONTATO";
+    public static final String CADASTRO_USUARIO = "CADASTRO_USUARIO";
+    public static final String CONTA_REGISTRADA = "CONTA_REGISTRADA";
 }

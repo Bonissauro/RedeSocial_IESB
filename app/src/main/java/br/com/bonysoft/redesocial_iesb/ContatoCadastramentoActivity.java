@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +19,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -28,6 +33,7 @@ import java.io.InputStream;
 
 
 import br.com.bonysoft.redesocial_iesb.modelo.Contato;
+import br.com.bonysoft.redesocial_iesb.modelo.Usuario;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.ContatoRepositorio;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.IContatoRepositorio;
 import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
@@ -42,7 +48,7 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
     private Contato contatoSelecionado = null;
     private boolean novo;
     private String caminhoFoto;
-
+    private FirebaseAuth mAuth;
 
     private EditText edtEmail;
     private EditText edtNome;
@@ -70,14 +76,22 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
 
         String titulo = "";
 
-        String id_Usuario = getIntent().getStringExtra(Constantes.ID_USUARIO_LOGADO);
+        //String id_Usuario = getIntent().getStringExtra(Constantes.ID_USUARIO_LOGADO);
+        Usuario user = ApplicationRedeSocial.getInstance().getUsuarioLogado();
 
-        Log.i(TAG_LOG,"Entrou no Cadastro-->"+id_Usuario);
+        Log.i(TAG_LOG,"Entrou no Cadastro-->"+user);
 
         String id = getIntent().getStringExtra(Constantes.ID_CONTATO);
 
-        if(id_Usuario!=null&& id_Usuario.equals(id)){
+        String emailLogin = getIntent().getStringExtra(Constantes.CADASTRO_USUARIO);
+
+        //if(id_Usuario!=null&& id_Usuario.equals(id)){
+        if(ApplicationRedeSocial.getInstance().isRegistrado() == false){
             titulo = "Cadastro do Usuario";
+            if(emailLogin!= null) {
+                edtEmail.setText(emailLogin);
+            }
+
             edtSenha.setVisibility(View.VISIBLE);
         } else {
             titulo = "Cadastro de Contato";
@@ -174,8 +188,13 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
                 || edtSenha.getText().toString().trim().length() < 4)){
                     Toast.makeText(ContatoCadastramentoActivity.this,"Informe uma senha com no minimo 4 caracteres.",Toast.LENGTH_LONG).show();
                 } else{
-                    salvarContato();
-                    //gravaContato();
+
+                    if(ApplicationRedeSocial.getInstance().isRegistrado() == false){
+                        registrarUsuario();
+                    } else {
+                        salvarContato();
+                    }
+
                 }
             }
         });
@@ -199,6 +218,57 @@ public class ContatoCadastramentoActivity extends AppCompatActivity {
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 startActivityForResult(intent,SELECIONAR_FOTO);
 
+            }
+        });
+
+    }
+
+    private void registrarUsuario(){
+        Log.i(TAG_LOG,"Registrar Usuario");
+        mAuth = FirebaseAuth.getInstance();
+
+        mAuth.createUserWithEmailAndPassword(edtEmail.getText().toString(),edtSenha.getText().toString())
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                Log.d(Constantes.TAG_LOG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+
+                // If sign in fails, display a message to the user. If sign in succeeds
+                // the auth state listener will be notified and logic to handle the
+                // signed in user can be handled in the listener.
+                if (!task.isSuccessful()) {
+                    Toast.makeText(ContatoCadastramentoActivity.this, "Não foi possivel realizar o cadastro no firebase",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Usuario u = new Usuario();
+                    u.setEmail(edtEmail.getText().toString());
+                    ApplicationRedeSocial.getInstance().setUsuarioLogado(u);
+
+                    Toast.makeText(ContatoCadastramentoActivity.this, "Cadastro realizado com sucesso",
+                            Toast.LENGTH_SHORT).show();
+                    // ABRE A ACTIVITY PRINCIPAL E FECHA TODAS AS ANTERIORES, DE MODO A BLOQUEAR
+                    // A NAVEGAÇAO DO USUARIO PELAS ACTIVITIES DE LOGIN
+                    Intent it = new Intent(ContatoCadastramentoActivity.this, PrincipalActivity.class);
+                    it.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(it);
+                    finish();
+                }
+            }
+        });
+
+        mAuth.signInWithEmailAndPassword(edtEmail.getText().toString(),edtSenha.getText().toString())
+        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                Log.d(Constantes.TAG_LOG, "signInWithEmail:onComplete:" + task.isSuccessful());
+
+                // If sign in fails, display a message to the user. If sign in succeeds
+                // the auth state listener will be notified and logic to handle the
+                // signed in user can be handled in the listener.
+                if (!task.isSuccessful()) {
+                    Toast.makeText(ContatoCadastramentoActivity.this, "Não foi possivel realizar o login ",
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

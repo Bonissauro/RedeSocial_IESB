@@ -1,6 +1,8 @@
 package br.com.bonysoft.redesocial_iesb;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -86,7 +88,7 @@ public class LoginEmailSenhaActivity extends AppCompatActivity {
 
                         if (!task.isSuccessful()) {
 
-                            Toast.makeText(LoginEmailSenhaActivity.this, "Não existe esse e-mail ou senha!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(LoginEmailSenhaActivity.this, "Não existe esse e-mail ou senha, Favor se cadastre!", Toast.LENGTH_LONG).show();
 
                         }else{
 
@@ -106,6 +108,27 @@ public class LoginEmailSenhaActivity extends AppCompatActivity {
             }
         });
 
+        Button btnCadastro = (Button) findViewById(R.id.idLogin_btnCadastrar);
+
+        btnCadastro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(ApplicationRedeSocial.getInstance().isRegistrado() == false){
+                    Intent it = new Intent(LoginEmailSenhaActivity.this, ContatoCadastramentoActivity.class);
+
+                    String email = txtEmail.getText().toString();
+
+                    if(email != null && !email.trim().isEmpty()){
+                        it.putExtra(Constantes.CADASTRO_USUARIO, email);
+                    }
+
+                    startActivity(it);
+                } else {
+                    Toast.makeText(LoginEmailSenhaActivity.this,"O usuario "+ ApplicationRedeSocial.getInstance().emailRegistrado() +" ja esta cadastrado para este aparelho!",Toast.LENGTH_LONG).show();
+                }
+
+            }
+        });
     }
 
     @Override

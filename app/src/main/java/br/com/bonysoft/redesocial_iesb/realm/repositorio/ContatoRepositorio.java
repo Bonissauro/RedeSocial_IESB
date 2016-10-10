@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import br.com.bonysoft.redesocial_iesb.ApplicationRedeSocial;
 import br.com.bonysoft.redesocial_iesb.modelo.Contato;
 import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
 import io.realm.Realm;
@@ -184,12 +185,17 @@ public class ContatoRepositorio implements IContatoRepositorio {
 
     @Override
     public String buscaEmailUsuarioLogado(){
+        return ApplicationRedeSocial.getInstance().emailRegistrado();
+
+        //Mudanca de planos não estamos salvando Usuario como contato.
+        /*
         Realm realm = Realm.getDefaultInstance();
         Contato usuario = realm.where(Contato.class).isNotEmpty("senha").isNotNull("senha").findFirst();
         if(usuario != null){
             return usuario.getEmail();
         }
         return "";
+        */
     }
 
 

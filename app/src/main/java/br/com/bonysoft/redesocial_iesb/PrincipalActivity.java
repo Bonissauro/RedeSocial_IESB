@@ -88,8 +88,6 @@ public class PrincipalActivity extends AppCompatActivity implements
 
         setContentView(R.layout.activity_principal);
 
-
-
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
@@ -143,9 +141,7 @@ public class PrincipalActivity extends AppCompatActivity implements
                         Intent it = new Intent(PrincipalActivity.this, LoginActivity.class);
                         startActivity(it);
                         finish();
-
                     }
-
                 }
 
             }
@@ -167,13 +163,7 @@ public class PrincipalActivity extends AppCompatActivity implements
         }
     }
 
-
-
-
-
     private void configuraOnCreate() {
-
-
         Usuario u = ApplicationRedeSocial.getInstance().getUsuarioLogado();
 
         if (u!=null) {
@@ -181,11 +171,8 @@ public class PrincipalActivity extends AppCompatActivity implements
             if (u.getNome()!=null) {
                 Log.d(TAG, u.getNome());
             }
-
         }else{
-
             Log.d(TAG, "NAO ACHOU O USUARIO LOGADO");
-
         }
 
         String id =getIntent().getStringExtra(Constantes.ID_USUARIO_LOGADO);
@@ -222,8 +209,6 @@ public class PrincipalActivity extends AppCompatActivity implements
         });
 
         buscaLista();
-
-
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -234,20 +219,14 @@ public class PrincipalActivity extends AppCompatActivity implements
         adapter.addFragment(new ListaConversasFragment(), "Conversas");
 
         viewPager.setAdapter(adapter);
-
     }
-
-
 
     @Override
     public void onListFragmentInteractionContato(Contato item) {
-
-
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -273,8 +252,6 @@ public class PrincipalActivity extends AppCompatActivity implements
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
         }
-
-
 
         @Override
         public CharSequence getPageTitle(int position) {
