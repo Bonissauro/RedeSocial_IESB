@@ -26,4 +26,22 @@
             android:layout_height="wrap_content"
             android:id="@+id/switchReceberLocalizacao" />
 
+        <TextView
+            android:id="@+id/txtSimples"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Usuario Registrado: "
+            android:layout_margin="16dp"
+            android:layout_below="@+id/switchReceberLocalizacao"
+            />
+
+        <TextView
+            android:id="@+id/txtUsuarioRegistrado"
+            android:layout_below="@+id/switchReceberLocalizacao"
+            android:layout_width="match_parent"
+            android:layout_margin="16dp"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/txtSimples"
+            />
+
 </RelativeLayout>

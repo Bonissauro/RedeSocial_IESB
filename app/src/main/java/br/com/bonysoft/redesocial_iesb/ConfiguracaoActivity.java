@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import br.com.bonysoft.redesocial_iesb.servicos.EnviaPosicaoFireBaseService;
 import br.com.bonysoft.redesocial_iesb.servicos.ObtemLocalizacaoContatoService;
@@ -16,6 +17,8 @@ import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
 public class ConfiguracaoActivity extends AppCompatActivity {
     private Switch mSwitchEnvio;
     private Switch mSwitchReceber;
+    private String emailRegistro;
+    private TextView mTexto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,13 +27,19 @@ public class ConfiguracaoActivity extends AppCompatActivity {
 
         mSwitchEnvio   = (Switch) findViewById(R.id.switchEnvioLocalizacao);
         mSwitchReceber = (Switch) findViewById(R.id.switchReceberLocalizacao);
+        mTexto = (TextView) findViewById(R.id.txtUsuarioRegistrado);
 
         SharedPreferences sharedPref = this.getSharedPreferences(Constantes.SERVICO, Context.MODE_PRIVATE);
         boolean envio = sharedPref.getBoolean(Constantes.SERVICO_ENVIO_EXEC,true);
         boolean rec = sharedPref.getBoolean(Constantes.SERVICO_REC_EXEC,true);
 
+        SharedPreferences sharedPrefEmail = getApplicationContext().getSharedPreferences(Constantes.CONTA_REGISTRADA, Context.MODE_PRIVATE);
+        emailRegistro = sharedPrefEmail.getString(Constantes.CONTA_REGISTRADA,"");
+
         mSwitchEnvio.setChecked(envio);
         mSwitchReceber.setChecked(rec);
+
+        mTexto.setText(emailRegistro);
 
         mSwitchEnvio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -48,6 +57,7 @@ public class ConfiguracaoActivity extends AppCompatActivity {
                 }
             }
         });
+
         mSwitchReceber.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
