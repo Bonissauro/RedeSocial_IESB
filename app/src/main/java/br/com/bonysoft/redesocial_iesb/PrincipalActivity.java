@@ -67,7 +67,7 @@ public class PrincipalActivity extends AppCompatActivity implements
 
 
     MyContatoRecyclerViewAdapter myContatoRecyclerViewAdapter;
-    ContatoMensagemRecyclerViewAdapter contatoMensagemRecyclerViewAdapter;
+
 
     RealmResults<Contato> listaContatos;
 
