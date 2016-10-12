@@ -4,6 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
+import com.facebook.imagepipeline.cache.BitmapMemoryCacheFactory;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -21,14 +25,18 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import br.com.bonysoft.redesocial_iesb.modelo.Contato;
 import br.com.bonysoft.redesocial_iesb.modelo.Localizacao;
 import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
 import io.realm.Realm;
@@ -122,29 +130,71 @@ public class CadeEuActivity extends FragmentActivity
             return;
         }
 
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        //Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
     }
 
     public void criarMarcadoresAmigos(final String emailUsuario){
         marcadoresAmigos = new ArrayList<>();
 
-        RealmResults<Localizacao> results = realm.where(Localizacao.class)
+        RealmResults<Contato> contatos = realm.where(Contato.class).findAll();
+
+        List<String> emailContatos = new ArrayList<>();
+
+        HashMap<String, Contato> mapContatos = new HashMap<>();
+        for(Contato c : contatos){
+            emailContatos.add(c.getEmail());
+            mapContatos.put(c.getEmail(),c);
+        }
+        RealmResults<Localizacao> localizacoes = realm.where(Localizacao.class)
+                .in("email",emailContatos.toArray(new String[emailContatos.size()]))
                 .findAll().sort("email");
 
-        for(Localizacao item : results) {
+        for(Localizacao item : localizacoes) {
             Log.d(Constantes.TAG_LOG, "Localizacao dos amigos-->" + item);
 
-
-
             if (emailUsuario != null && !emailUsuario.equalsIgnoreCase(item.getEmail())) {
-                marcadoresAmigos.add(new MarkerOptions()
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
-                        .position(new LatLng(item.getLatitude(),item.getLongitude()))
-                        .title(item.getEmail()));
+                Contato contato = mapContatos.get(item.getEmail());
 
+                String caminhoFoto="";
+                String nome="";
+                BitmapDescriptor bitmap = null;
+                if(contato!= null){
+                    if(contato.getNome()!= null){
+                      nome = contato.getNome();
+                    }
+
+                    if(contato.getCaminhoFoto() != null){
+                        caminhoFoto = contato.getCaminhoFoto();
+                    }
+                }
+
+                try {
+                    if(!caminhoFoto.isEmpty()){
+                        int height = 130;
+                        int width = 130;
+
+                        Bitmap smallMarker = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(caminhoFoto), width, height, false);
+                        bitmap = BitmapDescriptorFactory.fromBitmap(RoundedImageView.getCircularBitmap(smallMarker));
+                    }
+
+                }catch (Exception e){}
+
+                if(bitmap == null){
+                    bitmap = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+                }
+
+                if(nome.isEmpty()){
+                    nome = item.getEmail();
+                }
+
+                marcadoresAmigos.add(new MarkerOptions()
+                        .icon(bitmap)
+                        .position(new LatLng(item.getLatitude(),item.getLongitude()))
+                        .title(nome));
             }
         }
     }
+
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -207,7 +257,7 @@ public class CadeEuActivity extends FragmentActivity
             marcadorDaMinhaPosicao = new MarkerOptions()
                     .position(latLng)
                     .title("Eu");
-            marcadorDaMinhaPosicao.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+            marcadorDaMinhaPosicao.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
             mMap.addMarker(marcadorDaMinhaPosicao);
         }else{
             marcadorDaMinhaPosicao.position(latLng);

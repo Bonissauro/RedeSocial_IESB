@@ -14,9 +14,12 @@ import android.widget.RelativeLayout;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import br.com.bonysoft.redesocial_iesb.modelo.Contato;
 import br.com.bonysoft.redesocial_iesb.modelo.Mensagem;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.ContatoRepositorio;
 import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class ConversaActivity extends AppCompatActivity implements
         MensagemFragment.OnListFragmentInteractionListener{
@@ -26,10 +29,10 @@ public class ConversaActivity extends AppCompatActivity implements
     private String emailContato;
     private EditText mTextoMensagem;
     private Toolbar mToolbarConversa;
-
-
+    private Realm mRealm;
 
     private DatabaseReference ref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,13 +42,18 @@ public class ConversaActivity extends AppCompatActivity implements
         mTextoMensagem =(EditText) findViewById(R.id.editTextoConversa);
         mToolbarConversa = (Toolbar) findViewById(R.id.toolbarConversa);
 
-
-
         ref = FirebaseDatabase.getInstance().getReference("mensagens");
 
         emailContato = getIntent().getStringExtra(Constantes.EMAIL_CONVERSA);
 
-        mToolbarConversa.setTitle("Conversando com " + emailContato);
+        mRealm = Realm.getDefaultInstance();
+        Contato contato = mRealm.where(Contato.class).equalTo("email",emailContato).findFirst();
+
+        if(contato != null) {
+            mToolbarConversa.setTitle(contato.getNome() +" " + contato.getSobreNome());
+        } else {
+            mToolbarConversa.setTitle( emailContato);
+        }
 
         ContatoRepositorio repo = new ContatoRepositorio();
         emailUsuario = repo.buscaEmailUsuarioLogado();
@@ -76,5 +84,11 @@ public class ConversaActivity extends AppCompatActivity implements
     @Override
     public void onListFragmentInteraction(Mensagem item) {
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mRealm.close();
     }
 }
