@@ -23,21 +23,21 @@ import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
 public class ObtemPosicaoReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.i(Constantes.TAG_LOG,"onReceive ObtemPosicaoReceiver");
+        Log.i(Constantes.TAG_LOG,"onReceive:  ObtemPosicaoReceiver");
         if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ) {
-            Log.i(Constantes.TAG_LOG,"onReceive ObtemPosicaoReceiver Possui Permissao de Localizacao");
+            Log.i(Constantes.TAG_LOG,"onReceive:  ObtemPosicaoReceiver Possui Permissao de Localizacao");
 
             LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
             Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             LatLng loc = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
 
-            Log.i(Constantes.TAG_LOG,"Localizacao Long--> " + loc.longitude + " Lat--> " + loc.latitude);
+            Log.i(Constantes.TAG_LOG,"onReceive: Localizacao Long--> " + loc.longitude + " Lat--> " + loc.latitude);
 
 
             SharedPreferences sharedPref = context.getSharedPreferences(Constantes.SERVICO,Context.MODE_PRIVATE);
             boolean envio = sharedPref.getBoolean(Constantes.SERVICO_ENVIO_EXEC,false);
             boolean rec = sharedPref.getBoolean(Constantes.SERVICO_REC_EXEC,false);
-
+            Log.i(Constantes.TAG_LOG, "onReceive: Servico Envio->" + envio + " Servico de Receber-->" + rec);
             //Servico de Envio de Posicao do Usuario
             if(envio) {
                 Intent startServiceIntent = new Intent(context, EnviaPosicaoFireBaseService.class);
@@ -49,9 +49,6 @@ public class ObtemPosicaoReceiver extends BroadcastReceiver {
                 Intent startServiceRecebimento = new Intent(context, ObtemLocalizacaoContatoService.class);
                 context.startService(startServiceRecebimento);
             }
-
-
-
         }
     }
 }

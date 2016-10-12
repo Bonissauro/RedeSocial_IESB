@@ -1,7 +1,7 @@
 package br.com.bonysoft.redesocial_iesb;
 
+import android.app.Activity;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,16 +18,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import br.com.bonysoft.redesocial_iesb.modelo.Contato;
 import br.com.bonysoft.redesocial_iesb.modelo.ContatoUltimaMsg;
 import br.com.bonysoft.redesocial_iesb.modelo.Mensagem;
-import br.com.bonysoft.redesocial_iesb.realm.repositorio.ContatoRepositorio;
+import br.com.bonysoft.redesocial_iesb.modelo.MensagemRealm;
+
 import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
+import io.realm.Realm;
 
 
 /**
@@ -40,8 +40,10 @@ import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
  */
 public class ListaConversasFragment extends Fragment {
 
+    final static String TAG = Constantes.TAG_LOG;
+    private Realm mRealm;
+
     private OnListFragmentInteractionListener mListener;
-    String emailUsuario;
 
     public ListaConversasFragment() {
     }
@@ -60,98 +62,101 @@ public class ListaConversasFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mRealm = Realm.getDefaultInstance();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        carregarMensagensNoRealm(ApplicationRedeSocial.getInstance().emailRegistrado());
+    }
+
+    public void carregarMensagensNoRealm(final String emailUsuario){
+        if(emailUsuario == null || emailUsuario.trim().isEmpty()){
+            return;
+        }
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("mensagens");
+        ref.orderByChild("timestamp").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onDataChange: Achou mensagens na lista de conversas");
+                DataSnapshot dsnap = null;
+                Iterator<DataSnapshot> it = dataSnapshot.getChildren().iterator();
+
+                while (it.hasNext()){
+                    dsnap = it.next();
+                    Log.d(TAG, "onDataChange:DataSnapshot para salvar no Realm -->" + dsnap);
+                    Mensagem msg = dsnap.getValue(Mensagem.class);
+                    Log.d(TAG, "onDataChange:Mensagem para salvar no Realm -->" + msg);
+                    if(msg!= null &&
+                            (msg.para.equalsIgnoreCase(emailUsuario) || msg.de.equalsIgnoreCase(emailUsuario))){
+
+                        Log.d(TAG, "onDataChange:Id Msg -->" + dsnap.getKey());
+                        mRealm.beginTransaction();
+                        mRealm.insertOrUpdate(new MensagemRealm(dsnap.getKey(),msg));
+                        mRealm.commitTransaction();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(Constantes.TAG_LOG,"Erro em salvar msg no realm");
+            }
+        });
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_contato_list, container, false);
 
-        ContatoRepositorio repo = new ContatoRepositorio();
-        emailUsuario = repo.buscaEmailUsuarioLogado();
-        repo.close();
+        View view = inflater.inflate(R.layout.fragment_lista_conversas, container, false);
 
-        // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
+
             RecyclerView recyclerView = (RecyclerView) view;
 
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-            List<ContatoUltimaMsg> lista = buscarContatoMsg(((PrincipalActivity) getActivity()).listaContatos);
+            List<ContatoUltimaMsg> lista = buscaListaConversas(ApplicationRedeSocial.getInstance().emailRegistrado(), ((PrincipalActivity) getActivity()).listaContatos);
 
-           ((PrincipalActivity) getActivity()).contatoMensagemRecyclerViewAdapter = new ContatoMensagemRecyclerViewAdapter
-                   (lista, mListener,(PrincipalActivity) getActivity());
+            ((PrincipalActivity) getActivity()).contatoMensagemRecyclerViewAdapter = new ContatoMensagemRecyclerViewAdapter
+                    (lista, mListener,(PrincipalActivity) getActivity());
 
-           recyclerView.setAdapter(((PrincipalActivity) getActivity()).contatoMensagemRecyclerViewAdapter);
+            recyclerView.setAdapter(((PrincipalActivity) getActivity()).contatoMensagemRecyclerViewAdapter);
+
         }
-
         return view;
     }
 
+    private List<ContatoUltimaMsg> buscaListaConversas(final String emailUsuario,final List<Contato> contatos) {
+        List<ContatoUltimaMsg> listaRetorno = new ArrayList<>();
 
-    private List<ContatoUltimaMsg> buscarContatoMsg(final List<Contato> contatos){
-        final Map<String,ContatoUltimaMsg> retorno = new HashMap<>();
+        if(contatos != null) {
+            for (Contato cont : contatos) {
+                Log.d(TAG, "buscaListaConversas: Contato-->" + cont);
 
-        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("mensagens");
+                MensagemRealm msg = mRealm.where(MensagemRealm.class)
+                        .beginGroup()
+                        .equalTo("de", emailUsuario).or().equalTo("para", emailUsuario)
+                        .endGroup()
+                        .beginGroup()
+                        .equalTo("de", cont.getEmail()).or().equalTo("para", cont.getEmail())
+                        .endGroup().findAllSorted("timestamp").last();
+                Log.d(TAG, "buscaListaConversas: Mensagem-->" + msg);
+                listaRetorno.add(new ContatoUltimaMsg(cont, msg));
+            }
+        }
 
-        // or(de = emailContato and para = emailUsuario) ???
-        ref.orderByChild("timestamp").equalTo(emailUsuario,"para")
-                   .addListenerForSingleValueEvent(
-                           new ValueEventListener() {
+        for(ContatoUltimaMsg c:listaRetorno){
+            Log.d(TAG, "buscaListaConversas: ContatoUltimaMsg-->" + c);
+        }
 
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                Log.i(Constantes.TAG_LOG, "Resultado do firebase Chat-->" + dataSnapshot);
-
-                                DataSnapshot dataSnapshotFilho = null;
-
-                                Iterator<DataSnapshot> e = dataSnapshot.getChildren().iterator();
-
-                                if(e.hasNext()){
-                                    retorno.clear();
-                                }
-
-                                while (e.hasNext()){
-                                    dataSnapshotFilho = e.next();
-
-                                    Mensagem m = dataSnapshotFilho.getValue(Mensagem.class);
-
-                                    if(m!=null) {
-                                        ContatoUltimaMsg cm;
-                                        Contato c=null;
-
-                                        for(Contato cont: contatos){
-                                            if(m.de.equalsIgnoreCase(cont.getEmail())){
-
-                                                ContatoUltimaMsg ultima = null;
-                                                if(retorno.containsKey(cont.getEmail())){
-                                                    ultima = retorno.get(cont.getEmail());
-                                                    ultima.setUltimaMensagem(m);
-                                                }
-
-                                                if(ultima==null){
-                                                    ultima = new ContatoUltimaMsg(c,m);
-                                                }
-                                                retorno.put(cont.getEmail(),ultima);
-                                            }
-                                        }
-                                    } else {
-                                        Log.i(Constantes.TAG_LOG,"Mensagem NULL");
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                Log.i(Constantes.TAG_LOG, "Erro dataBase Chat -->" + databaseError.getMessage());
-                                Log.i(Constantes.TAG_LOG, "Erro dataBase Chat -->" + databaseError.getDetails());
-                            }
-                        }
-                );
-
-        return new ArrayList<>( retorno.values());
+        return listaRetorno;
     }
+
 
     @Override
     public void onAttach(Context context) {
@@ -183,5 +188,11 @@ public class ListaConversasFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteractionContato(ContatoUltimaMsg item);
+    }
+
+    @Override
+    public void onDestroy() {
+        mRealm.close();
+        super.onDestroy();
     }
 }

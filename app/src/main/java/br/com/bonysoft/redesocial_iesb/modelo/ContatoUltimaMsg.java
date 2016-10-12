@@ -7,14 +7,14 @@ package br.com.bonysoft.redesocial_iesb.modelo;
 public class ContatoUltimaMsg {
 
     public Contato contato;
-    public Mensagem msg;
+    public MensagemRealm msg;
 
-    public ContatoUltimaMsg(Contato c, Mensagem m){
-        c = contato;
-        m = msg;
+    public ContatoUltimaMsg(Contato c, MensagemRealm m){
+        contato = c;
+        msg = m;
     }
 
-    public void setUltimaMensagem(Mensagem m){
+    public void setUltimaMensagem(MensagemRealm m){
         if(m !=null && m.timestamp!= null && !m.timestamp.trim().isEmpty()){
             if(msg != null &&  msg.timestamp!= null && !msg.timestamp.trim().isEmpty()){
                 long lNovo = new Long(m.timestamp.replace(":","").replace(" ","").replace("-",""));

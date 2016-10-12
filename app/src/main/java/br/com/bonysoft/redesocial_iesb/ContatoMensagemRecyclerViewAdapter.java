@@ -22,7 +22,9 @@ import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
 
 
 public class ContatoMensagemRecyclerViewAdapter
-        extends RecyclerView.Adapter<ContatoMensagemRecyclerViewAdapter.ViewHolder>{
+        extends RecyclerView.Adapter<ContatoMensagemRecyclerViewAdapter.ContatoMensagemViewHolder>{
+
+    private final static String TAG = Constantes.TAG_LOG;
 
     private final List<ContatoUltimaMsg> mValues;
     private final OnListFragmentInteractionListener mListener;
@@ -37,44 +39,44 @@ public class ContatoMensagemRecyclerViewAdapter
         public boolean onItemLongClicked(int position);
     }
 
-
-
     public ContatoMensagemRecyclerViewAdapter(List<ContatoUltimaMsg> items, OnListFragmentInteractionListener listener, Activity activity) {
         mValues = items;
         mListener = listener;
         mActivity = activity;
 
-        ContatoRepositorio repo = new ContatoRepositorio();
-        emailUsuario = repo.buscaEmailUsuarioLogado();
-        repo.close();
+        emailUsuario = ApplicationRedeSocial.getInstance().emailRegistrado();
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ContatoMensagemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_lista_conversas, parent, false);
-        return new ViewHolder(view);
+                .inflate(R.layout.fragment_contato_msg, parent, false);
+        return new ContatoMensagemViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ContatoMensagemViewHolder holder, final int position) {
 
         holder.mItem = mValues.get(position);
-        holder.mContatoNomeView.setText(mValues.get(position).contato.nomeCompleto());
-        holder.mTextoUltimoMsg.setText(mValues.get(position).getTextoUltimaMensagem());
+        Log.d(TAG, "onBindViewHolder: mValues("+position+")-->" + holder.mItem);
+        Log.d(TAG, "onBindViewHolder: holder.mItem.contato.nomeCompleto() -->"+holder.mItem.contato.nomeCompleto());
+        Log.d(TAG, "onBindViewHolder: mContatoNomeView --> "+ holder.mContatoNomeView );
 
-        if(mValues.get(position).contato .getCaminhoFoto()!= null && !mValues.get(position).contato.getCaminhoFoto().isEmpty()){
+        holder.mContatoNomeView.setText(holder.mItem.contato.nomeCompleto());
+        holder.mTextoUltimoMsg.setText(holder.mItem.getTextoUltimaMensagem());
+
+        if (holder.mItem.contato.getCaminhoFoto() != null && !holder.mItem.contato.getCaminhoFoto().isEmpty()) {
             try {
 
-                Uri imageUri = Uri.fromFile(new File(mValues.get(position).contato.getCaminhoFoto()));
-                Log.i("ContatoLog","Caminho do Item no List " + imageUri.toString() );
+                Uri imageUri = Uri.fromFile(new File(holder.mItem.contato.getCaminhoFoto()));
+                Log.i(TAG, "Caminho do Item no List " + imageUri.toString());
                 holder.mSimpleImagem.setImageURI(imageUri);
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
-            Log.i("ContatoLog","Nao encontrou a imagem "+ mValues.get(position).contato.getCaminhoFoto());
+            Log.i(TAG, "Nao encontrou a imagem " + holder.mItem.contato.getCaminhoFoto());
             String imageUri = "drawable://" + R.drawable.ic_foto_padrao;
             holder.mSimpleImagem.setImageURI(imageUri);
         }
@@ -88,15 +90,15 @@ public class ContatoMensagemRecyclerViewAdapter
                     mListener.onListFragmentInteractionContato(holder.mItem);
                 }
 
-                int p = position;
-                ContatoUltimaMsg c = mValues.get(p);
+                ContatoUltimaMsg c = mValues.get(position);
 
                 Intent it = new Intent(mActivity, ConversaActivity.class);
-                it.putExtra(Constantes.EMAIL_CONVERSA,c.contato.getEmail());
+                it.putExtra(Constantes.EMAIL_CONVERSA, c.contato.getEmail());
                 mActivity.startActivity(it);
 
             }
         });
+
     }
 
     @Override
@@ -105,7 +107,7 @@ public class ContatoMensagemRecyclerViewAdapter
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ContatoMensagemViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mContatoNomeView;
         public final TextView mTextoUltimoMsg;
@@ -113,12 +115,12 @@ public class ContatoMensagemRecyclerViewAdapter
 
         public ContatoUltimaMsg mItem;
 
-        public ViewHolder(View view) {
+        public ContatoMensagemViewHolder(View view) {
             super(view);
             mView = view;
             mContatoNomeView = (TextView) view.findViewById(R.id.contatoItemListaNomeMsg);
             mTextoUltimoMsg = (TextView) view.findViewById(R.id.textoUltimoMensagem);
-            mSimpleImagem = (SimpleDraweeView) view.findViewById(R.id.imgListaContato);
+            mSimpleImagem = (SimpleDraweeView) view.findViewById(R.id.imgListaContatoMsg);
         }
 
         @Override

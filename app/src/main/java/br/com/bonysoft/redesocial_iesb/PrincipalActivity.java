@@ -58,6 +58,7 @@ public class PrincipalActivity extends AppCompatActivity implements
 
 
 
+
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     private FirebaseAuth firebaseAuth;
@@ -65,9 +66,8 @@ public class PrincipalActivity extends AppCompatActivity implements
     private boolean jaChamou = false;
 
 
-
+    ContatoMensagemRecyclerViewAdapter contatoMensagemRecyclerViewAdapter;
     MyContatoRecyclerViewAdapter myContatoRecyclerViewAdapter;
-
 
     RealmResults<Contato> listaContatos;
 
@@ -403,8 +403,12 @@ public class PrincipalActivity extends AppCompatActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        Log.d(TAG, "onActivityResult: requestCode-->"+requestCode);
+        Log.d(TAG, "onActivityResult: resultCode-->"+resultCode);
+        Log.d(TAG, "onActivityResult: data-->"+data);
         myContatoRecyclerViewAdapter.notifyDataSetChanged();
+
+        contatoMensagemRecyclerViewAdapter.notifyDataSetChanged();
 
     }
 

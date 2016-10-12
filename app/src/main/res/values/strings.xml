@@ -3,7 +3,7 @@
     <string name="facebook_app_id">1068176056564355</string>
 
     <string name="app_name">IESB - Rede</string>
-    <string name="action_cade_eu">Onde estou?</string>
+    <string name="action_cade_eu">Localização</string>
     <string name="action_bluetooth">Bluetooth</string>
     <string name="action_settings">Configuração</string>
     <string name="action_contatos">Contatos</string>

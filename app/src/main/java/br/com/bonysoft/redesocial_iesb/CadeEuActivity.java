@@ -24,8 +24,12 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import br.com.bonysoft.redesocial_iesb.modelo.Contato;
 import br.com.bonysoft.redesocial_iesb.modelo.LocalizacaoContatos;
@@ -39,8 +43,7 @@ public class CadeEuActivity extends FragmentActivity
             OnMapReadyCallback,
             GoogleApiClient.ConnectionCallbacks,
             GoogleApiClient.OnConnectionFailedListener,
-            LocationListener
-{
+            LocationListener{
 
     String TAG_LOG = Constantes.TAG_LOG;
 
@@ -48,14 +51,10 @@ public class CadeEuActivity extends FragmentActivity
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
 
-    private LatLng latLngAtual;
-    private MarkerOptions marcadorDaPosicao;
-    private MarkerOptions marcadorDaPosicaoAtualDoUsuario;
+    private MarkerOptions marcadorDaMinhaPosicao;
+    private List<MarkerOptions> marcadoresAmigos;
 
-    private Marker marcador;
     private Realm realm;
-
-    private int quantos=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +65,7 @@ public class CadeEuActivity extends FragmentActivity
         setContentView(R.layout.activity_cade_eu);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+
 
         mapFragment.getMapAsync(this);
 
@@ -82,6 +82,7 @@ public class CadeEuActivity extends FragmentActivity
                 .setInterval(10 * 1000)        // 10 seconds, in milliseconds
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds
 
+        criarMarcadoresAmigos(ApplicationRedeSocial.getInstance().emailRegistrado());
     }
 
     @Override
@@ -125,7 +126,44 @@ public class CadeEuActivity extends FragmentActivity
         }
 
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+    }
 
+    public void criarMarcadoresAmigos(final String emailUsuario){
+        marcadoresAmigos = new ArrayList<>();
+
+        RealmResults<LocalizacaoContatos> results = realm.where(LocalizacaoContatos.class)
+                .findAll().sort("email");
+
+        for(LocalizacaoContatos item : results) {
+            Log.d(Constantes.TAG_LOG, "Localizacao dos amigos-->" + item);
+
+            Double dlatitude = 0d;
+            Double dlongitude = 0d;
+
+            if (item.latitude != null) {
+                try {
+                    dlatitude = new Double(item.latitude);
+                } catch (Exception e) {
+
+                }
+            }
+
+            if (item.longitude != null) {
+                try {
+                    dlongitude = new Double(item.longitude);
+                } catch (Exception e) {
+
+                }
+            }
+
+            if (emailUsuario != null && !emailUsuario.equalsIgnoreCase(item.getEmail())) {
+                marcadoresAmigos.add(new MarkerOptions()
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                        .position(new LatLng(dlatitude, dlongitude))
+                        .title(item.email));
+
+            }
+        }
     }
 
     @Override
@@ -151,15 +189,7 @@ public class CadeEuActivity extends FragmentActivity
         if (location == null) {
 
         } else {
-
-            CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(),location.getLongitude()));
-            CameraUpdate zoom   = CameraUpdateFactory.zoomTo(80);
-
-            mMap.moveCamera(center);
-            mMap.animateCamera(zoom);
-
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-
             handleNewLocation(location);
 
             /* Se quiser colocar um filtro por distancia é so marcar aqui
@@ -168,15 +198,13 @@ public class CadeEuActivity extends FragmentActivity
             float distanceInMeters = center.distanceTo(test);
             boolean isWithin10km = distanceInMeters < 10000;
             */
-            RealmResults<LocalizacaoContatos> results = realm.where(LocalizacaoContatos.class)
-                    .findAll().sort("email");
 
-            for(LocalizacaoContatos item : results){
-                //TODO colocar os novos pontos no mapa
-                Log.d(Constantes.TAG_LOG,"Localizacao dos amigos-->" + item);
+            for(MarkerOptions m:marcadoresAmigos) {
+                mMap.addMarker(m);
             }
 
-
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marcadorDaMinhaPosicao.getPosition(), 15));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(14), 2000, null);
         }
     }
 
@@ -194,23 +222,18 @@ public class CadeEuActivity extends FragmentActivity
 
         LatLng latLng = new LatLng(currentLatitude, currentLongitude);
 
-        if (marcadorDaPosicao==null) {
+        if (marcadorDaMinhaPosicao==null) {
 
-            marcadorDaPosicao = new MarkerOptions()
+            marcadorDaMinhaPosicao = new MarkerOptions()
                     .position(latLng)
-                    .title("Tô aqui! "+(quantos++));
-
-            mMap.addMarker(marcadorDaPosicao);
-
+                    .title("Eu");
+            marcadorDaMinhaPosicao.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+            mMap.addMarker(marcadorDaMinhaPosicao);
         }else{
-
-            marcadorDaPosicao.title("Tô aqui de novo! "+(quantos++));
-            marcadorDaPosicao.position(latLng);
-
+            marcadorDaMinhaPosicao.position(latLng);
         }
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-
     }
 
     @Override
@@ -223,115 +246,11 @@ public class CadeEuActivity extends FragmentActivity
         Log.i(TAG_LOG, "Location services failed.");
     }
 
-    private void marcarLocalizacaoUsuario(Location location) {
-
-        double currentLatitude  = location.getLatitude();
-        double currentLongitude = location.getLongitude();
-
-        latLngAtual = new LatLng(currentLatitude, currentLongitude);
-
-        CameraUpdate center = CameraUpdateFactory.newLatLng(latLngAtual);
-
-        if (marcadorDaPosicaoAtualDoUsuario == null) {
-/*
-            LocalDescarteServicos servico = new LocalDescarteServicos();
-
-            servico.listarTodosRegistros(new ILocalDescarteServicos.OnListarTodosRegistrosCallback(){
-
-                @Override
-                public void onSuccess(RealmResults<LocalDescarte> lista) {
-
-                    for (LocalDescarte localDescarte:lista){
-
-                        LatLng ll = new LatLng(localDescarte.getLatitude(), localDescarte.getLongitude());
-
-                        mMap.addMarker(new MarkerOptions()
-                                .position(ll)
-                                .title(localDescarte.getNome())
-                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
-
-                    }
-
-                }
-
-                @Override
-                public void onError(String message) {
-
-                }
-
-            });
-
-*/
-            marcadorDaPosicaoAtualDoUsuario = new MarkerOptions()
-                    .position(latLngAtual)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
-                    .title("Você");
-
-            marcador = mMap.addMarker(marcadorDaPosicaoAtualDoUsuario);
-
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngAtual));
-
-
-        }else{
-/*
-            String lat1 = Ferramentas.arredondarCoordenada(marcadorDaPosicaoAtualDoUsuario.getPosition().latitude);
-            String lat2 = Ferramentas.arredondarCoordenada(latLngAtual.latitude);
-
-            String long1 = Ferramentas.arredondarCoordenada(marcadorDaPosicaoAtualDoUsuario.getPosition().longitude);
-            String long2 = Ferramentas.arredondarCoordenada(latLngAtual.longitude);
-
-            if ((!lat1.equalsIgnoreCase(lat2))||(!long1.equalsIgnoreCase(long2))){
-
-                marcador.remove();
-
-                marcadorDaPosicaoAtualDoUsuario = new MarkerOptions()
-                        .position(latLngAtual)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
-                        .title("Você");
-
-                marcador = mMap.addMarker(marcadorDaPosicaoAtualDoUsuario);
-
-                LocalDescarte objeto = new LocalDescarte(currentLatitude, currentLongitude, "Ponto cadastrado automaticamente!");
-
-                new LocalDescarteServicos().gravar(objeto, new LocalDescarteServicos.OnGravarCallback() {
-
-                    @Override
-                    public void onSuccess(LocalDescarte objeto) {
-
-                    }
-
-                    @Override
-                    public void onError(String message) {
-                        Toast.makeText(getBaseContext(), "Erro ==> " + message, Toast.LENGTH_LONG).show();
-                    }
-
-                });
-
-            }
-*/
-        }
-
-    }
-
-    // TODO vamos fazer a busca da localizacao dos contatos atualizar por um broacast ou pelo Realm?
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            /*
-            LatLng loc = intent.getParcelableExtra("LOC");
-            updateMap(loc);
-            */
-        }
-    };
-
     @Override
     protected void onDestroy() {
-
         if(realm != null && !realm.isClosed()) {
             realm.close();
         }
-
         super.onDestroy();
     }
 }

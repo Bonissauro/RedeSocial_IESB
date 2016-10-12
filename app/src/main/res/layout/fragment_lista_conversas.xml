@@ -9,5 +9,5 @@
     android:layout_marginRight="8dp"
     android:background="@color/icons"
     app:layoutManager="LinearLayoutManager"
-    tools:context=".ListaConversasFragment"
+    tools:context="br.com.bonysoft.redesocial_iesb.ListaConversasFragment"
     tools:listitem="@layout/fragment_contato_msg" />

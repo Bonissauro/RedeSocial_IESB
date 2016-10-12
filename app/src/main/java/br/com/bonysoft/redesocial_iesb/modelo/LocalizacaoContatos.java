@@ -1,10 +1,13 @@
 package br.com.bonysoft.redesocial_iesb.modelo;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 /**
@@ -25,8 +28,6 @@ public class LocalizacaoContatos  extends RealmObject implements Serializable {
         this.latitude = latitude;
         this.longitude = longitude;
     }
-
-
 
     public String getEmail() {
         return email;
