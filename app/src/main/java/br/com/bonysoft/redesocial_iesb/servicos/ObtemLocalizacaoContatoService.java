@@ -16,14 +16,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Iterator;
 
-import br.com.bonysoft.redesocial_iesb.modelo.LocalizacaoContatos;
-import br.com.bonysoft.redesocial_iesb.modelo.LocalizacaoFireBase;
+import br.com.bonysoft.redesocial_iesb.modelo.Localizacao;
 import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
 import io.realm.Realm;
 
 
 /**
- * Created by panar on 03/10/2016.
+ * Created by carlospanarello on 03/10/2016.
  */
 
 public class ObtemLocalizacaoContatoService extends Service {
@@ -49,7 +48,7 @@ public class ObtemLocalizacaoContatoService extends Service {
                         Iterator<DataSnapshot> e = dataSnapshot.getChildren().iterator();
 
                         while (e.hasNext()){
-                            LocalizacaoFireBase local =  e.next().getValue(LocalizacaoFireBase.class);
+                            Localizacao local =  e.next().getValue(Localizacao.class);
                             if(local != null){
                                 if(gravarLocalizacaoRealm(local)){
                                     Log.i(Constantes.TAG_LOG,"ObtemLocalizacaoContatoService Item salvo com sucesso -->"+ local);
@@ -69,41 +68,25 @@ public class ObtemLocalizacaoContatoService extends Service {
         );
     }
 
-    private boolean gravarLocalizacaoRealm(LocalizacaoFireBase local){
+    private boolean gravarLocalizacaoRealm(Localizacao local){
         try {
             Realm realm = Realm.getDefaultInstance();
             if (local == null) {
-                Log.d(Constantes.TAG_LOG,"ObtemLocalizacaoContatoService gravarLocalizacaoRealm - local fire = null");
+                Log.d(Constantes.TAG_LOG, "gravarLocalizacaoRealm: local null");
                 return false;
             }
+
             realm.beginTransaction();
-
-            LocalizacaoContatos result = realm.where(LocalizacaoContatos.class)
-                    .equalTo("email", local.email)
-                    .findFirst();
-
-            if (result == null) {
-                Log.d(Constantes.TAG_LOG,"ObtemLocalizacaoContatoService Nova Localizacao Amigo");
-                result = realm.createObject(LocalizacaoContatos.class);
-                result.setEmail(local.email);
-            } else {
-                Log.d(Constantes.TAG_LOG,"ObtemLocalizacaoContatoService Update Localizacao Amigo");
-            }
-            result.setLongitude(local.longitude.toString());
-            result.setLatitude(local.latitude.toString());
-
-            realm.insertOrUpdate(result);
-
+            realm.copyToRealmOrUpdate(local);
             realm.commitTransaction();
 
             return true;
         }catch (Exception e){
             e.printStackTrace();
-            Log.d(Constantes.TAG_LOG,"ObtemLocalizacaoContatoService Erro na busca/update do Realm Localizacao");
+            Log.d(Constantes.TAG_LOG, "gravarLocalizacaoRealm: Erro na busca/update do Realm Localizacao");
             return false;
         }
     }
-
 
     @Override
     public void onDestroy() {

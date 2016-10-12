@@ -33,10 +33,9 @@ public class ObtemPosicaoReceiver extends BroadcastReceiver {
 
             Log.i(Constantes.TAG_LOG,"onReceive: Localizacao Long--> " + loc.longitude + " Lat--> " + loc.latitude);
 
-
             SharedPreferences sharedPref = context.getSharedPreferences(Constantes.SERVICO,Context.MODE_PRIVATE);
-            boolean envio = sharedPref.getBoolean(Constantes.SERVICO_ENVIO_EXEC,false);
-            boolean rec = sharedPref.getBoolean(Constantes.SERVICO_REC_EXEC,false);
+            boolean envio = sharedPref.getBoolean(Constantes.SERVICO_ENVIO_EXEC,true);
+            boolean rec = sharedPref.getBoolean(Constantes.SERVICO_REC_EXEC,true);
             Log.i(Constantes.TAG_LOG, "onReceive: Servico Envio->" + envio + " Servico de Receber-->" + rec);
             //Servico de Envio de Posicao do Usuario
             if(envio) {

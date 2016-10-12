@@ -7,18 +7,18 @@ package br.com.bonysoft.redesocial_iesb.modelo;
 public class ContatoUltimaMsg {
 
     public Contato contato;
-    public MensagemRealm msg;
+    public Mensagem msg;
 
-    public ContatoUltimaMsg(Contato c, MensagemRealm m){
+    public ContatoUltimaMsg(Contato c, Mensagem m){
         contato = c;
         msg = m;
     }
 
-    public void setUltimaMensagem(MensagemRealm m){
-        if(m !=null && m.timestamp!= null && !m.timestamp.trim().isEmpty()){
-            if(msg != null &&  msg.timestamp!= null && !msg.timestamp.trim().isEmpty()){
-                long lNovo = new Long(m.timestamp.replace(":","").replace(" ","").replace("-",""));
-                long lAntigo = new Long(msg.timestamp.replace(":","").replace(" ","").replace("-",""));
+    public void setUltimaMensagem(Mensagem m){
+        if(m !=null && m.getTimestamp()!= null && !m.getTimestamp().trim().isEmpty()){
+            if(msg != null &&  msg.getTimestamp()!= null && !msg.getTimestamp().trim().isEmpty()){
+                long lNovo = new Long(m.getTimestamp().replace(":","").replace(" ","").replace("-",""));
+                long lAntigo = new Long(msg.getTimestamp().replace(":","").replace(" ","").replace("-",""));
                 if(lNovo < lAntigo){
                     return;
                 }
@@ -37,11 +37,11 @@ public class ContatoUltimaMsg {
     }
 
     public String getTextoUltimaMensagem(){
-        if(msg != null &&  msg.texto!= null && !msg.texto.trim().isEmpty()){
-            if(msg.texto.length()> 15){
-                return msg.texto.substring(0,14)+" ...";
+        if(msg != null &&  msg.getTexto()!= null && !msg.getTexto().trim().isEmpty()){
+            if(msg.getTexto().length()> 15){
+                return msg.getTexto().substring(0,14)+" ...";
             } else {
-                return msg.texto;
+                return msg.getTexto();
             }
         }
         return  "";

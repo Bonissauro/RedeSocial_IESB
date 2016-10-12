@@ -9,19 +9,15 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.HashMap;
-import java.util.Map;
 
-import br.com.bonysoft.redesocial_iesb.R;
-import br.com.bonysoft.redesocial_iesb.modelo.LocalizacaoContatos;
-import br.com.bonysoft.redesocial_iesb.modelo.LocalizacaoFireBase;
+import br.com.bonysoft.redesocial_iesb.modelo.Localizacao;
 import br.com.bonysoft.redesocial_iesb.realm.repositorio.ContatoRepositorio;
 import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
 
@@ -84,21 +80,21 @@ public class EnviaPosicaoFireBaseService extends Service {
                         Log.i(Constantes.TAG_LOG, "Resultado do firebase -->" + dataSnapshot);
                         Log.i(Constantes.TAG_LOG,"onDataChange-->" + localizacao);
 
-                        LocalizacaoFireBase local = null;
+                        Localizacao local = null;
                         String chave = "";
                         DataSnapshot dataSnapshotFilho = null;
                         if(dataSnapshot.getChildren().iterator().hasNext()) {
                             dataSnapshotFilho =  dataSnapshot.getChildren().iterator().next();
 
-                            local = dataSnapshotFilho.getValue(LocalizacaoFireBase.class);
+                            local = dataSnapshotFilho.getValue(Localizacao.class);
                             chave = dataSnapshotFilho.getKey();
                         }
 
                         Log.i(Constantes.TAG_LOG,"Resultado do firebase convertido -->"+ local);
                         if(local == null){
                             Log.i(Constantes.TAG_LOG,"Inserindo Novo");
-                            LocalizacaoFireBase localFire =
-                                    new LocalizacaoFireBase(email,location.latitude,location.longitude);
+                            Localizacao localFire =
+                                    new Localizacao(email,location.latitude,location.longitude);
 
                             Log.i(Constantes.TAG_LOG,"Incluindo um novo local -->"+ localFire);
 

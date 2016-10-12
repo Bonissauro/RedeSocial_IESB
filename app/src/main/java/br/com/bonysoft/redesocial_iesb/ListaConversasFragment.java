@@ -1,6 +1,5 @@
 package br.com.bonysoft.redesocial_iesb;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -24,7 +23,6 @@ import java.util.List;
 import br.com.bonysoft.redesocial_iesb.modelo.Contato;
 import br.com.bonysoft.redesocial_iesb.modelo.ContatoUltimaMsg;
 import br.com.bonysoft.redesocial_iesb.modelo.Mensagem;
-import br.com.bonysoft.redesocial_iesb.modelo.MensagemRealm;
 
 import br.com.bonysoft.redesocial_iesb.utilitarios.Constantes;
 import io.realm.Realm;
@@ -57,18 +55,15 @@ public class ListaConversasFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
+        carregarMensagensNoRealm(ApplicationRedeSocial.getInstance().emailRegistrado());
+
+        ((PrincipalActivity) getActivity()).contatoMensagemRecyclerViewAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mRealm = Realm.getDefaultInstance();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        carregarMensagensNoRealm(ApplicationRedeSocial.getInstance().emailRegistrado());
     }
 
     public void carregarMensagensNoRealm(final String emailUsuario){
@@ -90,11 +85,14 @@ public class ListaConversasFragment extends Fragment {
                     Mensagem msg = dsnap.getValue(Mensagem.class);
                     Log.d(TAG, "onDataChange:Mensagem para salvar no Realm -->" + msg);
                     if(msg!= null &&
-                            (msg.para.equalsIgnoreCase(emailUsuario) || msg.de.equalsIgnoreCase(emailUsuario))){
+                            (msg.getPara().equalsIgnoreCase(emailUsuario) || msg.getDe().equalsIgnoreCase(emailUsuario))){
 
                         Log.d(TAG, "onDataChange:Id Msg -->" + dsnap.getKey());
                         mRealm.beginTransaction();
-                        mRealm.insertOrUpdate(new MensagemRealm(dsnap.getKey(),msg));
+
+                        msg.setId(dsnap.getKey());
+
+                        mRealm.copyToRealmOrUpdate(msg);
                         mRealm.commitTransaction();
                     }
                 }
@@ -138,13 +136,14 @@ public class ListaConversasFragment extends Fragment {
             for (Contato cont : contatos) {
                 Log.d(TAG, "buscaListaConversas: Contato-->" + cont);
 
-                MensagemRealm msg = mRealm.where(MensagemRealm.class)
+                Mensagem msg = mRealm.where(Mensagem.class)
                         .beginGroup()
                         .equalTo("de", emailUsuario).or().equalTo("para", emailUsuario)
                         .endGroup()
                         .beginGroup()
                         .equalTo("de", cont.getEmail()).or().equalTo("para", cont.getEmail())
                         .endGroup().findAllSorted("timestamp").last();
+
                 Log.d(TAG, "buscaListaConversas: Mensagem-->" + msg);
                 listaRetorno.add(new ContatoUltimaMsg(cont, msg));
             }

@@ -30,8 +30,8 @@ public class ConfiguracaoActivity extends AppCompatActivity {
         mTexto = (TextView) findViewById(R.id.txtUsuarioRegistrado);
 
         SharedPreferences sharedPref = this.getSharedPreferences(Constantes.SERVICO, Context.MODE_PRIVATE);
-        boolean envio = sharedPref.getBoolean(Constantes.SERVICO_ENVIO_EXEC,true);
-        boolean rec = sharedPref.getBoolean(Constantes.SERVICO_REC_EXEC,true);
+        boolean envio = sharedPref.getBoolean(Constantes.SERVICO_ENVIO_EXEC,false);
+        boolean rec = sharedPref.getBoolean(Constantes.SERVICO_REC_EXEC,false);
 
         SharedPreferences sharedPrefEmail = getApplicationContext().getSharedPreferences(Constantes.CONTA_REGISTRADA, Context.MODE_PRIVATE);
         emailRegistro = sharedPrefEmail.getString(Constantes.CONTA_REGISTRADA,"");

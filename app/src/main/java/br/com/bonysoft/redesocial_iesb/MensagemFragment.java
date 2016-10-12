@@ -119,9 +119,9 @@ public class MensagemFragment extends Fragment {
                     Log.d(Constantes.TAG_LOG , "Populando o View Holder TextoView--> " + viewHolder.mTextoView);
                     Log.d(Constantes.TAG_LOG , "Populando o View Holder MSG --> " + msg);
                     if(msg!= null && viewHolder != null &&  viewHolder.mTextoView != null && (
-                        (msg.de.equalsIgnoreCase(emailContato) && msg.para.equalsIgnoreCase(emailUsuario) )
-                     || (msg.de.equalsIgnoreCase(emailUsuario) && msg.para.equalsIgnoreCase(emailContato) ) )){
-                        viewHolder.mTextoView.setText(msg.texto);
+                        (msg.getDe().equalsIgnoreCase(emailContato) && msg.getPara().equalsIgnoreCase(emailUsuario) )
+                     || (msg.getDe().equalsIgnoreCase(emailUsuario) && msg.getPara().equalsIgnoreCase(emailContato) ) )){
+                        viewHolder.mTextoView.setText(msg.getTexto());
 
                         //LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         RelativeLayout.LayoutParams params =
@@ -129,7 +129,7 @@ public class MensagemFragment extends Fragment {
                                         RelativeLayout.LayoutParams.WRAP_CONTENT);
 
                         int color;
-                        if(msg.de.equalsIgnoreCase(emailUsuario)) {
+                        if(msg.getDe().equalsIgnoreCase(emailUsuario)) {
                             //llp.setMargins(10, 10, 10, 10); // llp.setMargins(left, top, right, bottom);
                             color = R.color.backGroundRece;
                             //viewHolder.mTextoView.setGravity(Gravity.RIGHT);
@@ -173,61 +173,7 @@ public class MensagemFragment extends Fragment {
         }
        return view;
     }
-/*
-    private String obterEmailUsuarioLogado(){
 
-        return email;
-    }
-
-    private List<Mensagem> recuperarMensagensNoFirebase(final String emailUsuario,final String emailContato){
-        final List<Mensagem> retorno = new ArrayList<>();
-
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("mensagens");
-
-
-        // or(de = emailContato and para = emailUsuario) ???
-        ref.orderByChild("timestamp")
-                .startAt(emailUsuario,"de").endAt(emailContato,"de")
-                .startAt(emailContato,"de").endAt(emailUsuario,"de")
-                .startAt(emailUsuario,"para").endAt(emailContato,"para")
-                .startAt(emailContato,"para").endAt(emailUsuario,"para")
-                .addValueEventListener(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                            Log.i(Constantes.TAG_LOG, "Resultado do firebase Chat-->" + dataSnapshot);
-
-                            DataSnapshot dataSnapshotFilho = null;
-
-                            Iterator<DataSnapshot> e = dataSnapshot.getChildren().iterator();
-
-                            if(e.hasNext()){
-                                retorno.clear();
-                            }
-
-                            while (e.hasNext()){
-                                dataSnapshotFilho = e.next();
-                                Mensagem m = dataSnapshotFilho.getValue(Mensagem.class);
-                                if(m!=null) {
-                                    Log.i(Constantes.TAG_LOG,"Inserindo Mensagem");
-                                    retorno.add(m);
-                                } else {
-                                    Log.i(Constantes.TAG_LOG,"Mensagem NULL");
-                                }
-                            }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.i(Constantes.TAG_LOG, "Erro dataBase Chat -->" + databaseError.getMessage());
-                        Log.i(Constantes.TAG_LOG, "Erro dataBase Chat -->" + databaseError.getDetails());
-                    }
-                }
-        );
-
-        return retorno;
-    }
-*/
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
